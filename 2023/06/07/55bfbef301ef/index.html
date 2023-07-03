@@ -45,7 +45,7 @@
         content="2023-06-07">
       <meta 
         property="og:article:modified_time" 
-        content="2023-06-14">
+        content="2023-06-15">
       <meta 
         property="og:article:author" 
         content="MrLibertine">
@@ -311,7 +311,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1"><span class="toc-text">类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2"><span class="toc-text">装饰符（限定符 ）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3"><span class="toc-text">内置变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4"><span class="toc-text">内置常量</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-text">目录</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1"><span class="toc-text">类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2"><span class="toc-text">装饰符（限定符 ）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3"><span class="toc-text">内置变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4"><span class="toc-text">内置常量</span></a></li></ol></li></ol></li></ol></li></ol>
       </div>
     </article>
   
@@ -353,15 +353,15 @@
       </a>
     
       <a 
-        href="/tags/%E4%B8%80%E4%BA%9B%E6%AF%94%E8%BE%83%E6%9C%89%E7%94%A8%E7%9A%84%E7%BD%91%E7%AB%99/" 
-        title="一些比较有用的网站">
-        <div class="tags-list-item">一些比较有用的网站</div>
-      </a>
-    
-      <a 
         href="/tags/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/" 
         title="杂七杂八">
         <div class="tags-list-item">杂七杂八</div>
+      </a>
+    
+      <a 
+        href="/tags/%E4%B8%80%E4%BA%9B%E6%AF%94%E8%BE%83%E6%9C%89%E7%94%A8%E7%9A%84%E7%BD%91%E7%AB%99/" 
+        title="一些比较有用的网站">
+        <div class="tags-list-item">一些比较有用的网站</div>
       </a>
     
   </div>
@@ -418,41 +418,33 @@
     id="section" 
     class="post-content">
     <p>GLSL一些常见的词汇表注解</p>
-<ul>
-<li><p>目录</p>
-</li>
-<li><p><a href="#1">1.类型</a></p>
-</li>
-<li><p><a href="#2">2.装饰符（限定符 ）</a></p>
-</li>
-<li><p><a href="#3">3.内置变量</a></p>
-</li>
-<li><p><a href="#4">4.内置常量</a></p>
-</li>
+<h1 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h1><ul>
+<li><a href="#1">1.类型</a></li>
+<li><a href="#2">2.装饰符（限定符 ）</a></li>
+<li><a href="#3">3.内置变量</a></li>
+<li><a href="#4">4.内置常量</a></li>
 </ul>
 <h4 id="1">类型</h4>
 
-
+<hr>
 <ul>
 <li><p>void</p>
 <pre class="highlight"><span class="line"><span class="comment">// 这个没什么好说的非常常见 `当函数没有参数或函数不返回值时使用。</span></span><br><span class="line"><span class="type">void</span> main(<span class="type">void</span>);</span><br><span class="line"><span class="type">int</span> aFunction(<span class="type">void</span>);</span><br><span class="line"><span class="type">void</span> bFunction(<span class="type">float</span>);</span><br></pre>
 </li>
 <li><p>bool，int，float </p>
 <pre class="highlight"><span class="line"><span class="comment">// 这几个也是一样，布尔值，有符号整形，浮点数</span></span><br></pre>
-
 </li>
 <li><p>bvec2 ，bvec3，bvec4 </p>
- <pre class="highlight"><span class="line"><span class="comment">// 上面这三个指的是布尔向量，分别是2，3,4维的向量</span></span><br><span class="line"><span class="type">bvec2</span> aBvec2 = <span class="type">bvec2</span>(<span class="literal">true</span>, <span class="literal">true</span>);</span><br><span class="line"><span class="type">bvec2</span> bBvec2 = <span class="type">bvec2</span>(<span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="type">bvec2</span> cBvec2 = <span class="type">bvec2</span>(aBvec3);</span><br><span class="line"><span class="type">bvec2</span> dBvec2 = <span class="type">bvec2</span>(aBvec3.x, aBvec3.y);</span><br><span class="line"></span><br><span class="line">类推。。<span class="number">3</span>,<span class="number">4</span>写法</span><br></pre>
+<pre class="highlight"><span class="line"><span class="comment">// 上面这三个指的是布尔向量，分别是2，3,4维的向量</span></span><br><span class="line"><span class="type">bvec2</span> aBvec2 = <span class="type">bvec2</span>(<span class="literal">true</span>, <span class="literal">true</span>);</span><br><span class="line"><span class="type">bvec2</span> bBvec2 = <span class="type">bvec2</span>(<span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="type">bvec2</span> cBvec2 = <span class="type">bvec2</span>(aBvec3);</span><br><span class="line"><span class="type">bvec2</span> dBvec2 = <span class="type">bvec2</span>(aBvec3.x, aBvec3.y);</span><br><span class="line"></span><br><span class="line">类推。。<span class="number">3</span>,<span class="number">4</span>写法</span><br></pre>
 </li>
-<li><p>ivec2 ，ivec3 ，ivec4 </p>
-<pre class="highlight"><span class="line">  <span class="comment">// 二维整数向量，分别是2，3,4维的向量</span></span><br><span class="line">  <span class="type">bvec2</span> aIvec2 = <span class="type">ivec2</span>(<span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">  <span class="type">bvec2</span> bIvec2 = <span class="type">ivec2</span>(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="type">bvec2</span> cIvec2 = <span class="type">ivec2</span>(aIvec3);</span><br><span class="line"><span class="type">bvec2</span> dIvec2 = <span class="type">ivec2</span>(aIvec3.x, aIvec3.y);</span><br><span class="line"></span><br><span class="line">类推。。<span class="number">3</span>,<span class="number">4</span>写法</span><br></pre>
+<li><p>ivec2 ，ivec3 ，ivec4</p>
+<pre class="highlight"><span class="line"><span class="comment">// 二维整数向量，分别是2，3,4维的向量</span></span><br><span class="line"><span class="type">bvec2</span> aIvec2 = <span class="type">ivec2</span>(<span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line"><span class="type">bvec2</span> bIvec2 = <span class="type">ivec2</span>(<span class="number">1</span>);</span><br><span class="line"><span class="type">bvec2</span> cIvec2 = <span class="type">ivec2</span>(aIvec3);</span><br><span class="line"><span class="type">bvec2</span> dIvec2 = <span class="type">ivec2</span>(aIvec3.x, aIvec3.y);</span><br><span class="line"></span><br><span class="line">类推。。<span class="number">3</span>,<span class="number">4</span>写法</span><br></pre>
 </li>
 <li><p>vec2 ，vec3 ，vec4 </p>
 <pre class="highlight"><span class="line"><span class="comment">// 二维浮点向量，当然了也是跟上面的一样</span></span><br><span class="line"><span class="type">vec2</span> aVec2 = <span class="type">vec2</span>(<span class="number">1.0</span>, <span class="number">1.0</span>);</span><br><span class="line"><span class="type">vec2</span> bVec2 = <span class="type">vec2</span>(<span class="number">1.0</span>);</span><br><span class="line"></span><br><span class="line"><span class="type">vec2</span> cVec2 = <span class="type">vec2</span>(aVec3);</span><br><span class="line"><span class="type">vec2</span> dVec2 = <span class="type">vec2</span>(aVec3.x, aVec3.y);</span><br></pre>
 </li>
 <li><p>mat2 ，mat3，mat4 </p>
-<pre class="highlight"><span class="line">* 接下来这几个是矩阵n*n浮点矩阵</span><br><span class="line"><span class="type">mat2</span> aMat2 = <span class="type">mat2</span>(<span class="number">1.0</span>, <span class="number">0.0</span>,  <span class="comment">// 1. column</span></span><br><span class="line">                  <span class="number">0.0</span>, <span class="number">1.0</span>); <span class="comment">// 2. column</span></span><br><span class="line"><span class="type">mat2</span> bMat2 = <span class="type">mat2</span>(<span class="number">1.0</span>);</span><br><span class="line"><span class="type">mat2</span> cMat2 = <span class="type">mat2</span>(aVec2, bVec2);</span><br><span class="line"><span class="type">mat2</span> dMat2 = <span class="type">mat2</span>(aVec3, aFloat);</span><br><span class="line"></span><br><span class="line">------</span><br><span class="line"></span><br><span class="line"><span class="type">mat4</span> aMat4 = <span class="type">mat4</span>(<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>,  <span class="comment">// 1. column</span></span><br><span class="line">                  <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>,  <span class="comment">// 2. column</span></span><br><span class="line">                  <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>,  <span class="comment">// 3. column</span></span><br><span class="line">                  <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>); <span class="comment">// 4. column</span></span><br><span class="line"><span class="type">mat4</span> bMat4 = <span class="type">mat4</span>(<span class="number">1.0</span>);</span><br><span class="line"></span><br><span class="line"><span class="type">mat4</span> cMat4 = <span class="type">mat4</span>(aVec4, bVec4, cVec4, dVec4);</span><br><span class="line"><span class="type">mat4</span> dMat4 = <span class="type">mat4</span>(aVec4, aVec3, bVec4, cVec4, aFloat);</span><br><span class="line"></span><br><span class="line"><span class="type">mat4</span>数据类型为 <span class="number">4</span>x4 浮点矩阵。正如你在上面看到的，可以用不同的方式初始化：</span><br><span class="line">逐列为每个组件提供一个值。</span><br><span class="line">提供一个用于主对角线上组件的值。</span><br><span class="line">提供向量和标量的组合。</span><br><span class="line">以相同的方式可以按组件或逐列访问数据：</span><br><span class="line"></span><br><span class="line">aMat4[<span class="number">3</span>][<span class="number">3</span>] = <span class="number">1.0</span>;</span><br><span class="line"><span class="type">float</span> aFloat = aMat4[<span class="number">3</span>][<span class="number">3</span>];</span><br><span class="line"></span><br><span class="line">aMat4[<span class="number">0</span>] = <span class="type">vec4</span>(<span class="number">1.0</span>);</span><br><span class="line"><span class="type">vec4</span> aVec4 = aMat4[<span class="number">0</span>];</span><br></pre>
-
+<pre class="highlight"><span class="line">接下来这几个是矩阵n*n浮点矩阵</span><br><span class="line"><span class="type">mat2</span> aMat2 = <span class="type">mat2</span>(<span class="number">1.0</span>, <span class="number">0.0</span>,  <span class="comment">// 1. column</span></span><br><span class="line">                  <span class="number">0.0</span>, <span class="number">1.0</span>); <span class="comment">// 2. column</span></span><br><span class="line"><span class="type">mat2</span> bMat2 = <span class="type">mat2</span>(<span class="number">1.0</span>);</span><br><span class="line"><span class="type">mat2</span> cMat2 = <span class="type">mat2</span>(aVec2, bVec2);</span><br><span class="line"><span class="type">mat2</span> dMat2 = <span class="type">mat2</span>(aVec3, aFloat);</span><br><span class="line"></span><br><span class="line">------</span><br><span class="line"></span><br><span class="line"><span class="type">mat4</span> aMat4 = <span class="type">mat4</span>(<span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>,  <span class="comment">// 1. column</span></span><br><span class="line">                  <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>,  <span class="comment">// 2. column</span></span><br><span class="line">                  <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>,  <span class="comment">// 3. column</span></span><br><span class="line">                  <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">0.0</span>, <span class="number">1.0</span>); <span class="comment">// 4. column</span></span><br><span class="line"><span class="type">mat4</span> bMat4 = <span class="type">mat4</span>(<span class="number">1.0</span>);</span><br><span class="line"></span><br><span class="line"><span class="type">mat4</span> cMat4 = <span class="type">mat4</span>(aVec4, bVec4, cVec4, dVec4);</span><br><span class="line"><span class="type">mat4</span> dMat4 = <span class="type">mat4</span>(aVec4, aVec3, bVec4, cVec4, aFloat);</span><br><span class="line"></span><br><span class="line"><span class="type">mat4</span>数据类型为 <span class="number">4</span>x4 浮点矩阵。正如你在上面看到的，可以用不同的方式初始化：</span><br><span class="line">逐列为每个组件提供一个值。</span><br><span class="line">提供一个用于主对角线上组件的值。</span><br><span class="line">提供向量和标量的组合。</span><br><span class="line">以相同的方式可以按组件或逐列访问数据：</span><br><span class="line"></span><br><span class="line">aMat4[<span class="number">3</span>][<span class="number">3</span>] = <span class="number">1.0</span>;</span><br><span class="line"><span class="type">float</span> aFloat = aMat4[<span class="number">3</span>][<span class="number">3</span>];</span><br><span class="line"></span><br><span class="line">aMat4[<span class="number">0</span>] = <span class="type">vec4</span>(<span class="number">1.0</span>);</span><br><span class="line"><span class="type">vec4</span> aVec4 = aMat4[<span class="number">0</span>];</span><br></pre>
 </li>
 <li><p>sampler2D </p>
 <pre class="highlight"><span class="line"><span class="type">sampler2D</span>用于处理二维纹理，它表示一个从纹理中获取像素颜色的采样器。通过使用<span class="type">sampler2D</span>，可以在着色器中读取和处理二维纹理图像的像素信息。这样可以实现纹理映射、纹理混合、纹理过滤等功能，使渲染效果更加细腻和逼真。</span><br></pre></li>
@@ -464,23 +456,39 @@
 </ul>
 <h4 id="2">装饰符（限定符 ）</h4>
 
+<hr>
 <ul>
-<li>attribute <pre class="highlight"><span class="line"><span class="comment">//顶点属性数据。</span></span><br><span class="line"><span class="comment">//attribute`包含从 WebGL/OpenGL 环境共享到顶点着色器的数据的只读变量。</span></span><br><span class="line"><span class="comment">//因为顶点着色器对每个顶点执行一次，所以属性是按顶点数据指定的，通常包含诸如顶点的空间位置、颜色、法线方向和纹理坐标等信息。</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">attribute</span> **<span class="type">vec4</span>** v_color;</span><br></pre></li>
-<li>const <pre class="highlight"><span class="line"><span class="comment">//常量符</span></span><br><span class="line"><span class="comment">//const限定符可应用于任何变量的声明，以指定其值不会更改。</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="type">float</span> PI = <span class="number">3.14159265359</span>;</span><br></pre></li>
-<li>uniform<pre class="highlight"><span class="line"><span class="keyword">uniform</span>变量包含从 WebGL/OpenGL 环境共享到顶点或片段着色器的只读数据。</span><br><span class="line">该值是针对每个图元的，因此对于沿图元、帧或场景保持不变的变量很有用。</span><br><span class="line"></span><br><span class="line"><span class="keyword">uniform</span> <span class="type">vec4</span> direction;</span><br></pre></li>
-<li>varying <pre class="highlight"><span class="line">可变变量限定符。</span><br><span class="line"><span class="keyword">varying</span>变量包含从顶点着色器到片段着色器共享的数据。</span><br><span class="line">变量必须写入顶点着色器，片段着色器中的只读值然后从构成片段的顶点进行插值。</span><br><span class="line"></span><br><span class="line"><span class="keyword">varying</span> <span class="type">vec3</span> position;</span><br></pre></li>
-<li>precision <pre class="highlight"><span class="line"><span class="comment">//还不知道</span></span><br></pre></li>
-<li>highp <pre class="highlight"><span class="line"><span class="comment">//还不知道</span></span><br></pre></li>
-<li>mediump <pre class="highlight"><span class="line"><span class="comment">//还不知道</span></span><br></pre></li>
-<li>lowp <pre class="highlight"><span class="line"><span class="comment">//还不知道</span></span><br></pre></li>
-<li>in <pre class="highlight"><span class="line"><span class="comment">//还不知道</span></span><br></pre></li>
-<li>out <pre class="highlight"><span class="line"><span class="comment">//还不知道</span></span><br></pre></li>
-<li>inout<pre class="highlight"><span class="line"><span class="comment">//还不知道</span></span><br></pre></li>
+<li><p>attribute </p>
+<pre class="highlight"><span class="line"><span class="comment">//顶点属性数据。</span></span><br><span class="line"><span class="comment">//attribute`包含从 WebGL/OpenGL 环境共享到顶点着色器的数据的只读变量。</span></span><br><span class="line"><span class="comment">//因为顶点着色器对每个顶点执行一次，所以属性是按顶点数据指定的，通常包含诸如顶点的空间位置、颜色、法线方向和纹理坐标等信息。</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">attribute</span> **<span class="type">vec4</span>** v_color;</span><br></pre>
+</li>
+<li><p>const </p>
+<pre class="highlight"><span class="line"><span class="comment">//常量符</span></span><br><span class="line"><span class="comment">//const限定符可应用于任何变量的声明，以指定其值不会更改。</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="type">float</span> PI = <span class="number">3.14159265359</span>;</span><br></pre></li>
+<li><p>uniform</p>
+<pre class="highlight"><span class="line"><span class="keyword">uniform</span>变量包含从 WebGL/OpenGL 环境共享到顶点或片段着色器的只读数据。</span><br><span class="line">该值是针对每个图元的，因此对于沿图元、帧或场景保持不变的变量很有用。</span><br><span class="line"></span><br><span class="line"><span class="keyword">uniform</span> <span class="type">vec4</span> direction;</span><br></pre></li>
+<li><p>varying </p>
+  <pre class="highlight"><span class="line">可变变量限定符。</span><br><span class="line"><span class="keyword">varying</span>变量包含从顶点着色器到片段着色器共享的数据。</span><br><span class="line">变量必须写入顶点着色器，片段着色器中的只读值然后从构成片段的顶点进行插值。</span><br><span class="line"></span><br><span class="line"><span class="keyword">varying</span> <span class="type">vec3</span> position;</span><br></pre>
+</li>
+<li><p>precision </p>
+<pre class="highlight"><span class="line"><span class="comment">//还不知道</span></span><br></pre></li>
+<li><p>highp </p>
+<pre class="highlight"><span class="line"><span class="comment">//还不知道</span></span><br></pre></li>
+<li><p>mediump </p>
+<pre class="highlight"><span class="line"><span class="comment">//还不知道</span></span><br></pre></li>
+<li><p>lowp </p>
+<pre class="highlight"><span class="line"><span class="comment">//还不知道</span></span><br></pre></li>
+<li><p>in </p>
+<pre class="highlight"><span class="line"><span class="comment">//还不知道</span></span><br></pre></li>
+<li><p>out </p>
+<pre class="highlight"><span class="line"><span class="comment">//还不知道</span></span><br></pre></li>
+<li><p>inout</p>
+<pre class="highlight"><span class="line"><span class="comment">//还不知道</span></span><br></pre></li>
 </ul>
 <h4 id="3">内置变量</h4>
-* gl_Position 
 
+<hr>
 <ul>
+<li><p>gl_Position </p>
+</li>
 <li><p>gl_PointSize </p>
 </li>
 <li><p>gl_PointCoord </p>
@@ -494,6 +502,7 @@
 </ul>
 <h4 id="4">内置常量</h4> 
 
+<hr>
 <ul>
 <li><p>gl_MaxVertexAttribs </p>
 </li>
@@ -580,7 +589,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1"><span class="toc-text">类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2"><span class="toc-text">装饰符（限定符 ）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3"><span class="toc-text">内置变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4"><span class="toc-text">内置常量</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-text">目录</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1"><span class="toc-text">类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2"><span class="toc-text">装饰符（限定符 ）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3"><span class="toc-text">内置变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4"><span class="toc-text">内置常量</span></a></li></ol></li></ol></li></ol></li></ol>
 </div>
                     </main>
                     <aside class="right-column">
@@ -594,7 +603,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#1"><span class="toc-text">类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2"><span class="toc-text">装饰符（限定符 ）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3"><span class="toc-text">内置变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4"><span class="toc-text">内置常量</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%9B%AE%E5%BD%95"><span class="toc-text">目录</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1"><span class="toc-text">类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2"><span class="toc-text">装饰符（限定符 ）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3"><span class="toc-text">内置变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4"><span class="toc-text">内置常量</span></a></li></ol></li></ol></li></ol></li></ol>
     </article>
   
   

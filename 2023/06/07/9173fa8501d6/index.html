@@ -45,7 +45,7 @@
         content="2023-06-07">
       <meta 
         property="og:article:modified_time" 
-        content="2023-06-14">
+        content="2023-06-15">
       <meta 
         property="og:article:author" 
         content="MrLibertine">
@@ -353,15 +353,15 @@
       </a>
     
       <a 
-        href="/tags/%E4%B8%80%E4%BA%9B%E6%AF%94%E8%BE%83%E6%9C%89%E7%94%A8%E7%9A%84%E7%BD%91%E7%AB%99/" 
-        title="一些比较有用的网站">
-        <div class="tags-list-item">一些比较有用的网站</div>
-      </a>
-    
-      <a 
         href="/tags/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/" 
         title="杂七杂八">
         <div class="tags-list-item">杂七杂八</div>
+      </a>
+    
+      <a 
+        href="/tags/%E4%B8%80%E4%BA%9B%E6%AF%94%E8%BE%83%E6%9C%89%E7%94%A8%E7%9A%84%E7%BD%91%E7%AB%99/" 
+        title="一些比较有用的网站">
+        <div class="tags-list-item">一些比较有用的网站</div>
       </a>
     
   </div>
@@ -390,7 +390,7 @@
     
     
       <span class="dot"></span>
-      <span>308 字</span>
+      <span>1.4k 字</span>
     
   </div>
   
@@ -430,25 +430,101 @@
 <h4 id="1">角度和三角函数</h4>  
 
 <ul>
-<li>radians() </li>
-<li>degrees()</li>
-<li>sin()</li>
-<li>cos()</li>
-<li>tan()</li>
-<li>asin()</li>
-<li>acos()</li>
-<li>atan()</li>
+<li><p>radians() </p>
+<ul>
+<li><p>将角度转换为弧度。</p>
+<p>示例：float rad &#x3D; radians(90.0); 返回值rad为1.5708，表示将90度转换为弧度。</p>
+</li>
+</ul>
+</li>
+<li><p>degrees()</p>
+<ul>
+<li><p>将弧度转换为角度。</p>
+<p>示例：float deg &#x3D; degrees(1.5708); 返回值deg为90.0，表示将1.5708弧度转换为角度。</p>
+</li>
+</ul>
+</li>
+<li><p>sin()</p>
+<ul>
+<li><p>计算角度的正弦值。</p>
+<p>示例：float result &#x3D; sin(0.7854); 返回值result约为0.7071，表示计算0.7854弧度的正弦值。</p>
+</li>
+</ul>
+</li>
+<li><p>cos()</p>
+<ul>
+<li><p>计算角度的余弦值。</p>
+<p>示例：float result &#x3D; cos(0.7854); 返回值result约为0.7071，表示计算0.7854弧度的余弦值。</p>
+</li>
+</ul>
+</li>
+<li><p>tan()</p>
+<ul>
+<li><p>计算角度的正切值。</p>
+<p>示例：float result &#x3D; tan(0.7854); 返回值result约为0.9992，表示计算0.7854弧度的正切值。</p>
+</li>
+</ul>
+</li>
+<li><p>asin()</p>
+<ul>
+<li><p>计算给定值的反正弦值。</p>
+<p>示例：float result &#x3D; asin(0.5); 返回值result约为0.5236，表示计算值0.5的反正弦值。</p>
+</li>
+</ul>
+</li>
+<li><p>acos()</p>
+<ul>
+<li><p>计算给定值的反余弦值。</p>
+<p>示例：float result &#x3D; acos(0.5); 返回值result约为1.0472，表示计算值0.5的反余弦值。</p>
+</li>
+</ul>
+</li>
+<li><p>atan()</p>
+<ul>
+<li><p>计算给定值的反正切值。</p>
+<p>示例：float result &#x3D; atan(1.0); 返回值result约为0.7854，表示计算值1.0的反正切值。</p>
+</li>
+</ul>
+</li>
 </ul>
 <h4 id="2">指数函数</h4>  
 
 <ul>
-<li>pow() </li>
-<li>exp()</li>
-<li>log()</li>
-<li>exp2()</li>
-<li>log2()</li>
-<li>sqrt()</li>
-<li>inversesqrt()</li>
+<li>pow() <ul>
+<li>计算x的y次方。例如，pow(2.0, 3.0)返回8.0，表示计算2的3次方。</li>
+<li>可以用于实现颜色的gamma校正，调整颜色的亮度曲线等。</li>
+</ul>
+</li>
+<li>exp()<ul>
+<li>计算e的x次方，其中e是自然对数的底数。例如，exp(1.0)返回2.71828，表示计算e的1次方。</li>
+<li>可以用于实现粒子系统中的衰减效果，例如粒子的大小随时间呈指数增长或衰减。</li>
+</ul>
+</li>
+<li>log()<ul>
+<li>计算x的自然对数。例如，log(10.0)返回2.30259，表示计算10的自然对数。</li>
+<li>可以用于计算深度缓冲的指数变换，将深度值从线性空间转换为非线性空间。</li>
+</ul>
+</li>
+<li>exp2()<ul>
+<li>计算2的x次方。例如，exp2(4.0)返回16.0，表示计算2的4次方。</li>
+<li>可以用于实现纹理级别的计算，根据距离或细节等级选择合适的纹理细节级别。</li>
+</ul>
+</li>
+<li>log2()<ul>
+<li>计算x的以2为底的对数。例如，log2(16.0)返回4.0，表示计算以2为底的16的对数。</li>
+<li>可以用于计算纹理级别的反向操作，根据纹理的实际大小确定适合的纹理细节级别。</li>
+</ul>
+</li>
+<li>sqrt()<ul>
+<li>计算x的平方根。例如，sqrt(9.0)返回3.0，表示计算9的平方根。</li>
+<li>可以用于实现距离计算，例如在光照模型中计算点光源到片元的距离衰减。</li>
+</ul>
+</li>
+<li>inversesqrt()<ul>
+<li>计算x的倒数的平方根。例如，inversesqrt(4.0)返回0.5，表示计算4的倒数的平方根。</li>
+<li>可以用于实现归一化向量的长度计算，例如在光照模型中计算光照强度随距离衰减的效果。</li>
+</ul>
+</li>
 </ul>
 <h4 id="3">常用函数</h4>  
 
@@ -467,14 +543,62 @@
 <h4 id="4">几何函数</h4>  
 
 <ul>
-<li>length() </li>
-<li>distance()</li>
-<li>dot()</li>
-<li>cross()</li>
-<li>normalize()</li>
-<li>faceforward()</li>
-<li>reflect()</li>
-<li>refract()</li>
+<li><p>length() </p>
+<ul>
+<li><p>计算向量的长度（模）。</p>
+<p>示例：float len &#x3D; length(vec3(3.0, 4.0, 0.0)); 返回值len为5.0，表示计算向量(3.0, 4.0, 0.0)的长度。</p>
+</li>
+</ul>
+</li>
+<li><p>distance()</p>
+<ul>
+<li><p>计算两个点之间的距离。</p>
+<p>示例：float dist &#x3D; distance(vec3(1.0, 2.0, 3.0), vec3(4.0, 5.0, 6.0)); 返回值dist为5.19615，表示计算点(1.0, 2.0, 3.0)与点(4.0, 5.0, 6.0)之间的距离。</p>
+</li>
+</ul>
+</li>
+<li><p>dot()</p>
+<ul>
+<li><p>计算两个向量的点积（内积）。</p>
+<p>示例：float result &#x3D; dot(vec3(1.0, 2.0, 3.0), vec3(4.0, 5.0, 6.0)); 返回值result为32.0，表示计算向量(1.0, 2.0, 3.0)和向量(4.0, 5.0, 6.0)的点积。</p>
+</li>
+</ul>
+</li>
+<li><p>cross()</p>
+<ul>
+<li><p>计算两个向量的叉积（外积）。</p>
+<p>示例：vec3 result &#x3D; cross(vec3(1.0, 0.0, 0.0), vec3(0.0, 1.0, 0.0)); 返回值result为(0.0, 0.0, 1.0)，表示计算向量(1.0, 0.0, 0.0)和向量(0.0, 1.0, 0.0)的叉积。</p>
+</li>
+</ul>
+</li>
+<li><p>normalize()</p>
+<ul>
+<li><p>将向量归一化（单位化），使其长度为1。</p>
+<p>示例：vec3 normalizedVec &#x3D; normalize(vec3(3.0, 0.0, 4.0)); 返回值normalizedVec为(0.6, 0.0, 0.8)，表示将向量(3.0, 0.0, 4.0)归一化。</p>
+</li>
+</ul>
+</li>
+<li><p>faceforward()</p>
+<ul>
+<li><p>返回一个朝向与法线方向相同的向量。</p>
+<p>示例：vec3 newVec &#x3D; faceforward(normal, incident, normalRef); 返回值newVec是根据法线normal、入射向量incident和参考法线normalRef计算出的新向量。</p>
+</li>
+</ul>
+</li>
+<li><p>reflect()</p>
+<ul>
+<li><p>计算入射向量相对于法线的反射向量。</p>
+<p>示例：vec3 reflectedVec &#x3D; reflect(incidentVec, normalVec); 返回值reflectedVec是根据入射向量incidentVec和法线normalVec计算出的反射向量。</p>
+</li>
+</ul>
+</li>
+<li><p>refract()</p>
+<ul>
+<li><p>计算入射向量相对于法线的折射向量。</p>
+<p>示例：vec3 refractedVec &#x3D; refract(incidentVec, normalVec, 1.5); 返回值refractedVec是根据入射向量incidentVec、法线normalVec和折射率1.5计算出的折射向量。</p>
+</li>
+</ul>
+</li>
 </ul>
 <h4 id="5">矩阵函数 </h4>  
 
