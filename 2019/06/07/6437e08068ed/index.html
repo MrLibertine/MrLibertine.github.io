@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>Unity Editor 工具脚本速查</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="Unity Editor 工具脚本速查">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://mrlibertine.github.io/2019/06/07/6437e08068ed/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="/img/68339006.png">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2019-06-07">
+      <meta 
+        property="og:article:modified_time" 
+        content="2026-05-20">
+      <meta 
+        property="og:article:author" 
+        content="MrLibertine">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="Unity">
+        
+          <meta 
+            property="og:article:tag" 
+            content="C#">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div class="wrapper">
+      
+        <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">MrLibertine</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav>
+          
+            <div id="local-search" style="display: none">
+              <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容..." />
+              <div id="search-content"></div>
+            </div>
+            
+              <div class="section-wrap">
+                <div class="container">
+                  <div class="columns">
+                    <aside class="left-column">
+                      
+                        <div class="card card-author">
+                          
+  <img 
+    src="/img/68339006.png" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">MrLibertine</p>
+<p class="author-description">designed by MrLibertine</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>14</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>0</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>11</span>
+    <span>标签</span>
+  </a>
+</div>
+
+                        </div>
+                         <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MenuItem-%E2%80%94-%E8%8F%9C%E5%8D%95%E9%A1%B9%E5%85%A5%E5%8F%A3"><span class="toc-text">MenuItem — 菜单项入口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Selection-%E2%80%94-%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E9%80%89%E4%B8%AD%E5%AF%B9%E8%B1%A1"><span class="toc-text">Selection — 获取当前选中对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EditorWindow-%E2%80%94-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B7%A5%E5%85%B7%E9%9D%A2%E6%9D%BF"><span class="toc-text">EditorWindow — 自定义工具面板</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CustomEditor-%E2%80%94-%E8%87%AA%E5%AE%9A%E4%B9%89-Inspector"><span class="toc-text">CustomEditor — 自定义 Inspector</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PropertyDrawer-%E2%80%94-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%AD%97%E6%AE%B5%E7%BB%98%E5%88%B6"><span class="toc-text">PropertyDrawer — 自定义字段绘制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AssetDatabase-%E2%80%94-%E8%B5%84%E6%BA%90%E6%93%8D%E4%BD%9C"><span class="toc-text">AssetDatabase — 资源操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%94%A8%E6%A1%88%E4%BE%8B"><span class="toc-text">实用案例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B-1%EF%BC%9A%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9-Prefab-%E7%9A%84-Layer"><span class="toc-text">案例 1：批量修改 Prefab 的 Layer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B-2%EF%BC%9A%E6%9F%A5%E6%89%BE%E5%9C%BA%E6%99%AF%E4%B8%AD-Missing-%E8%84%9A%E6%9C%AC%E7%9A%84%E7%89%A9%E4%BD%93"><span class="toc-text">案例 2：查找场景中 Missing 脚本的物体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B-3%EF%BC%9A%E4%B8%80%E9%94%AE%E7%94%9F%E6%88%90%E9%A2%84%E5%88%B6%E4%BD%93%E7%BC%A9%E7%95%A5%E5%9B%BE"><span class="toc-text">案例 3：一键生成预制体缩略图</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%BE%91%E5%99%A8%E7%83%AD%E9%94%AE%E9%80%9F%E6%9F%A5"><span class="toc-text">编辑器热键速查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GUIContent-%E4%B8%8E-EditorGUI-%E5%B8%B8%E7%94%A8-API"><span class="toc-text">GUIContent 与 EditorGUI 常用 API</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/Unity/" 
+        title="Unity">
+        <div class="tags-list-item">Unity</div>
+      </a>
+    
+      <a 
+        href="/tags/C/" 
+        title="C#">
+        <div class="tags-list-item">C#</div>
+      </a>
+    
+      <a 
+        href="/tags/GLSL/" 
+        title="GLSL">
+        <div class="tags-list-item">GLSL</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%98%85%E8%AF%BB%E7%90%86%E8%A7%A3/" 
+        title="阅读理解">
+        <div class="tags-list-item">阅读理解</div>
+      </a>
+    
+      <a 
+        href="/tags/%E4%B8%80%E4%BA%9B%E6%AF%94%E8%BE%83%E6%9C%89%E7%94%A8%E7%9A%84%E7%BD%91%E7%AB%99/" 
+        title="一些比较有用的网站">
+        <div class="tags-list-item">一些比较有用的网站</div>
+      </a>
+    
+      <a 
+        href="/tags/Linux/" 
+        title="Linux">
+        <div class="tags-list-item">Linux</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/" 
+        title="杂七杂八">
+        <div class="tags-list-item">杂七杂八</div>
+      </a>
+    
+      <a 
+        href="/tags/RAG/" 
+        title="RAG">
+        <div class="tags-list-item">RAG</div>
+      </a>
+    
+      <a 
+        href="/tags/NLP/" 
+        title="NLP">
+        <div class="tags-list-item">NLP</div>
+      </a>
+    
+      <a 
+        href="/tags/LLM/" 
+        title="LLM">
+        <div class="tags-list-item">LLM</div>
+      </a>
+    
+      <a 
+        href="/tags/AI/" 
+        title="AI">
+        <div class="tags-list-item">AI</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+                    </aside>
+                    <main class="main-column">
+                      
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      Unity Editor 工具脚本速查
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2019-06-07T02:00:00.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2019-06-07</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>1.1k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/Unity/" 
+            class="post-meta-link">
+            Unity
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/C/" 
+            class="post-meta-link">
+            C#
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <h2 id="MenuItem-—-菜单项入口"><a href="#MenuItem-—-菜单项入口" class="headerlink" title="MenuItem — 菜单项入口"></a>MenuItem — 菜单项入口</h2><pre class="highlight"><span class="line"><span class="comment">// 静态方法 + MenuItem 特性 → 自动出现在菜单栏</span></span><br><span class="line">[<span class="meta">MenuItem(<span class="string">&quot;Tools/Do Something&quot;</span>)</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">DoSomething</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    Debug.Log(<span class="string">&quot;菜单点击&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 带快捷键（% = Ctrl/Cmd, # = Shift, &amp; = Alt, _ = 无修饰符）</span></span><br><span class="line">[<span class="meta">MenuItem(<span class="string">&quot;Tools/Batch Rename %#r&quot;</span>)</span>]  <span class="comment">// Ctrl+Shift+R</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">BatchRename</span>()</span> &#123; &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 带验证函数（返回 bool 控制菜单是否可点击）</span></span><br><span class="line">[<span class="meta">MenuItem(<span class="string">&quot;Tools/Conditional Action&quot;</span>, true)</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">bool</span> <span class="title">ValidateAction</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> Selection.activeGameObject != <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre>
+
+<p><strong>要点</strong>：验证函数名与执行函数名相同，第二个参数 <code>true</code> 标记为验证函数。</p>
+<hr>
+<h2 id="Selection-—-获取当前选中对象"><a href="#Selection-—-获取当前选中对象" class="headerlink" title="Selection — 获取当前选中对象"></a>Selection — 获取当前选中对象</h2><pre class="highlight"><span class="line"><span class="comment">// 当前选中的 GameObject</span></span><br><span class="line"><span class="keyword">var</span> go = Selection.activeGameObject;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 当前选中的 Transform</span></span><br><span class="line"><span class="keyword">var</span> t = Selection.activeTransform;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 当前选中的对象（Component、Asset 等）</span></span><br><span class="line"><span class="keyword">var</span> obj = Selection.activeObject;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 多选</span></span><br><span class="line"><span class="keyword">var</span> objects = Selection.objects;       <span class="comment">// Object[]</span></span><br><span class="line"><span class="keyword">var</span> gameObjects = Selection.gameObjects; <span class="comment">// GameObject[]</span></span><br><span class="line"><span class="keyword">var</span> transforms = Selection.transforms; <span class="comment">// Transform[]</span></span><br></pre>
+
+<hr>
+<h2 id="EditorWindow-—-自定义工具面板"><a href="#EditorWindow-—-自定义工具面板" class="headerlink" title="EditorWindow — 自定义工具面板"></a>EditorWindow — 自定义工具面板</h2><pre class="highlight"><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyToolWindow</span> : <span class="title">EditorWindow</span></span><br><span class="line">&#123;</span><br><span class="line">    [<span class="meta">MenuItem(<span class="string">&quot;Tools/My Tool Window&quot;</span>)</span>]</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">ShowWindow</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        GetWindow&lt;MyToolWindow&gt;(<span class="string">&quot;我的工具&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnGUI</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        GUILayout.Label(<span class="string">&quot;自定义工具面板&quot;</span>, EditorStyles.boldLabel);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (GUILayout.Button(<span class="string">&quot;执行操作&quot;</span>))</span><br><span class="line">        &#123;</span><br><span class="line">            DoWork();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">DoWork</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">foreach</span> (<span class="keyword">var</span> go <span class="keyword">in</span> Selection.gameObjects)</span><br><span class="line">        &#123;</span><br><span class="line">            go.name = go.name.Replace(<span class="string">&quot;(Clone)&quot;</span>, <span class="string">&quot;&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+
+<p><strong>常用布局</strong>：</p>
+<pre class="highlight"><span class="line"><span class="comment">// 横向布局</span></span><br><span class="line">GUILayout.BeginHorizontal();</span><br><span class="line">GUILayout.Button(<span class="string">&quot;左&quot;</span>);</span><br><span class="line">GUILayout.Button(<span class="string">&quot;右&quot;</span>);</span><br><span class="line">GUILayout.EndHorizontal();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 纵向布局</span></span><br><span class="line">GUILayout.BeginVertical();</span><br><span class="line">GUILayout.Label(<span class="string">&quot;区域&quot;</span>);</span><br><span class="line">GUILayout.EndVertical();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 滚动区</span></span><br><span class="line">scrollPos = GUILayout.BeginScrollView(scrollPos);</span><br><span class="line"><span class="comment">// ... 内容</span></span><br><span class="line">GUILayout.EndScrollView();</span><br></pre>
+
+<hr>
+<h2 id="CustomEditor-—-自定义-Inspector"><a href="#CustomEditor-—-自定义-Inspector" class="headerlink" title="CustomEditor — 自定义 Inspector"></a>CustomEditor — 自定义 Inspector</h2><pre class="highlight"><span class="line">[<span class="meta">CustomEditor(typeof(EnemyData))</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">EnemyDataEditor</span> : <span class="title">Editor</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">OnInspectorGUI</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 绘制默认 Inspector</span></span><br><span class="line">        DrawDefaultInspector();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 追加自定义按钮</span></span><br><span class="line">        <span class="keyword">var</span> data = (EnemyData)target;</span><br><span class="line">        <span class="keyword">if</span> (GUILayout.Button(<span class="string">&quot;随机生成属性&quot;</span>))</span><br><span class="line">        &#123;</span><br><span class="line">            data.hp = Random.Range(<span class="number">50</span>, <span class="number">200</span>);</span><br><span class="line">            data.attack = Random.Range(<span class="number">10</span>, <span class="number">50</span>);</span><br><span class="line">            EditorUtility.SetDirty(data);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+
+<p><strong>关键 API</strong>：</p>
+<ul>
+<li><code>target</code> — 当前编辑的对象（<code>object</code> 类型，需强转）。</li>
+<li><code>serializedObject</code> — 序列化对象，用于操作 SerializedProperty。</li>
+<li><code>EditorUtility.SetDirty(obj)</code> — 标记对象已修改（支持 Undo）。</li>
+<li><code>Undo.RecordObject(obj, &quot;操作描述&quot;)</code> — 注册到撤销栈。</li>
+</ul>
+<hr>
+<h2 id="PropertyDrawer-—-自定义字段绘制"><a href="#PropertyDrawer-—-自定义字段绘制" class="headerlink" title="PropertyDrawer — 自定义字段绘制"></a>PropertyDrawer — 自定义字段绘制</h2><pre class="highlight"><span class="line">[<span class="meta">Serializable</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">struct</span> MinMaxRange</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> min;</span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">float</span> max;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">[<span class="meta">CustomPropertyDrawer(typeof(MinMaxRange))</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MinMaxRangeDrawer</span> : <span class="title">PropertyDrawer</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">OnGUI</span>(<span class="params">Rect position, SerializedProperty property, GUIContent label</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> minProp = property.FindPropertyRelative(<span class="string">&quot;min&quot;</span>);</span><br><span class="line">        <span class="keyword">var</span> maxProp = property.FindPropertyRelative(<span class="string">&quot;max&quot;</span>);</span><br><span class="line"></span><br><span class="line">        EditorGUI.BeginProperty(position, label, property);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 双滑块</span></span><br><span class="line">        <span class="built_in">float</span> min = minProp.floatValue;</span><br><span class="line">        <span class="built_in">float</span> max = maxProp.floatValue;</span><br><span class="line"></span><br><span class="line">        EditorGUI.MinMaxSlider(position, label, <span class="keyword">ref</span> min, <span class="keyword">ref</span> max, <span class="number">0f</span>, <span class="number">100f</span>);</span><br><span class="line"></span><br><span class="line">        minProp.floatValue = min;</span><br><span class="line">        maxProp.floatValue = max;</span><br><span class="line"></span><br><span class="line">        EditorGUI.EndProperty();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+
+<hr>
+<h2 id="AssetDatabase-—-资源操作"><a href="#AssetDatabase-—-资源操作" class="headerlink" title="AssetDatabase — 资源操作"></a>AssetDatabase — 资源操作</h2><pre class="highlight"><span class="line"><span class="comment">// 创建资源</span></span><br><span class="line"><span class="keyword">var</span> config = ScriptableObject.CreateInstance&lt;EnemyConfig&gt;();</span><br><span class="line">AssetDatabase.CreateAsset(config, <span class="string">&quot;Assets/Configs/Enemy_001.asset&quot;</span>);</span><br><span class="line">AssetDatabase.SaveAssets();</span><br><span class="line">AssetDatabase.Refresh();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查找资源</span></span><br><span class="line"><span class="keyword">var</span> guids = AssetDatabase.FindAssets(<span class="string">&quot;t:Prefab Enemy&quot;</span>);</span><br><span class="line"><span class="keyword">foreach</span> (<span class="keyword">var</span> guid <span class="keyword">in</span> guids)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">string</span> path = AssetDatabase.GUIDToAssetPath(guid);</span><br><span class="line">    <span class="keyword">var</span> prefab = AssetDatabase.LoadAssetAtPath&lt;GameObject&gt;(path);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 批量重命名</span></span><br><span class="line"><span class="built_in">string</span> path = AssetDatabase.GetAssetPath(obj);</span><br><span class="line">AssetDatabase.RenameAsset(path, newName);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 移动资源</span></span><br><span class="line">AssetDatabase.MoveAsset(oldPath, newPath);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建文件夹（递归）</span></span><br><span class="line">System.IO.Directory.CreateDirectory(<span class="string">&quot;Assets/NewFolder/Sub&quot;</span>);</span><br><span class="line">AssetDatabase.Refresh();</span><br></pre>
+
+<hr>
+<h2 id="实用案例"><a href="#实用案例" class="headerlink" title="实用案例"></a>实用案例</h2><h3 id="案例-1：批量修改-Prefab-的-Layer"><a href="#案例-1：批量修改-Prefab-的-Layer" class="headerlink" title="案例 1：批量修改 Prefab 的 Layer"></a>案例 1：批量修改 Prefab 的 Layer</h3><pre class="highlight"><span class="line">[<span class="meta">MenuItem(<span class="string">&quot;Tools/Set Selected to Layer &#x27;Environment&#x27;&quot;</span>)</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">SetToEnvironmentLayer</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> go <span class="keyword">in</span> Selection.gameObjects)</span><br><span class="line">    &#123;</span><br><span class="line">        SetLayerRecursive(go, LayerMask.NameToLayer(<span class="string">&quot;Environment&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">SetLayerRecursive</span>(<span class="params">GameObject go, <span class="built_in">int</span> layer</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    go.layer = layer;</span><br><span class="line">    <span class="keyword">foreach</span> (Transform child <span class="keyword">in</span> go.transform)</span><br><span class="line">        SetLayerRecursive(child.gameObject, layer);</span><br><span class="line">&#125;</span><br></pre>
+
+<h3 id="案例-2：查找场景中-Missing-脚本的物体"><a href="#案例-2：查找场景中-Missing-脚本的物体" class="headerlink" title="案例 2：查找场景中 Missing 脚本的物体"></a>案例 2：查找场景中 Missing 脚本的物体</h3><pre class="highlight"><span class="line">[<span class="meta">MenuItem(<span class="string">&quot;Tools/Find Missing Scripts&quot;</span>)</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">FindMissingScripts</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> allObjects = Resources.FindObjectsOfTypeAll&lt;GameObject&gt;();</span><br><span class="line">    <span class="built_in">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> go <span class="keyword">in</span> allObjects)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> components = go.GetComponents&lt;Component&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; components.Length; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (components[i] == <span class="literal">null</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                Debug.Log(<span class="string">$&quot;Missing 脚本: <span class="subst">&#123;go.name&#125;</span>&quot;</span>, go);</span><br><span class="line">                count++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Debug.Log(<span class="string">$&quot;找到 <span class="subst">&#123;count&#125;</span> 个 Missing 脚本&quot;</span>);</span><br><span class="line">&#125;</span><br></pre>
+
+<h3 id="案例-3：一键生成预制体缩略图"><a href="#案例-3：一键生成预制体缩略图" class="headerlink" title="案例 3：一键生成预制体缩略图"></a>案例 3：一键生成预制体缩略图</h3><pre class="highlight"><span class="line">[<span class="meta">MenuItem(<span class="string">&quot;Assets/Capture Prefab Thumbnail&quot;</span>)</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">CaptureThumbnail</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> go = Selection.activeGameObject;</span><br><span class="line">    <span class="keyword">var</span> rt = <span class="keyword">new</span> RenderTexture(<span class="number">256</span>, <span class="number">256</span>, <span class="number">16</span>);</span><br><span class="line">    <span class="keyword">var</span> cameraObj = <span class="keyword">new</span> GameObject(<span class="string">&quot;ThumbCam&quot;</span>, <span class="keyword">typeof</span>(Camera));</span><br><span class="line">    <span class="keyword">var</span> cam = cameraObj.GetComponent&lt;Camera&gt;();</span><br><span class="line">    cam.targetTexture = rt;</span><br><span class="line">    cam.Render();</span><br><span class="line"></span><br><span class="line">    RenderTexture.active = rt;</span><br><span class="line">    <span class="keyword">var</span> tex = <span class="keyword">new</span> Texture2D(<span class="number">256</span>, <span class="number">256</span>, TextureFormat.RGBA32, <span class="literal">false</span>);</span><br><span class="line">    tex.ReadPixels(<span class="keyword">new</span> Rect(<span class="number">0</span>, <span class="number">0</span>, <span class="number">256</span>, <span class="number">256</span>), <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    tex.Apply();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> bytes = tex.EncodeToPNG();</span><br><span class="line">    <span class="keyword">var</span> path = AssetDatabase.GetAssetPath(go);</span><br><span class="line">    <span class="keyword">var</span> dir = System.IO.Path.GetDirectoryName(path);</span><br><span class="line">    System.IO.File.WriteAllBytes(<span class="string">$&quot;<span class="subst">&#123;dir&#125;</span>/<span class="subst">&#123;go.name&#125;</span>_thumb.png&quot;</span>, bytes);</span><br><span class="line"></span><br><span class="line">    Object.DestroyImmediate(cameraObj);</span><br><span class="line">    RenderTexture.active = <span class="literal">null</span>;</span><br><span class="line">    AssetDatabase.Refresh();</span><br><span class="line">&#125;</span><br></pre>
+
+<hr>
+<h2 id="编辑器热键速查"><a href="#编辑器热键速查" class="headerlink" title="编辑器热键速查"></a>编辑器热键速查</h2><table>
+<thead>
+<tr>
+<th>修饰符</th>
+<th>Win&#x2F;Linux</th>
+<th>macOS</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Ctrl &#x2F; Cmd</td>
+<td><code>%</code></td>
+<td><code>%</code></td>
+</tr>
+<tr>
+<td>Shift</td>
+<td><code>#</code></td>
+<td><code>#</code></td>
+</tr>
+<tr>
+<td>Alt &#x2F; Option</td>
+<td><code>&amp;</code></td>
+<td><code>&amp;</code></td>
+</tr>
+<tr>
+<td>无修饰符</td>
+<td><code>_</code></td>
+<td><code>_</code></td>
+</tr>
+<tr>
+<td>示例</td>
+<td><code>%#r</code> &#x3D; Ctrl+Shift+R</td>
+<td><code>%#r</code> &#x3D; Cmd+Shift+R</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="GUIContent-与-EditorGUI-常用-API"><a href="#GUIContent-与-EditorGUI-常用-API" class="headerlink" title="GUIContent 与 EditorGUI 常用 API"></a>GUIContent 与 EditorGUI 常用 API</h2><pre class="highlight"><span class="line"><span class="comment">// 带图标的标签</span></span><br><span class="line">GUIContent content = EditorGUIUtility.IconContent(<span class="string">&quot;Search Icon&quot;</span>);</span><br><span class="line">GUILayout.Button(content);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 对象选择框</span></span><br><span class="line">gameObject = (GameObject)EditorGUILayout.ObjectField(<span class="string">&quot;对象&quot;</span>, gameObject, <span class="keyword">typeof</span>(GameObject), <span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 进度条</span></span><br><span class="line">EditorUtility.DisplayProgressBar(<span class="string">&quot;标题&quot;</span>, <span class="string">&quot;处理中...&quot;</span>, progress);</span><br><span class="line">EditorUtility.ClearProgressBar();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 确认对话框</span></span><br><span class="line"><span class="keyword">if</span> (EditorUtility.DisplayDialog(<span class="string">&quot;确认&quot;</span>, <span class="string">&quot;是否继续？&quot;</span>, <span class="string">&quot;是&quot;</span>, <span class="string">&quot;否&quot;</span>))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 用户点了&quot;是&quot;</span></span><br><span class="line">&#125;</span><br></pre>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            MrLibertine
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://mrlibertine.github.io/2019/06/07/6437e08068ed/">
+            https://mrlibertine.github.io/2019/06/07/6437e08068ed/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2019/06/07/0ef0a4467201/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">C# 与 Unity 内存管理速查 </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2019/06/07/4b1db091ce8d/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">Unity 基础速查 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MenuItem-%E2%80%94-%E8%8F%9C%E5%8D%95%E9%A1%B9%E5%85%A5%E5%8F%A3"><span class="toc-text">MenuItem — 菜单项入口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Selection-%E2%80%94-%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E9%80%89%E4%B8%AD%E5%AF%B9%E8%B1%A1"><span class="toc-text">Selection — 获取当前选中对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EditorWindow-%E2%80%94-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B7%A5%E5%85%B7%E9%9D%A2%E6%9D%BF"><span class="toc-text">EditorWindow — 自定义工具面板</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CustomEditor-%E2%80%94-%E8%87%AA%E5%AE%9A%E4%B9%89-Inspector"><span class="toc-text">CustomEditor — 自定义 Inspector</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PropertyDrawer-%E2%80%94-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%AD%97%E6%AE%B5%E7%BB%98%E5%88%B6"><span class="toc-text">PropertyDrawer — 自定义字段绘制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AssetDatabase-%E2%80%94-%E8%B5%84%E6%BA%90%E6%93%8D%E4%BD%9C"><span class="toc-text">AssetDatabase — 资源操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%94%A8%E6%A1%88%E4%BE%8B"><span class="toc-text">实用案例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B-1%EF%BC%9A%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9-Prefab-%E7%9A%84-Layer"><span class="toc-text">案例 1：批量修改 Prefab 的 Layer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B-2%EF%BC%9A%E6%9F%A5%E6%89%BE%E5%9C%BA%E6%99%AF%E4%B8%AD-Missing-%E8%84%9A%E6%9C%AC%E7%9A%84%E7%89%A9%E4%BD%93"><span class="toc-text">案例 2：查找场景中 Missing 脚本的物体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B-3%EF%BC%9A%E4%B8%80%E9%94%AE%E7%94%9F%E6%88%90%E9%A2%84%E5%88%B6%E4%BD%93%E7%BC%A9%E7%95%A5%E5%9B%BE"><span class="toc-text">案例 3：一键生成预制体缩略图</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%BE%91%E5%99%A8%E7%83%AD%E9%94%AE%E9%80%9F%E6%9F%A5"><span class="toc-text">编辑器热键速查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GUIContent-%E4%B8%8E-EditorGUI-%E5%B8%B8%E7%94%A8-API"><span class="toc-text">GUIContent 与 EditorGUI 常用 API</span></a></li></ol>
+</div>
+                    </main>
+                    <aside class="right-column">
+                      <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MenuItem-%E2%80%94-%E8%8F%9C%E5%8D%95%E9%A1%B9%E5%85%A5%E5%8F%A3"><span class="toc-text">MenuItem — 菜单项入口</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Selection-%E2%80%94-%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E9%80%89%E4%B8%AD%E5%AF%B9%E8%B1%A1"><span class="toc-text">Selection — 获取当前选中对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#EditorWindow-%E2%80%94-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%B7%A5%E5%85%B7%E9%9D%A2%E6%9D%BF"><span class="toc-text">EditorWindow — 自定义工具面板</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CustomEditor-%E2%80%94-%E8%87%AA%E5%AE%9A%E4%B9%89-Inspector"><span class="toc-text">CustomEditor — 自定义 Inspector</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PropertyDrawer-%E2%80%94-%E8%87%AA%E5%AE%9A%E4%B9%89%E5%AD%97%E6%AE%B5%E7%BB%98%E5%88%B6"><span class="toc-text">PropertyDrawer — 自定义字段绘制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AssetDatabase-%E2%80%94-%E8%B5%84%E6%BA%90%E6%93%8D%E4%BD%9C"><span class="toc-text">AssetDatabase — 资源操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%94%A8%E6%A1%88%E4%BE%8B"><span class="toc-text">实用案例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B-1%EF%BC%9A%E6%89%B9%E9%87%8F%E4%BF%AE%E6%94%B9-Prefab-%E7%9A%84-Layer"><span class="toc-text">案例 1：批量修改 Prefab 的 Layer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B-2%EF%BC%9A%E6%9F%A5%E6%89%BE%E5%9C%BA%E6%99%AF%E4%B8%AD-Missing-%E8%84%9A%E6%9C%AC%E7%9A%84%E7%89%A9%E4%BD%93"><span class="toc-text">案例 2：查找场景中 Missing 脚本的物体</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B-3%EF%BC%9A%E4%B8%80%E9%94%AE%E7%94%9F%E6%88%90%E9%A2%84%E5%88%B6%E4%BD%93%E7%BC%A9%E7%95%A5%E5%9B%BE"><span class="toc-text">案例 3：一键生成预制体缩略图</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%BE%91%E5%99%A8%E7%83%AD%E9%94%AE%E9%80%9F%E6%9F%A5"><span class="toc-text">编辑器热键速查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GUIContent-%E4%B8%8E-EditorGUI-%E5%B8%B8%E7%94%A8-API"><span class="toc-text">GUIContent 与 EditorGUI 常用 API</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-01-13</div>
+        <a href="/2026/01/13/19efe93a808b/"><div class="recent-posts-item-content">AI 与 LLM 术语速查</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2024-06-07</div>
+        <a href="/2024/06/07/0aebe7b6b0bb/"><div class="recent-posts-item-content">Linux部署dotnet程序相关</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-06-07</div>
+        <a href="/2023/06/07/9173fa8501d6/"><div class="recent-posts-item-content">关于GLSL一些内置函数</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-06-07</div>
+        <a href="/2023/06/07/55bfbef301ef/"><div class="recent-posts-item-content">关于GLSL一些知识</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+                    </aside>
+                  </div>
+                </div>
+              </div>
+    </div>
+    
+      <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2026
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          MrLibertine
+        </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+
+        
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+          
+            
+                  
+                    <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+
+                      
+                        
+                          <script src="/js/main.js"></script>
+                            
+                              <script>
+                                loadScript('/js/lib/busuanzi.min.js') 
+                              </script>
+                              
+                                
+                                  <script>
+                                    var addLazyload = function () {
+                                      var observer = lozad('.lozad', {
+                                        load: function (el) {
+                                          el.srcset = el.getAttribute('data-src')
+                                        },
+                                        loaded: function (el) {
+                                          el.classList.add('loaded')
+                                        },
+                                      })
+                                      observer.observe()
+                                    }
+                                  </script>
+                                  <script>
+                                    loadScript('/js/lib/lozad.min.js', addLazyload)
+                                  </script>
+                                  
+                                    <script src="//instant.page/5.1.0" type="module"
+                                      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+                                    
+                                        
+  </body>
+
+</html>

@@ -18,17 +18,17 @@
   <link 
     rel="icon" 
     href="/">
-  <title>Linux部署dotnet程序相关</title>
+  <title>Unity 基础速查</title>
   
     
       <meta 
         property="og:title" 
-        content="Linux部署dotnet程序相关">
+        content="Unity 基础速查">
     
     
       <meta 
         property="og:url" 
-        content="https://mrlibertine.github.io/2024/06/07/0aebe7b6b0bb/index.html">
+        content="https://mrlibertine.github.io/2019/06/07/4b1db091ce8d/index.html">
     
     
       <meta 
@@ -42,10 +42,10 @@
         content="article">
       <meta 
         property="og:article:published_time" 
-        content="2024-06-07">
+        content="2019-06-07">
       <meta 
         property="og:article:modified_time" 
-        content="2025-06-17">
+        content="2026-05-20">
       <meta 
         property="og:article:author" 
         content="MrLibertine">
@@ -53,7 +53,11 @@
         
           <meta 
             property="og:article:tag" 
-            content="Linux">
+            content="Unity">
+        
+          <meta 
+            property="og:article:tag" 
+            content="C#">
         
       
     
@@ -311,7 +315,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#linux%E9%83%A8%E7%BD%B2dotnet-runtime"><span class="toc-text">linux部署dotnet runtime</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dotnet-%E7%A8%8B%E5%BA%8F%E8%87%AA%E5%8C%85%E5%90%AB%E6%A8%A1%E5%BC%8F%E6%93%8D%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-text">dotnet 程序自包含模式操作流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E4%B8%AD%E5%85%B3%E9%97%AD%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="toc-text">Linux中关闭程序的命令</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MonoBehaviour-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-text">MonoBehaviour 生命周期</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Update-x2F-FixedUpdate-x2F-LateUpdate-%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="toc-text">Update &#x2F; FixedUpdate &#x2F; LateUpdate 执行顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Transform-%E5%9D%90%E6%A0%87%E7%B3%BB%E7%BB%9F"><span class="toc-text">Transform 坐标系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Prefab-%E4%B8%8E-Instantiate"><span class="toc-text">Prefab 与 Instantiate</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%8F%E7%A8%8B%E5%8E%9F%E7%90%86"><span class="toc-text">协程原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Destroy-vs-DestroyImmediate"><span class="toc-text">Destroy vs DestroyImmediate</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GameObject-x2F-Component-x2F-Transform-%E5%85%B3%E7%B3%BB"><span class="toc-text">GameObject &#x2F; Component &#x2F; Transform 关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%97%B6%E9%97%B4%E7%9B%B8%E5%85%B3-API"><span class="toc-text">常用时间相关 API</span></a></li></ol>
       </div>
     </article>
   
@@ -418,21 +422,21 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      Linux部署dotnet程序相关
+      Unity 基础速查
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2024-06-07T03:06:05.000Z">
+    <time datetime="2019-06-07T02:00:00.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2024-06-07</span>
+      <span>2019-06-07</span>
     </time>
     
     
       <span class="dot"></span>
-      <span>290 字</span>
+      <span>806 字</span>
     
   </div>
   
@@ -447,9 +451,18 @@
         
           
           <a 
-            href="/tags/Linux/" 
+            href="/tags/Unity/" 
             class="post-meta-link">
-            Linux
+            Unity
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/C/" 
+            class="post-meta-link">
+            C#
           </a>
         
       </div>
@@ -459,33 +472,120 @@
   <div 
     id="section" 
     class="post-content">
-    <hr>
-<h2 id="linux部署dotnet-runtime"><a href="#linux部署dotnet-runtime" class="headerlink" title="linux部署dotnet runtime"></a>linux部署dotnet runtime</h2><ol>
-<li><p>登录linux，创建安装目录<br>一般放在 &#x2F;opt&#x2F;dotnet（标准的第三方程序安装目录）：<br><code>sudo mkdir -p /opt/dotnet</code></p>
-</li>
-<li><p>下载并解压 runtime 文件<br><code>cd /opt/dotnet</code><br><code>sudo wget https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.36/dotnet-runtime-6.0.36-linux-x64.tar.gz</code><br>或者（使用xftp上传dotnet-runtime-6.0.36-linux-x64.tar.gz）<br><code>sudo tar -xzvf dotnet-runtime-6.0.36-linux-x64.tar.gz</code><br><code>sudo rm dotnet-runtime-6.0.36-linux-x64.tar.gz</code></p>
-</li>
-<li><p>配置环境变量<br><code>sudo ln -s /opt/dotnet/dotnet /usr/local/bin/dotnet</code></p>
-</li>
-<li><p>验证安装<br><code>dotnet --info</code></p>
-</li>
-</ol>
-<h2 id="dotnet-程序自包含模式操作流程"><a href="#dotnet-程序自包含模式操作流程" class="headerlink" title="dotnet 程序自包含模式操作流程"></a>dotnet 程序自包含模式操作流程</h2><ol>
-<li><p>发布命令：<br><code>dotnet publish -c Release -r linux-x64 -o publish/linux-x64 --self-contained true</code><br><code>pause</code></p>
-</li>
-<li><p>filezilla上传后cd到指定目录：<br>   <code>cd /var/www/game-admin/linux-x64</code></p>
-</li>
-<li><p>进入程序目录并设置执行权限：<br><code>chmod +x GameConsoleAdmin</code><br><code>./GameConsoleAdmin</code></p>
-</li>
-<li><p>运行程序<br>直接运行。Xshell关闭后进程也会关闭<br><code>./GameConsoleAdmin</code><br>后台运行。Xshell关闭后不会关闭进程<br><code>nohup ./GameConsoleAdmin&gt; output.log 2&gt;&amp;1 &amp;</code></p>
-</li>
-</ol>
-<h2 id="Linux中关闭程序的命令"><a href="#Linux中关闭程序的命令" class="headerlink" title="Linux中关闭程序的命令"></a>Linux中关闭程序的命令</h2><ul>
-<li><p>找到pid<br><code>ps aux | grep GameConsoleAdmin</code><br>或者:<br><code>pgrep -fl GameConsoleAdmin</code><br>找到pid，然后运行<br><code>kill pid</code><br>如果程序没有响应，再使用强制方式：<br><code>kill -9 pid</code></p>
-</li>
-<li><p>一键杀掉系统中叫GameConsoleAdmin<br><code>pkill -f GameConsoleAdmin</code></p>
-</li>
+    <h2 id="MonoBehaviour-生命周期"><a href="#MonoBehaviour-生命周期" class="headerlink" title="MonoBehaviour 生命周期"></a>MonoBehaviour 生命周期</h2><pre class="highlight"><span class="line">Awake → OnEnable → Start → FixedUpdate → Update → LateUpdate → OnDisable → OnDestroy</span><br></pre>
+
+<ul>
+<li><strong>Awake</strong>：脚本实例化时调用一次，适合初始化自身引用。此时其他脚本的 Awake 未必已执行。</li>
+<li><strong>OnEnable</strong>：每次对象激活时调用（含首次 Awake 后）。适合订阅事件。</li>
+<li><strong>Start</strong>：首次 Update 前调用一次。此时其他脚本的 Awake 已全部完成，可安全跨脚本引用。</li>
+<li><strong>FixedUpdate</strong>：固定时间步长调用（默认 0.02s），物理相关逻辑放这里。</li>
+<li><strong>Update</strong>：每帧调用，频率不固定。</li>
+<li><strong>LateUpdate</strong>：所有 Update 之后调用，适合跟随相机、处理动画后的逻辑。</li>
+<li><strong>OnDisable</strong>：对象禁用时调用，适合取消事件订阅。</li>
+<li><strong>OnDestroy</strong>：对象销毁时调用。</li>
 </ul>
+<hr>
+<h2 id="Update-x2F-FixedUpdate-x2F-LateUpdate-执行顺序"><a href="#Update-x2F-FixedUpdate-x2F-LateUpdate-执行顺序" class="headerlink" title="Update &#x2F; FixedUpdate &#x2F; LateUpdate 执行顺序"></a>Update &#x2F; FixedUpdate &#x2F; LateUpdate 执行顺序</h2><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>调用时机</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>FixedUpdate</td>
+<td>固定间隔（<code>Time.fixedDeltaTime</code>）</td>
+<td>物理运算、Rigidbody</td>
+</tr>
+<tr>
+<td>Update</td>
+<td>每帧</td>
+<td>输入检测、通用逻辑</td>
+</tr>
+<tr>
+<td>LateUpdate</td>
+<td>Update 之后</td>
+<td>相机跟随、动画后期调整</td>
+</tr>
+</tbody></table>
+<p><strong>要点</strong>：一帧内可能出现 0 次、1 次或多次 <code>FixedUpdate</code>（帧率 vs 物理步长差异）。物理逻辑放 <code>FixedUpdate</code> 避免偏移。</p>
+<hr>
+<h2 id="Transform-坐标系统"><a href="#Transform-坐标系统" class="headerlink" title="Transform 坐标系统"></a>Transform 坐标系统</h2><ul>
+<li><code>transform.position</code> — 世界坐标</li>
+<li><code>transform.localPosition</code> — 相对父节点的局部坐标</li>
+<li><code>TransformPoint(Vector3)</code> — 局部 → 世界</li>
+<li><code>InverseTransformPoint(Vector3)</code> — 世界 → 局部</li>
+<li><code>TransformDirection</code> &#x2F; <code>InverseTransformDirection</code> — 方向转换（忽略位移，仅旋转和缩放）</li>
+</ul>
+<p><strong>注意</strong>：当物体无父节点时，<code>position</code> 和 <code>localPosition</code> 等价。</p>
+<hr>
+<h2 id="Prefab-与-Instantiate"><a href="#Prefab-与-Instantiate" class="headerlink" title="Prefab 与 Instantiate"></a>Prefab 与 Instantiate</h2><ul>
+<li><strong>Prefab</strong>：可复用的 GameObject 模板，修改 Prefab 影响所有实例（未 Override 的属性）。</li>
+<li><strong>Prefab Variant</strong>：基于已有 Prefab 派生的子模板，继承基类属性并允许局部覆盖。</li>
+<li><strong>Override</strong>：实例上修改的属性会以粗体显示，可通过 Override 下拉菜单 Apply 回 Prefab 或 Revert。</li>
+<li><code>Instantiate(Object original)</code> — 克隆对象。返回值类型与传入类型一致。</li>
+<li><code>Instantiate(Object original, Transform parent)</code> — 克隆并设父节点，<code>worldPositionStays</code> 控制世界坐标保持。</li>
+</ul>
+<hr>
+<h2 id="协程原理"><a href="#协程原理" class="headerlink" title="协程原理"></a>协程原理</h2><pre class="highlight"><span class="line"><span class="function">IEnumerator <span class="title">MyCoroutine</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">yield</span> <span class="keyword">return</span> <span class="keyword">new</span> <span class="title">WaitForSeconds</span>(<span class="params"><span class="number">1f</span></span>)</span>;</span><br><span class="line">    <span class="comment">// 1 秒后继续执行</span></span><br><span class="line">&#125;</span><br></pre>
+
+<ul>
+<li>本质是编译器生成的 <code>IEnumerator</code> 状态机，通过 <code>MoveNext()</code> 驱动。</li>
+<li><code>yield return null</code> — 等待一帧。</li>
+<li><code>yield return new WaitForSeconds(n)</code> — 等待 n 秒（受 <code>Time.timeScale</code> 影响）。</li>
+<li><code>yield return new WaitForEndOfFrame</code> — 等待到帧末渲染完成。</li>
+<li><code>StartCoroutine</code> 在 MonoBehaviour 上调用，对象禁用&#x2F;销毁时协程自动停止。</li>
+<li>非 MonoBehaviour 类需注入 Mono 实例或用 <code>MonoBehaviour</code> 委托。</li>
+</ul>
+<hr>
+<h2 id="Destroy-vs-DestroyImmediate"><a href="#Destroy-vs-DestroyImmediate" class="headerlink" title="Destroy vs DestroyImmediate"></a>Destroy vs DestroyImmediate</h2><ul>
+<li><code>Destroy(obj)</code> — 当前帧结束时标记删除，下一帧才真正释放。</li>
+<li><code>DestroyImmediate(obj)</code> — 立即删除。<strong>仅编辑器脚本可用</strong>，运行时使用会破坏数据一致性（破坏顺序遍历等）。</li>
+<li><code>Object.DontDestroyOnLoad</code> — 场景切换时保持对象不被销毁。</li>
+</ul>
+<hr>
+<h2 id="GameObject-x2F-Component-x2F-Transform-关系"><a href="#GameObject-x2F-Component-x2F-Transform-关系" class="headerlink" title="GameObject &#x2F; Component &#x2F; Transform 关系"></a>GameObject &#x2F; Component &#x2F; Transform 关系</h2><ul>
+<li><code>GameObject</code> 是容器，持有 <code>Component</code> 列表，必然含一个 <code>Transform</code>。</li>
+<li><code>Transform</code> 是每个 GameObject 的强制组件，不可移除。</li>
+<li><code>GetComponent&lt;T&gt;()</code> 沿 GameObject 查找组件。</li>
+<li><code>GetComponentInChildren&lt;T&gt;()</code> 递归查找（含自身）。</li>
+<li><code>GetComponentInParent&lt;T&gt;()</code> 向上查找父级链。</li>
+<li><code>TryGetComponent&lt;T&gt;(out T comp)</code> — 无 GC 分配的获取方式（优于 null 检查 + <code>GetComponent</code>）。</li>
+</ul>
+<hr>
+<h2 id="常用时间相关-API"><a href="#常用时间相关-API" class="headerlink" title="常用时间相关 API"></a>常用时间相关 API</h2><table>
+<thead>
+<tr>
+<th>API</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Time.deltaTime</code></td>
+<td>上一帧到当前帧的间隔（受 timeScale 影响）</td>
+</tr>
+<tr>
+<td><code>Time.unscaledDeltaTime</code></td>
+<td>不受 timeScale 影响的帧间隔</td>
+</tr>
+<tr>
+<td><code>Time.fixedDeltaTime</code></td>
+<td>FixedUpdate 的固定时间步长</td>
+</tr>
+<tr>
+<td><code>Time.time</code></td>
+<td>游戏开始累计时间（受 timeScale 影响）</td>
+</tr>
+<tr>
+<td><code>Time.timeScale</code></td>
+<td>时间缩放，0 &#x3D; 暂停</td>
+</tr>
+<tr>
+<td><code>Time.realtimeSinceStartup</code></td>
+<td>不受 timeScale 影响的真实运行时间</td>
+</tr>
+</tbody></table>
 
   </div>
   <div>
@@ -505,8 +605,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://mrlibertine.github.io/2024/06/07/0aebe7b6b0bb/">
-            https://mrlibertine.github.io/2024/06/07/0aebe7b6b0bb/
+            href="https://mrlibertine.github.io/2019/06/07/4b1db091ce8d/">
+            https://mrlibertine.github.io/2019/06/07/4b1db091ce8d/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -518,13 +618,13 @@
   
     <div class="nav-item-prev">
       <a 
-        href="/2026/01/13/19efe93a808b/" 
+        href="/2019/06/07/6437e08068ed/" 
         class="nav-link">
         <i class="iconfont icon-left nav-prev-icon"></i>
         <div>
           <div class="nav-label">上一篇</div>
           
-            <div class="nav-title">AI 与 LLM 术语速查 </div>
+            <div class="nav-title">Unity Editor 工具脚本速查 </div>
           
         </div>
       </a>
@@ -533,12 +633,12 @@
   
     <div class="nav-item-next">
       <a 
-        href="/2023/06/07/9173fa8501d6/" 
+        href="/2019/06/07/044db01d498a/" 
         class="nav-link">
         <div>
           <div class="nav-label">下一篇</div>
           
-            <div class="nav-title">关于GLSL一些内置函数 </div>
+            <div class="nav-title">Unity 架构与设计速查 </div>
           
         </div>
         <i class="iconfont icon-right nav-next-icon"></i>
@@ -556,7 +656,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#linux%E9%83%A8%E7%BD%B2dotnet-runtime"><span class="toc-text">linux部署dotnet runtime</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dotnet-%E7%A8%8B%E5%BA%8F%E8%87%AA%E5%8C%85%E5%90%AB%E6%A8%A1%E5%BC%8F%E6%93%8D%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-text">dotnet 程序自包含模式操作流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E4%B8%AD%E5%85%B3%E9%97%AD%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="toc-text">Linux中关闭程序的命令</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MonoBehaviour-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-text">MonoBehaviour 生命周期</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Update-x2F-FixedUpdate-x2F-LateUpdate-%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="toc-text">Update &#x2F; FixedUpdate &#x2F; LateUpdate 执行顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Transform-%E5%9D%90%E6%A0%87%E7%B3%BB%E7%BB%9F"><span class="toc-text">Transform 坐标系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Prefab-%E4%B8%8E-Instantiate"><span class="toc-text">Prefab 与 Instantiate</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%8F%E7%A8%8B%E5%8E%9F%E7%90%86"><span class="toc-text">协程原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Destroy-vs-DestroyImmediate"><span class="toc-text">Destroy vs DestroyImmediate</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GameObject-x2F-Component-x2F-Transform-%E5%85%B3%E7%B3%BB"><span class="toc-text">GameObject &#x2F; Component &#x2F; Transform 关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%97%B6%E9%97%B4%E7%9B%B8%E5%85%B3-API"><span class="toc-text">常用时间相关 API</span></a></li></ol>
 </div>
                     </main>
                     <aside class="right-column">
@@ -570,7 +670,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#linux%E9%83%A8%E7%BD%B2dotnet-runtime"><span class="toc-text">linux部署dotnet runtime</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dotnet-%E7%A8%8B%E5%BA%8F%E8%87%AA%E5%8C%85%E5%90%AB%E6%A8%A1%E5%BC%8F%E6%93%8D%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-text">dotnet 程序自包含模式操作流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E4%B8%AD%E5%85%B3%E9%97%AD%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="toc-text">Linux中关闭程序的命令</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MonoBehaviour-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-text">MonoBehaviour 生命周期</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Update-x2F-FixedUpdate-x2F-LateUpdate-%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F"><span class="toc-text">Update &#x2F; FixedUpdate &#x2F; LateUpdate 执行顺序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Transform-%E5%9D%90%E6%A0%87%E7%B3%BB%E7%BB%9F"><span class="toc-text">Transform 坐标系统</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Prefab-%E4%B8%8E-Instantiate"><span class="toc-text">Prefab 与 Instantiate</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%8F%E7%A8%8B%E5%8E%9F%E7%90%86"><span class="toc-text">协程原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Destroy-vs-DestroyImmediate"><span class="toc-text">Destroy vs DestroyImmediate</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GameObject-x2F-Component-x2F-Transform-%E5%85%B3%E7%B3%BB"><span class="toc-text">GameObject &#x2F; Component &#x2F; Transform 关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%97%B6%E9%97%B4%E7%9B%B8%E5%85%B3-API"><span class="toc-text">常用时间相关 API</span></a></li></ol>
     </article>
   
   

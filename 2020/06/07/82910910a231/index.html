@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>Unity 资源管理速查</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="Unity 资源管理速查">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://mrlibertine.github.io/2020/06/07/82910910a231/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="/img/68339006.png">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2020-06-07">
+      <meta 
+        property="og:article:modified_time" 
+        content="2026-05-20">
+      <meta 
+        property="og:article:author" 
+        content="MrLibertine">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="Unity">
+        
+          <meta 
+            property="og:article:tag" 
+            content="C#">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div class="wrapper">
+      
+        <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">MrLibertine</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav>
+          
+            <div id="local-search" style="display: none">
+              <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容..." />
+              <div id="search-content"></div>
+            </div>
+            
+              <div class="section-wrap">
+                <div class="container">
+                  <div class="columns">
+                    <aside class="left-column">
+                      
+                        <div class="card card-author">
+                          
+  <img 
+    src="/img/68339006.png" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">MrLibertine</p>
+<p class="author-description">designed by MrLibertine</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>14</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>0</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>11</span>
+    <span>标签</span>
+  </a>
+</div>
+
+                        </div>
+                         <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E7%A7%8D%E6%96%B9%E6%A1%88%E6%BC%94%E8%BF%9B"><span class="toc-text">三种方案演进</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Resources-%E7%9B%AE%E5%BD%95"><span class="toc-text">Resources 目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AssetBundle-%E6%A0%B8%E5%BF%83%E6%B5%81%E7%A8%8B"><span class="toc-text">AssetBundle 核心流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA"><span class="toc-text">构建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD"><span class="toc-text">加载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%B8%E8%BD%BD"><span class="toc-text">卸载</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AssetBundle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86"><span class="toc-text">AssetBundle 依赖管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Addressables-%E6%A0%B8%E5%BF%83%E6%93%8D%E4%BD%9C"><span class="toc-text">Addressables 核心操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD-1"><span class="toc-text">加载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8A%E6%94%BE"><span class="toc-text">释放</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0"><span class="toc-text">引用计数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Group-%E7%AD%96%E7%95%A5%E8%AE%BE%E8%AE%A1"><span class="toc-text">Group 策略设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%83%AD%E6%9B%B4%E6%96%B0%E6%B5%81%E7%A8%8B"><span class="toc-text">热更新流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E7%BA%A2%E7%BA%BF%E9%80%9F%E6%9F%A5"><span class="toc-text">内存红线速查</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/Unity/" 
+        title="Unity">
+        <div class="tags-list-item">Unity</div>
+      </a>
+    
+      <a 
+        href="/tags/C/" 
+        title="C#">
+        <div class="tags-list-item">C#</div>
+      </a>
+    
+      <a 
+        href="/tags/GLSL/" 
+        title="GLSL">
+        <div class="tags-list-item">GLSL</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%98%85%E8%AF%BB%E7%90%86%E8%A7%A3/" 
+        title="阅读理解">
+        <div class="tags-list-item">阅读理解</div>
+      </a>
+    
+      <a 
+        href="/tags/%E4%B8%80%E4%BA%9B%E6%AF%94%E8%BE%83%E6%9C%89%E7%94%A8%E7%9A%84%E7%BD%91%E7%AB%99/" 
+        title="一些比较有用的网站">
+        <div class="tags-list-item">一些比较有用的网站</div>
+      </a>
+    
+      <a 
+        href="/tags/Linux/" 
+        title="Linux">
+        <div class="tags-list-item">Linux</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/" 
+        title="杂七杂八">
+        <div class="tags-list-item">杂七杂八</div>
+      </a>
+    
+      <a 
+        href="/tags/RAG/" 
+        title="RAG">
+        <div class="tags-list-item">RAG</div>
+      </a>
+    
+      <a 
+        href="/tags/NLP/" 
+        title="NLP">
+        <div class="tags-list-item">NLP</div>
+      </a>
+    
+      <a 
+        href="/tags/LLM/" 
+        title="LLM">
+        <div class="tags-list-item">LLM</div>
+      </a>
+    
+      <a 
+        href="/tags/AI/" 
+        title="AI">
+        <div class="tags-list-item">AI</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+                    </aside>
+                    <main class="main-column">
+                      
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      Unity 资源管理速查
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2020-06-07T02:00:00.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2020-06-07</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>999 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/Unity/" 
+            class="post-meta-link">
+            Unity
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/C/" 
+            class="post-meta-link">
+            C#
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <h2 id="三种方案演进"><a href="#三种方案演进" class="headerlink" title="三种方案演进"></a>三种方案演进</h2><pre class="highlight"><span class="line">Resources ──→ AssetBundle ──→ Addressables</span><br><span class="line">  (小项目)      (手动管理)        (推荐方案)</span><br></pre>
+
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>加载方式</th>
+<th>热更新</th>
+<th>内存管理</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Resources</td>
+<td>同步&#x2F;异步</td>
+<td>❌ 不可热更</td>
+<td>手动 <code>Unload</code></td>
+<td>原型、小项目</td>
+</tr>
+<tr>
+<td>AssetBundle</td>
+<td><code>AssetBundle.LoadFromFile</code> 等</td>
+<td>✅</td>
+<td>手动 <code>Unload(true/false)</code></td>
+<td>传统手游</td>
+</tr>
+<tr>
+<td>Addressables</td>
+<td><code>LoadAssetAsync&lt;T&gt;</code></td>
+<td>✅</td>
+<td>引用计数自动释放</td>
+<td>Unity 2018.3+ 推荐</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="Resources-目录"><a href="#Resources-目录" class="headerlink" title="Resources 目录"></a>Resources 目录</h2><pre class="highlight"><span class="line"><span class="comment">// 同步加载（阻塞主线程）</span></span><br><span class="line"><span class="keyword">var</span> prefab = Resources.Load&lt;GameObject&gt;(<span class="string">&quot;Prefabs/Enemy&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 异步加载</span></span><br><span class="line"><span class="keyword">var</span> request = Resources.LoadAsync&lt;GameObject&gt;(<span class="string">&quot;Prefabs/Enemy&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 加载所有同类型资源</span></span><br><span class="line"><span class="keyword">var</span> all = Resources.LoadAll&lt;Texture&gt;(<span class="string">&quot;Textures&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 卸载未使用的资源</span></span><br><span class="line">Resources.UnloadUnusedAssets();</span><br></pre>
+
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li><code>Resources</code> 目录下的所有资源都会打入包体，无论是否使用。</li>
+<li>同步 <code>Load</code> 会卡主线程，只在初始化阶段使用。</li>
+<li>资源不会被自动卸载，需手动 <code>UnloadUnusedAssets</code> 或场景切换释放。</li>
+</ul>
+<hr>
+<h2 id="AssetBundle-核心流程"><a href="#AssetBundle-核心流程" class="headerlink" title="AssetBundle 核心流程"></a>AssetBundle 核心流程</h2><h3 id="构建"><a href="#构建" class="headerlink" title="构建"></a>构建</h3><pre class="highlight"><span class="line"><span class="comment">// Editor 脚本中构建</span></span><br><span class="line">BuildPipeline.BuildAssetBundles(</span><br><span class="line">    <span class="string">&quot;Assets/StreamingAssets&quot;</span>,</span><br><span class="line">    BuildAssetBundleOptions.None,</span><br><span class="line">    BuildTarget.Android</span><br><span class="line">);</span><br></pre>
+
+<h3 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h3><pre class="highlight"><span class="line"><span class="comment">// 从文件加载（最快，不占用额外内存）</span></span><br><span class="line"><span class="keyword">var</span> bundle = AssetBundle.LoadFromFile(path);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从内存加载（多一次拷贝，内存峰值高）</span></span><br><span class="line"><span class="keyword">var</span> bundle = AssetBundle.LoadFromMemory(bytes);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从网络流加载</span></span><br><span class="line"><span class="keyword">var</span> bundle = AssetBundle.LoadFromStream(stream);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 加载资源</span></span><br><span class="line"><span class="keyword">var</span> prefab = bundle.LoadAsset&lt;GameObject&gt;(<span class="string">&quot;Enemy&quot;</span>);</span><br><span class="line"><span class="keyword">var</span> allScenes = bundle.LoadAllAssets&lt;Scene&gt;();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 异步</span></span><br><span class="line"><span class="keyword">var</span> request = bundle.LoadAssetAsync&lt;GameObject&gt;(<span class="string">&quot;Enemy&quot;</span>);</span><br></pre>
+
+<h3 id="卸载"><a href="#卸载" class="headerlink" title="卸载"></a>卸载</h3><pre class="highlight"><span class="line">bundle.Unload(<span class="literal">false</span>);  <span class="comment">// 仅释放 Bundle 自身，已加载的资源保留</span></span><br><span class="line">bundle.Unload(<span class="literal">true</span>);   <span class="comment">// 释放 Bundle 及所有已加载的资源（危险）</span></span><br></pre>
+
+<p><strong>关键陷阱</strong>：<code>Unload(true)</code> 后，已 Instantiate 的 GameObject 会丢失 Mesh&#x2F;Texture&#x2F;Shader 引用，变为紫色 Missing。确保无引用后再 <code>Unload(true)</code>。</p>
+<hr>
+<h2 id="AssetBundle-依赖管理"><a href="#AssetBundle-依赖管理" class="headerlink" title="AssetBundle 依赖管理"></a>AssetBundle 依赖管理</h2><ul>
+<li>多个 Bundle 依赖同一个资源（如贴图），需构建单独的依赖 Bundle。</li>
+<li>清单文件 <code>AssetBundleManifest</code> 记录依赖关系：</li>
+</ul>
+<pre class="highlight"><span class="line"><span class="keyword">var</span> manifestBundle = AssetBundle.LoadFromFile(manifestPath);</span><br><span class="line"><span class="keyword">var</span> manifest = manifestBundle.LoadAsset&lt;AssetBundleManifest&gt;(<span class="string">&quot;AssetBundleManifest&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 加载目标 Bundle 前，先加载其所有依赖</span></span><br><span class="line"><span class="built_in">string</span>[] deps = manifest.GetAllDependencies(<span class="string">&quot;enemies&quot;</span>);</span><br><span class="line"><span class="keyword">foreach</span> (<span class="keyword">var</span> dep <span class="keyword">in</span> deps)</span><br><span class="line">    AssetBundle.LoadFromFile(depPath + dep);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 再加载目标 Bundle</span></span><br><span class="line"><span class="keyword">var</span> enemyBundle = AssetBundle.LoadFromFile(bundlePath + <span class="string">&quot;enemies&quot;</span>);</span><br></pre>
+
+<p><strong>注意</strong>：依赖 Bundle 也必须 <code>Unload</code>，且要在引用它们的 Bundle 之后卸载。</p>
+<hr>
+<h2 id="Addressables-核心操作"><a href="#Addressables-核心操作" class="headerlink" title="Addressables 核心操作"></a>Addressables 核心操作</h2><h3 id="加载-1"><a href="#加载-1" class="headerlink" title="加载"></a>加载</h3><pre class="highlight"><span class="line"><span class="comment">// 异步加载（返回 handle）</span></span><br><span class="line"><span class="keyword">var</span> handle = Addressables.LoadAssetAsync&lt;GameObject&gt;(<span class="string">&quot;EnemyPrefab&quot;</span>);</span><br><span class="line"><span class="keyword">await</span> handle.Task;</span><br><span class="line">GameObject prefab = handle.Result;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实例化</span></span><br><span class="line"><span class="keyword">var</span> instanceHandle = Addressables.InstantiateAsync(<span class="string">&quot;EnemyPrefab&quot;</span>);</span><br><span class="line"><span class="keyword">await</span> instanceHandle.Task;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 加载场景</span></span><br><span class="line"><span class="keyword">var</span> sceneHandle = Addressables.LoadSceneAsync(<span class="string">&quot;Scenes/Battle&quot;</span>, LoadSceneMode.Additive);</span><br></pre>
+
+<h3 id="释放"><a href="#释放" class="headerlink" title="释放"></a>释放</h3><pre class="highlight"><span class="line"><span class="comment">// 释放单个资源</span></span><br><span class="line">Addressables.Release(handle);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 释放实例并销毁 GameObject</span></span><br><span class="line">Addressables.ReleaseInstance(instanceHandle);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 卸载场景</span></span><br><span class="line">Addressables.UnloadSceneAsync(sceneHandle);</span><br></pre>
+
+<h3 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h3><p>Addressables 内部使用引用计数。每次 <code>LoadAssetAsync</code> 计数 +1，每个 <code>Release</code> 计数 -1。计数归零后资源自动释放。</p>
+<p><strong>常见 Bug</strong>：多次加载同一 Address 后只 <code>Release</code> 一次 → 资源永远不会释放 → 内存泄漏。确保每次 Load 都有对应 Release。</p>
+<hr>
+<h2 id="Group-策略设计"><a href="#Group-策略设计" class="headerlink" title="Group 策略设计"></a>Group 策略设计</h2><table>
+<thead>
+<tr>
+<th>Group</th>
+<th>内容</th>
+<th>加载策略</th>
+<th>释放策略</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Local_Core</code></td>
+<td>核心 Prefab、字体</td>
+<td>启动时预加载</td>
+<td>游戏退出才释放</td>
+</tr>
+<tr>
+<td><code>Local_UI</code></td>
+<td>通用 UI 面板</td>
+<td>按需加载、缓存</td>
+<td>场景切换时清理</td>
+</tr>
+<tr>
+<td><code>Local_Level_N</code></td>
+<td>关卡独有资源</td>
+<td>进入关卡加载</td>
+<td>退出关卡释放</td>
+</tr>
+<tr>
+<td><code>Remote_Skins</code></td>
+<td>皮肤、装饰资源</td>
+<td>按需从 CDN 拉</td>
+<td>LRU 缓存淘汰</td>
+</tr>
+</tbody></table>
+<pre class="highlight"><span class="line"><span class="comment">// 预加载 Group</span></span><br><span class="line">Addressables.DownloadDependenciesAsync(<span class="string">&quot;Local_Core&quot;</span>);</span><br><span class="line"><span class="comment">// 清理 Group 缓存（释放内存，不删磁盘）</span></span><br><span class="line">Addressables.ClearDependencyCacheAsync(<span class="string">&quot;Local_Level_1&quot;</span>);</span><br></pre>
+
+<hr>
+<h2 id="热更新流程"><a href="#热更新流程" class="headerlink" title="热更新流程"></a>热更新流程</h2><ol>
+<li><strong>构建时</strong>：Addressables 生成 <code>catalog_xxx.hash</code> + <code>catalog_xxx.json</code> + Bundle 文件。</li>
+<li><strong>启动时</strong>：对比本地 catalog hash 与远程 hash。</li>
+<li><strong>有更新</strong>：下载新 catalog → 根据 catalog 下载变化的 Bundle。</li>
+<li><strong>校验</strong>：<code>CheckForCatalogUpdates</code> → <code>UpdateCatalogs</code> → <code>DownloadDependenciesAsync</code>。</li>
+</ol>
+<pre class="highlight"><span class="line"><span class="comment">// 检查更新</span></span><br><span class="line"><span class="keyword">var</span> checkHandle = Addressables.CheckForCatalogUpdates(<span class="literal">false</span>);</span><br><span class="line"><span class="keyword">await</span> checkHandle.Task;</span><br><span class="line"><span class="keyword">var</span> updates = checkHandle.Result;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (updates.Count &gt; <span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 更新 catalog</span></span><br><span class="line">    <span class="keyword">var</span> updateHandle = Addressables.UpdateCatalogs(updates, <span class="literal">false</span>);</span><br><span class="line">    <span class="keyword">await</span> updateHandle.Task;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 下载更新的资源</span></span><br><span class="line">    <span class="keyword">var</span> downloadHandle = Addressables.DownloadDependenciesAsync(<span class="string">&quot;Remote_Skins&quot;</span>);</span><br><span class="line">    <span class="keyword">await</span> downloadHandle.Task;</span><br><span class="line">&#125;</span><br></pre>
+
+<hr>
+<h2 id="内存红线速查"><a href="#内存红线速查" class="headerlink" title="内存红线速查"></a>内存红线速查</h2><table>
+<thead>
+<tr>
+<th>操作</th>
+<th>内存影响</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Resources.Load</code></td>
+<td>加载到内存，永不自动释放</td>
+</tr>
+<tr>
+<td><code>AssetBundle.LoadFromFile</code></td>
+<td>仅加载文件头索引，用到时才读</td>
+</tr>
+<tr>
+<td><code>AssetBundle.LoadFromMemory</code></td>
+<td>完整加载到内存，多一次字节数组拷贝</td>
+</tr>
+<tr>
+<td><code>Addressables.LoadAssetAsync</code></td>
+<td>按需加载 + 引用计数</td>
+</tr>
+<tr>
+<td><code>Resources.UnloadUnusedAssets</code></td>
+<td>遍历全堆，主线程阻塞</td>
+</tr>
+<tr>
+<td><code>AssetBundle.Unload(false)</code></td>
+<td>释放索引，已加载资源留在内存</td>
+</tr>
+<tr>
+<td><code>AssetBundle.Unload(true)</code></td>
+<td>全部释放，破坏现有引用</td>
+</tr>
+</tbody></table>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            MrLibertine
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://mrlibertine.github.io/2020/06/07/82910910a231/">
+            https://mrlibertine.github.io/2020/06/07/82910910a231/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2020/06/07/1953793fa7e8/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">GitHub代理设置 </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2019/06/07/48ddfcac233f/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">一些比较有用的网站 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E7%A7%8D%E6%96%B9%E6%A1%88%E6%BC%94%E8%BF%9B"><span class="toc-text">三种方案演进</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Resources-%E7%9B%AE%E5%BD%95"><span class="toc-text">Resources 目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AssetBundle-%E6%A0%B8%E5%BF%83%E6%B5%81%E7%A8%8B"><span class="toc-text">AssetBundle 核心流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA"><span class="toc-text">构建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD"><span class="toc-text">加载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%B8%E8%BD%BD"><span class="toc-text">卸载</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AssetBundle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86"><span class="toc-text">AssetBundle 依赖管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Addressables-%E6%A0%B8%E5%BF%83%E6%93%8D%E4%BD%9C"><span class="toc-text">Addressables 核心操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD-1"><span class="toc-text">加载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8A%E6%94%BE"><span class="toc-text">释放</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0"><span class="toc-text">引用计数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Group-%E7%AD%96%E7%95%A5%E8%AE%BE%E8%AE%A1"><span class="toc-text">Group 策略设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%83%AD%E6%9B%B4%E6%96%B0%E6%B5%81%E7%A8%8B"><span class="toc-text">热更新流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E7%BA%A2%E7%BA%BF%E9%80%9F%E6%9F%A5"><span class="toc-text">内存红线速查</span></a></li></ol>
+</div>
+                    </main>
+                    <aside class="right-column">
+                      <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E7%A7%8D%E6%96%B9%E6%A1%88%E6%BC%94%E8%BF%9B"><span class="toc-text">三种方案演进</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Resources-%E7%9B%AE%E5%BD%95"><span class="toc-text">Resources 目录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AssetBundle-%E6%A0%B8%E5%BF%83%E6%B5%81%E7%A8%8B"><span class="toc-text">AssetBundle 核心流程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA"><span class="toc-text">构建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD"><span class="toc-text">加载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%B8%E8%BD%BD"><span class="toc-text">卸载</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AssetBundle-%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86"><span class="toc-text">AssetBundle 依赖管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Addressables-%E6%A0%B8%E5%BF%83%E6%93%8D%E4%BD%9C"><span class="toc-text">Addressables 核心操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD-1"><span class="toc-text">加载</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8A%E6%94%BE"><span class="toc-text">释放</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0"><span class="toc-text">引用计数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Group-%E7%AD%96%E7%95%A5%E8%AE%BE%E8%AE%A1"><span class="toc-text">Group 策略设计</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%83%AD%E6%9B%B4%E6%96%B0%E6%B5%81%E7%A8%8B"><span class="toc-text">热更新流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E7%BA%A2%E7%BA%BF%E9%80%9F%E6%9F%A5"><span class="toc-text">内存红线速查</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-01-13</div>
+        <a href="/2026/01/13/19efe93a808b/"><div class="recent-posts-item-content">AI 与 LLM 术语速查</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2024-06-07</div>
+        <a href="/2024/06/07/0aebe7b6b0bb/"><div class="recent-posts-item-content">Linux部署dotnet程序相关</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-06-07</div>
+        <a href="/2023/06/07/9173fa8501d6/"><div class="recent-posts-item-content">关于GLSL一些内置函数</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2023-06-07</div>
+        <a href="/2023/06/07/55bfbef301ef/"><div class="recent-posts-item-content">关于GLSL一些知识</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+                    </aside>
+                  </div>
+                </div>
+              </div>
+    </div>
+    
+      <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2026
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          MrLibertine
+        </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+
+        
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+          
+            
+                  
+                    <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+
+                      
+                        
+                          <script src="/js/main.js"></script>
+                            
+                              <script>
+                                loadScript('/js/lib/busuanzi.min.js') 
+                              </script>
+                              
+                                
+                                  <script>
+                                    var addLazyload = function () {
+                                      var observer = lozad('.lozad', {
+                                        load: function (el) {
+                                          el.srcset = el.getAttribute('data-src')
+                                        },
+                                        loaded: function (el) {
+                                          el.classList.add('loaded')
+                                        },
+                                      })
+                                      observer.observe()
+                                    }
+                                  </script>
+                                  <script>
+                                    loadScript('/js/lib/lozad.min.js', addLazyload)
+                                  </script>
+                                  
+                                    <script src="//instant.page/5.1.0" type="module"
+                                      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+                                    
+                                        
+  </body>
+
+</html>

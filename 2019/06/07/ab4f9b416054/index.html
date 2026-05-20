@@ -18,17 +18,17 @@
   <link 
     rel="icon" 
     href="/">
-  <title>Linux部署dotnet程序相关</title>
+  <title>Unity 渲染与性能速查</title>
   
     
       <meta 
         property="og:title" 
-        content="Linux部署dotnet程序相关">
+        content="Unity 渲染与性能速查">
     
     
       <meta 
         property="og:url" 
-        content="https://mrlibertine.github.io/2024/06/07/0aebe7b6b0bb/index.html">
+        content="https://mrlibertine.github.io/2019/06/07/ab4f9b416054/index.html">
     
     
       <meta 
@@ -42,10 +42,10 @@
         content="article">
       <meta 
         property="og:article:published_time" 
-        content="2024-06-07">
+        content="2019-06-07">
       <meta 
         property="og:article:modified_time" 
-        content="2025-06-17">
+        content="2026-05-20">
       <meta 
         property="og:article:author" 
         content="MrLibertine">
@@ -53,7 +53,11 @@
         
           <meta 
             property="og:article:tag" 
-            content="Linux">
+            content="Unity">
+        
+          <meta 
+            property="og:article:tag" 
+            content="GLSL">
         
       
     
@@ -311,7 +315,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#linux%E9%83%A8%E7%BD%B2dotnet-runtime"><span class="toc-text">linux部署dotnet runtime</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dotnet-%E7%A8%8B%E5%BA%8F%E8%87%AA%E5%8C%85%E5%90%AB%E6%A8%A1%E5%BC%8F%E6%93%8D%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-text">dotnet 程序自包含模式操作流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E4%B8%AD%E5%85%B3%E9%97%AD%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="toc-text">Linux中关闭程序的命令</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#DrawCall-%E4%B8%8E-SetPass-Call"><span class="toc-text">DrawCall 与 SetPass Call</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%88%E6%89%B9%E7%AD%96%E7%95%A5%E5%AF%B9%E7%85%A7"><span class="toc-text">合批策略对照</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Overdraw%EF%BC%88%E8%BF%87%E5%BA%A6%E7%BB%98%E5%88%B6%EF%BC%89"><span class="toc-text">Overdraw（过度绘制）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LOD-x2F-MipMap-x2F-%E5%89%94%E9%99%A4"><span class="toc-text">LOD &#x2F; MipMap &#x2F; 剔除</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Canvas-%E6%B8%B2%E6%9F%93%E6%A8%A1%E5%BC%8F"><span class="toc-text">Canvas 渲染模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UI-%E5%90%88%E6%89%B9%E6%9D%A1%E4%BB%B6"><span class="toc-text">UI 合批条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%B9%E7%90%86%E5%8E%8B%E7%BC%A9%E6%A0%BC%E5%BC%8F"><span class="toc-text">纹理压缩格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Frame-Debugger-%E9%80%9F%E6%9F%A5"><span class="toc-text">Frame Debugger 速查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%8F%82%E8%80%83%EF%BC%88%E7%A7%BB%E5%8A%A8%E7%AB%AF%EF%BC%89"><span class="toc-text">常用性能指标参考（移动端）</span></a></li></ol>
       </div>
     </article>
   
@@ -418,21 +422,21 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      Linux部署dotnet程序相关
+      Unity 渲染与性能速查
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2024-06-07T03:06:05.000Z">
+    <time datetime="2019-06-07T02:00:00.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2024-06-07</span>
+      <span>2019-06-07</span>
     </time>
     
     
       <span class="dot"></span>
-      <span>290 字</span>
+      <span>965 字</span>
     
   </div>
   
@@ -447,9 +451,18 @@
         
           
           <a 
-            href="/tags/Linux/" 
+            href="/tags/Unity/" 
             class="post-meta-link">
-            Linux
+            Unity
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/GLSL/" 
+            class="post-meta-link">
+            GLSL
           </a>
         
       </div>
@@ -459,33 +472,201 @@
   <div 
     id="section" 
     class="post-content">
-    <hr>
-<h2 id="linux部署dotnet-runtime"><a href="#linux部署dotnet-runtime" class="headerlink" title="linux部署dotnet runtime"></a>linux部署dotnet runtime</h2><ol>
-<li><p>登录linux，创建安装目录<br>一般放在 &#x2F;opt&#x2F;dotnet（标准的第三方程序安装目录）：<br><code>sudo mkdir -p /opt/dotnet</code></p>
-</li>
-<li><p>下载并解压 runtime 文件<br><code>cd /opt/dotnet</code><br><code>sudo wget https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.36/dotnet-runtime-6.0.36-linux-x64.tar.gz</code><br>或者（使用xftp上传dotnet-runtime-6.0.36-linux-x64.tar.gz）<br><code>sudo tar -xzvf dotnet-runtime-6.0.36-linux-x64.tar.gz</code><br><code>sudo rm dotnet-runtime-6.0.36-linux-x64.tar.gz</code></p>
-</li>
-<li><p>配置环境变量<br><code>sudo ln -s /opt/dotnet/dotnet /usr/local/bin/dotnet</code></p>
-</li>
-<li><p>验证安装<br><code>dotnet --info</code></p>
-</li>
-</ol>
-<h2 id="dotnet-程序自包含模式操作流程"><a href="#dotnet-程序自包含模式操作流程" class="headerlink" title="dotnet 程序自包含模式操作流程"></a>dotnet 程序自包含模式操作流程</h2><ol>
-<li><p>发布命令：<br><code>dotnet publish -c Release -r linux-x64 -o publish/linux-x64 --self-contained true</code><br><code>pause</code></p>
-</li>
-<li><p>filezilla上传后cd到指定目录：<br>   <code>cd /var/www/game-admin/linux-x64</code></p>
-</li>
-<li><p>进入程序目录并设置执行权限：<br><code>chmod +x GameConsoleAdmin</code><br><code>./GameConsoleAdmin</code></p>
-</li>
-<li><p>运行程序<br>直接运行。Xshell关闭后进程也会关闭<br><code>./GameConsoleAdmin</code><br>后台运行。Xshell关闭后不会关闭进程<br><code>nohup ./GameConsoleAdmin&gt; output.log 2&gt;&amp;1 &amp;</code></p>
-</li>
-</ol>
-<h2 id="Linux中关闭程序的命令"><a href="#Linux中关闭程序的命令" class="headerlink" title="Linux中关闭程序的命令"></a>Linux中关闭程序的命令</h2><ul>
-<li><p>找到pid<br><code>ps aux | grep GameConsoleAdmin</code><br>或者:<br><code>pgrep -fl GameConsoleAdmin</code><br>找到pid，然后运行<br><code>kill pid</code><br>如果程序没有响应，再使用强制方式：<br><code>kill -9 pid</code></p>
-</li>
-<li><p>一键杀掉系统中叫GameConsoleAdmin<br><code>pkill -f GameConsoleAdmin</code></p>
+    <h2 id="DrawCall-与-SetPass-Call"><a href="#DrawCall-与-SetPass-Call" class="headerlink" title="DrawCall 与 SetPass Call"></a>DrawCall 与 SetPass Call</h2><ul>
+<li><strong>DrawCall</strong>：CPU 向 GPU 发起的一次绘制指令。每次 DrawCall 都有 CPU 开销（状态设置），是渲染性能的主要瓶颈之一。</li>
+<li><strong>SetPass Call</strong>：与 Shader Pass 绑定。一个 Shader 有多个 Pass 时，一次材质切换对应一个 SetPass。比 DrawCall 更昂贵。</li>
+</ul>
+<p><strong>SRP Batcher（URP&#x2F;HDRP）</strong>：</p>
+<ul>
+<li>核心思路不是减少 DrawCall 数量，而是减少每次 DrawCall 的 GPU 状态设置开销。</li>
+<li>适用条件：Shader 必须兼容 SRP Batcher（使用 <code>CBUFFER</code> 声明的内置 <code>UnityPerDraw</code> 变量）。</li>
+<li>可以在 Frame Debugger 中查看是否被 Batcher 处理。</li>
+</ul>
+<hr>
+<h2 id="合批策略对照"><a href="#合批策略对照" class="headerlink" title="合批策略对照"></a>合批策略对照</h2><table>
+<thead>
+<tr>
+<th>合批方式</th>
+<th>原理</th>
+<th>适用场景</th>
+<th>限制</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Static Batching</td>
+<td>运行时合并静态物体网格为一个大 Mesh</td>
+<td>完全静止的物体（建筑、地面）</td>
+<td>增加内存（额外存合批后的巨大 Mesh）</td>
+</tr>
+<tr>
+<td>Dynamic Batching</td>
+<td>每帧动态合并小网格</td>
+<td>顶点数少的动态物体（&lt; 300 顶点）</td>
+<td>顶点&#x2F;属性数限制、多 Pass Shader 无效</td>
+</tr>
+<tr>
+<td>GPU Instancing</td>
+<td>GPU 用同一 Mesh+Material 绘制多个实例，仅变换矩阵不同</td>
+<td>大量相同模型（草、子弹）</td>
+<td>需要 Instancing 兼容的 Shader</td>
+</tr>
+<tr>
+<td>SRP Batcher</td>
+<td>缓存材质属性，减少 SetPass 开销</td>
+<td>URP&#x2F;HDRP 下的通用场景</td>
+<td>需要 SRP Batcher 兼容 Shader</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="Overdraw（过度绘制）"><a href="#Overdraw（过度绘制）" class="headerlink" title="Overdraw（过度绘制）"></a>Overdraw（过度绘制）</h2><ul>
+<li><strong>定义</strong>：同一像素被多次绘制，填充率浪费。</li>
+<li><strong>检测</strong>：Scene View → 左上角下拉 → Overdraw 模式。越白越严重。</li>
+<li><strong>优化策略</strong>：<ul>
+<li>UI 层减少重叠（空白的 RaycastTarget 关闭）。</li>
+<li>粒子特效缩小 Quad，用圆形 Mesh 代替方形。</li>
+<li>半透明物体排序靠后，先渲染不透明。</li>
+<li>Forward 渲染路径下半透明无深度写入，叠加数层 Overdraw 严重。</li>
+</ul>
 </li>
 </ul>
+<hr>
+<h2 id="LOD-x2F-MipMap-x2F-剔除"><a href="#LOD-x2F-MipMap-x2F-剔除" class="headerlink" title="LOD &#x2F; MipMap &#x2F; 剔除"></a>LOD &#x2F; MipMap &#x2F; 剔除</h2><table>
+<thead>
+<tr>
+<th>技术</th>
+<th>作用</th>
+<th>配置位置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LOD (Level of Detail)</td>
+<td>距离越远切换为低面数模型</td>
+<td>LOD Group 组件</td>
+</tr>
+<tr>
+<td>MipMap</td>
+<td>距离越远使用低分辨率纹理</td>
+<td>纹理导入设置 <code>Generate Mip Maps</code></td>
+</tr>
+<tr>
+<td>Frustum Culling</td>
+<td>视锥体外物体不渲染</td>
+<td>自动，无需配置</td>
+</tr>
+<tr>
+<td>Occlusion Culling</td>
+<td>被遮挡物体不渲染</td>
+<td>Window → Rendering → Occlusion Culling，需烘焙</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="Canvas-渲染模式"><a href="#Canvas-渲染模式" class="headerlink" title="Canvas 渲染模式"></a>Canvas 渲染模式</h2><table>
+<thead>
+<tr>
+<th>模式</th>
+<th>渲染方式</th>
+<th>性能特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Screen Space - Overlay</td>
+<td>直接覆盖屏幕，无相机</td>
+<td>最轻量，适合 HUD</td>
+</tr>
+<tr>
+<td>Screen Space - Camera</td>
+<td>绑定相机，可受相机后期影响</td>
+<td>适合需要特效的 UI</td>
+</tr>
+<tr>
+<td>World Space</td>
+<td>作为 3D 空间物体，可旋转移动</td>
+<td>适合血条、漂浮文字、VR UI</td>
+</tr>
+</tbody></table>
+<p><strong>性能关键</strong>：Canvas 上任何子节点变化（位置、颜色、文本）都会触发 Canvas 重建（Rebuild），子节点多时开销大。用子 Canvas 隔离变化频繁的 UI 区域。</p>
+<hr>
+<h2 id="UI-合批条件"><a href="#UI-合批条件" class="headerlink" title="UI 合批条件"></a>UI 合批条件</h2><ul>
+<li>同一 Canvas 下。</li>
+<li>使用<strong>同一材质</strong>（等于同一图集 + 同一 Shader）。</li>
+<li>渲染层级相邻（无不同材质的 UI 打断）。</li>
+<li>不再重叠的 UI 元素之间无 RaycastTarget 阻断合批（可把不需要点击的 Image 关闭 RaycastTarget）。</li>
+</ul>
+<p><strong>打断合批的因素</strong>：</p>
+<ul>
+<li>夹入不同图集的 Image。</li>
+<li>字体纹理与图集交替。</li>
+<li>ScrollRect 内的 Mask 组件（每层 Mask 至少多 2 个 DrawCall）。</li>
+</ul>
+<hr>
+<h2 id="纹理压缩格式"><a href="#纹理压缩格式" class="headerlink" title="纹理压缩格式"></a>纹理压缩格式</h2><table>
+<thead>
+<tr>
+<th>平台</th>
+<th>推荐格式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>iOS</td>
+<td>ASTC</td>
+<td>高质量 + 任意尺寸，A 系列芯片支持</td>
+</tr>
+<tr>
+<td>Android</td>
+<td>ASTC &#x2F; ETC2</td>
+<td>ASTC 中高端设备，ETC2 兼容全覆盖</td>
+</tr>
+<tr>
+<td>Windows</td>
+<td>DXT5 (BC3) &#x2F; BC7</td>
+<td>BC7 质量最高但文件更大</td>
+</tr>
+<tr>
+<td>WebGL</td>
+<td>DXT &#x2F; ETC2</td>
+<td>根据浏览器底层选择</td>
+</tr>
+</tbody></table>
+<ul>
+<li>非 2 的幂纹理（NPOT）在部分平台无法压缩，统一用 POT 尺寸。</li>
+<li>带 Alpha 通道的纹理注意格式选择（ASTC 4×4 带 Alpha，ETC2 需 RGBA 扩展）。</li>
+</ul>
+<hr>
+<h2 id="Frame-Debugger-速查"><a href="#Frame-Debugger-速查" class="headerlink" title="Frame Debugger 速查"></a>Frame Debugger 速查</h2><ul>
+<li>路径：Window → Analysis → Frame Debugger → Enable。</li>
+<li>可以看到每一帧的 DrawCall 序列、SetPass 切换、Shader 属性变化。</li>
+<li>定位问题：某个 DrawCall 为什么没合批？它的材质、层级、Shader 是否与前一个相同？</li>
+</ul>
+<hr>
+<h2 id="常用性能指标参考（移动端）"><a href="#常用性能指标参考（移动端）" class="headerlink" title="常用性能指标参考（移动端）"></a>常用性能指标参考（移动端）</h2><table>
+<thead>
+<tr>
+<th>指标</th>
+<th>建议上限</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DrawCall</td>
+<td>200-400（视项目复杂度）</td>
+</tr>
+<tr>
+<td>SetPass Call</td>
+<td>&lt; 100</td>
+</tr>
+<tr>
+<td>三角形数</td>
+<td>&lt; 200K（中低端）</td>
+</tr>
+<tr>
+<td>纹理内存</td>
+<td>&lt; 200MB</td>
+</tr>
+<tr>
+<td>帧率</td>
+<td>30fps 稳定即可（高要求 60fps）</td>
+</tr>
+</tbody></table>
 
   </div>
   <div>
@@ -505,8 +686,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://mrlibertine.github.io/2024/06/07/0aebe7b6b0bb/">
-            https://mrlibertine.github.io/2024/06/07/0aebe7b6b0bb/
+            href="https://mrlibertine.github.io/2019/06/07/ab4f9b416054/">
+            https://mrlibertine.github.io/2019/06/07/ab4f9b416054/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -518,13 +699,13 @@
   
     <div class="nav-item-prev">
       <a 
-        href="/2026/01/13/19efe93a808b/" 
+        href="/2019/06/07/044db01d498a/" 
         class="nav-link">
         <i class="iconfont icon-left nav-prev-icon"></i>
         <div>
           <div class="nav-label">上一篇</div>
           
-            <div class="nav-title">AI 与 LLM 术语速查 </div>
+            <div class="nav-title">Unity 架构与设计速查 </div>
           
         </div>
       </a>
@@ -533,12 +714,12 @@
   
     <div class="nav-item-next">
       <a 
-        href="/2023/06/07/9173fa8501d6/" 
+        href="/2019/06/07/47f6275d35a1/" 
         class="nav-link">
         <div>
           <div class="nav-label">下一篇</div>
           
-            <div class="nav-title">关于GLSL一些内置函数 </div>
+            <div class="nav-title">移动端 Shader 优化速查 </div>
           
         </div>
         <i class="iconfont icon-right nav-next-icon"></i>
@@ -556,7 +737,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#linux%E9%83%A8%E7%BD%B2dotnet-runtime"><span class="toc-text">linux部署dotnet runtime</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dotnet-%E7%A8%8B%E5%BA%8F%E8%87%AA%E5%8C%85%E5%90%AB%E6%A8%A1%E5%BC%8F%E6%93%8D%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-text">dotnet 程序自包含模式操作流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E4%B8%AD%E5%85%B3%E9%97%AD%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="toc-text">Linux中关闭程序的命令</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#DrawCall-%E4%B8%8E-SetPass-Call"><span class="toc-text">DrawCall 与 SetPass Call</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%88%E6%89%B9%E7%AD%96%E7%95%A5%E5%AF%B9%E7%85%A7"><span class="toc-text">合批策略对照</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Overdraw%EF%BC%88%E8%BF%87%E5%BA%A6%E7%BB%98%E5%88%B6%EF%BC%89"><span class="toc-text">Overdraw（过度绘制）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LOD-x2F-MipMap-x2F-%E5%89%94%E9%99%A4"><span class="toc-text">LOD &#x2F; MipMap &#x2F; 剔除</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Canvas-%E6%B8%B2%E6%9F%93%E6%A8%A1%E5%BC%8F"><span class="toc-text">Canvas 渲染模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UI-%E5%90%88%E6%89%B9%E6%9D%A1%E4%BB%B6"><span class="toc-text">UI 合批条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%B9%E7%90%86%E5%8E%8B%E7%BC%A9%E6%A0%BC%E5%BC%8F"><span class="toc-text">纹理压缩格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Frame-Debugger-%E9%80%9F%E6%9F%A5"><span class="toc-text">Frame Debugger 速查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%8F%82%E8%80%83%EF%BC%88%E7%A7%BB%E5%8A%A8%E7%AB%AF%EF%BC%89"><span class="toc-text">常用性能指标参考（移动端）</span></a></li></ol>
 </div>
                     </main>
                     <aside class="right-column">
@@ -570,7 +751,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#linux%E9%83%A8%E7%BD%B2dotnet-runtime"><span class="toc-text">linux部署dotnet runtime</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dotnet-%E7%A8%8B%E5%BA%8F%E8%87%AA%E5%8C%85%E5%90%AB%E6%A8%A1%E5%BC%8F%E6%93%8D%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-text">dotnet 程序自包含模式操作流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E4%B8%AD%E5%85%B3%E9%97%AD%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="toc-text">Linux中关闭程序的命令</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#DrawCall-%E4%B8%8E-SetPass-Call"><span class="toc-text">DrawCall 与 SetPass Call</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%88%E6%89%B9%E7%AD%96%E7%95%A5%E5%AF%B9%E7%85%A7"><span class="toc-text">合批策略对照</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Overdraw%EF%BC%88%E8%BF%87%E5%BA%A6%E7%BB%98%E5%88%B6%EF%BC%89"><span class="toc-text">Overdraw（过度绘制）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LOD-x2F-MipMap-x2F-%E5%89%94%E9%99%A4"><span class="toc-text">LOD &#x2F; MipMap &#x2F; 剔除</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Canvas-%E6%B8%B2%E6%9F%93%E6%A8%A1%E5%BC%8F"><span class="toc-text">Canvas 渲染模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UI-%E5%90%88%E6%89%B9%E6%9D%A1%E4%BB%B6"><span class="toc-text">UI 合批条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%B9%E7%90%86%E5%8E%8B%E7%BC%A9%E6%A0%BC%E5%BC%8F"><span class="toc-text">纹理压缩格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Frame-Debugger-%E9%80%9F%E6%9F%A5"><span class="toc-text">Frame Debugger 速查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%8F%82%E8%80%83%EF%BC%88%E7%A7%BB%E5%8A%A8%E7%AB%AF%EF%BC%89"><span class="toc-text">常用性能指标参考（移动端）</span></a></li></ol>
     </article>
   
   

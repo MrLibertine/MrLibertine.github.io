@@ -18,17 +18,17 @@
   <link 
     rel="icon" 
     href="/">
-  <title>Linux部署dotnet程序相关</title>
+  <title>C# 与 Unity 内存管理速查</title>
   
     
       <meta 
         property="og:title" 
-        content="Linux部署dotnet程序相关">
+        content="C# 与 Unity 内存管理速查">
     
     
       <meta 
         property="og:url" 
-        content="https://mrlibertine.github.io/2024/06/07/0aebe7b6b0bb/index.html">
+        content="https://mrlibertine.github.io/2019/06/07/0ef0a4467201/index.html">
     
     
       <meta 
@@ -42,10 +42,10 @@
         content="article">
       <meta 
         property="og:article:published_time" 
-        content="2024-06-07">
+        content="2019-06-07">
       <meta 
         property="og:article:modified_time" 
-        content="2025-06-17">
+        content="2026-05-20">
       <meta 
         property="og:article:author" 
         content="MrLibertine">
@@ -53,7 +53,11 @@
         
           <meta 
             property="og:article:tag" 
-            content="Linux">
+            content="Unity">
+        
+          <meta 
+            property="og:article:tag" 
+            content="C#">
         
       
     
@@ -311,7 +315,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#linux%E9%83%A8%E7%BD%B2dotnet-runtime"><span class="toc-text">linux部署dotnet runtime</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dotnet-%E7%A8%8B%E5%BA%8F%E8%87%AA%E5%8C%85%E5%90%AB%E6%A8%A1%E5%BC%8F%E6%93%8D%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-text">dotnet 程序自包含模式操作流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E4%B8%AD%E5%85%B3%E9%97%AD%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="toc-text">Linux中关闭程序的命令</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%80%BC%E7%B1%BB%E5%9E%8B-vs-%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B"><span class="toc-text">值类型 vs 引用类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GC-%E8%A7%A6%E5%8F%91%E6%9D%A1%E4%BB%B6"><span class="toc-text">GC 触发条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81-GC-%E5%88%86%E9%85%8D%E6%BA%90%E5%8F%8A%E4%BC%98%E5%8C%96"><span class="toc-text">常见 GC 分配源及优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#string-%E6%8B%BC%E6%8E%A5"><span class="toc-text">string 拼接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A3%85%E7%AE%B1%E6%8B%86%E7%AE%B1"><span class="toc-text">装箱拆箱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#foreach-%E6%97%A7%E7%89%88%E6%9C%AC%E9%99%B7%E9%98%B1"><span class="toc-text">foreach 旧版本陷阱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#List-x2F-Dictionary-%E6%89%A9%E5%AE%B9"><span class="toc-text">List &#x2F; Dictionary 扩容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Instantiate-%E4%B8%8E-Destroy"><span class="toc-text">Instantiate 与 Destroy</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E6%B1%A0"><span class="toc-text">对象池</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Resources-UnloadUnusedAssets"><span class="toc-text">Resources.UnloadUnusedAssets</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E6%9E%90%E5%88%87%E5%85%A5%E7%82%B9"><span class="toc-text">内存分析切入点</span></a></li></ol>
       </div>
     </article>
   
@@ -418,21 +422,21 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      Linux部署dotnet程序相关
+      C# 与 Unity 内存管理速查
     </h1>
   </header>
   <div class="post-meta post-show-meta">
-    <time datetime="2024-06-07T03:06:05.000Z">
+    <time datetime="2019-06-07T02:00:00.000Z">
       <i 
         class="iconfont icon-calendar" 
         style="margin-right: 2px;">
       </i>
-      <span>2024-06-07</span>
+      <span>2019-06-07</span>
     </time>
     
     
       <span class="dot"></span>
-      <span>290 字</span>
+      <span>799 字</span>
     
   </div>
   
@@ -447,9 +451,18 @@
         
           
           <a 
-            href="/tags/Linux/" 
+            href="/tags/Unity/" 
             class="post-meta-link">
-            Linux
+            Unity
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/C/" 
+            class="post-meta-link">
+            C#
           </a>
         
       </div>
@@ -459,32 +472,72 @@
   <div 
     id="section" 
     class="post-content">
-    <hr>
-<h2 id="linux部署dotnet-runtime"><a href="#linux部署dotnet-runtime" class="headerlink" title="linux部署dotnet runtime"></a>linux部署dotnet runtime</h2><ol>
-<li><p>登录linux，创建安装目录<br>一般放在 &#x2F;opt&#x2F;dotnet（标准的第三方程序安装目录）：<br><code>sudo mkdir -p /opt/dotnet</code></p>
-</li>
-<li><p>下载并解压 runtime 文件<br><code>cd /opt/dotnet</code><br><code>sudo wget https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.36/dotnet-runtime-6.0.36-linux-x64.tar.gz</code><br>或者（使用xftp上传dotnet-runtime-6.0.36-linux-x64.tar.gz）<br><code>sudo tar -xzvf dotnet-runtime-6.0.36-linux-x64.tar.gz</code><br><code>sudo rm dotnet-runtime-6.0.36-linux-x64.tar.gz</code></p>
-</li>
-<li><p>配置环境变量<br><code>sudo ln -s /opt/dotnet/dotnet /usr/local/bin/dotnet</code></p>
-</li>
-<li><p>验证安装<br><code>dotnet --info</code></p>
-</li>
+    <h2 id="值类型-vs-引用类型"><a href="#值类型-vs-引用类型" class="headerlink" title="值类型 vs 引用类型"></a>值类型 vs 引用类型</h2><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>分配位置</th>
+<th>回收方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>值类型 (<code>struct</code>, <code>int</code>, <code>float</code>, <code>bool</code>)</td>
+<td>栈 &#x2F; 作为引用类型字段时在堆</td>
+<td>作用域退出自动释放</td>
+</tr>
+<tr>
+<td>引用类型 (<code>class</code>, <code>string</code>, <code>数组</code>, <code>delegate</code>)</td>
+<td>托管堆</td>
+<td>GC 回收</td>
+</tr>
+</tbody></table>
+<p><strong>Unity 特殊规则</strong>：从 <code>UnityEngine.Object</code> 派生的类型（GameObject、MonoBehaviour、Texture 等）由 Unity 的 C++ 侧持有，C# 侧只存句柄。<code>Destroy</code> 只标记 C++ 对象，C# 包装对象待 <code>Resources.UnloadUnusedAssets</code> 或场景切换时释放。</p>
+<hr>
+<h2 id="GC-触发条件"><a href="#GC-触发条件" class="headerlink" title="GC 触发条件"></a>GC 触发条件</h2><ol>
+<li><strong>堆内存分配超过阈值</strong>：Mono 和 IL2CPP 的 GC 阈值不同，分配累积到一定量触发。</li>
+<li><strong><code>System.GC.Collect()</code> 手动调用</strong>：应避免在运行时调用。</li>
+<li><strong>内存不足</strong>：移动端系统全局内存压力。</li>
 </ol>
-<h2 id="dotnet-程序自包含模式操作流程"><a href="#dotnet-程序自包含模式操作流程" class="headerlink" title="dotnet 程序自包含模式操作流程"></a>dotnet 程序自包含模式操作流程</h2><ol>
-<li><p>发布命令：<br><code>dotnet publish -c Release -r linux-x64 -o publish/linux-x64 --self-contained true</code><br><code>pause</code></p>
-</li>
-<li><p>filezilla上传后cd到指定目录：<br>   <code>cd /var/www/game-admin/linux-x64</code></p>
-</li>
-<li><p>进入程序目录并设置执行权限：<br><code>chmod +x GameConsoleAdmin</code><br><code>./GameConsoleAdmin</code></p>
-</li>
-<li><p>运行程序<br>直接运行。Xshell关闭后进程也会关闭<br><code>./GameConsoleAdmin</code><br>后台运行。Xshell关闭后不会关闭进程<br><code>nohup ./GameConsoleAdmin&gt; output.log 2&gt;&amp;1 &amp;</code></p>
-</li>
-</ol>
-<h2 id="Linux中关闭程序的命令"><a href="#Linux中关闭程序的命令" class="headerlink" title="Linux中关闭程序的命令"></a>Linux中关闭程序的命令</h2><ul>
-<li><p>找到pid<br><code>ps aux | grep GameConsoleAdmin</code><br>或者:<br><code>pgrep -fl GameConsoleAdmin</code><br>找到pid，然后运行<br><code>kill pid</code><br>如果程序没有响应，再使用强制方式：<br><code>kill -9 pid</code></p>
-</li>
-<li><p>一键杀掉系统中叫GameConsoleAdmin<br><code>pkill -f GameConsoleAdmin</code></p>
-</li>
+<p><strong>IL2CPP 的 GC</strong> 与 Mono 不同——使用 Boehm GC（非分代），每次触发都是全堆扫描，耗时更长。</p>
+<hr>
+<h2 id="常见-GC-分配源及优化"><a href="#常见-GC-分配源及优化" class="headerlink" title="常见 GC 分配源及优化"></a>常见 GC 分配源及优化</h2><h3 id="string-拼接"><a href="#string-拼接" class="headerlink" title="string 拼接"></a>string 拼接</h3><pre class="highlight"><span class="line"><span class="comment">// ❌ 每帧 1 次分配</span></span><br><span class="line"><span class="built_in">string</span> s = <span class="string">&quot;Score: &quot;</span> + score;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ✅ 无分配</span></span><br><span class="line"><span class="built_in">int</span> score;</span><br><span class="line"><span class="comment">// UI Text 直接设数值，或</span></span><br><span class="line">StringBuilder sb = <span class="keyword">new</span> StringBuilder(<span class="number">64</span>);</span><br><span class="line">sb.Clear();</span><br><span class="line">sb.Append(<span class="string">&quot;Score: &quot;</span>);</span><br><span class="line">sb.Append(score);</span><br></pre>
+
+<h3 id="装箱拆箱"><a href="#装箱拆箱" class="headerlink" title="装箱拆箱"></a>装箱拆箱</h3><pre class="highlight"><span class="line"><span class="comment">// ❌ 装箱：int → object</span></span><br><span class="line"><span class="built_in">object</span> obj = <span class="number">42</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ❌ 常见隐藏装箱：Debug.Log 多参数</span></span><br><span class="line">Debug.Log(<span class="string">&quot;Value: &quot;</span> + <span class="keyword">value</span>); <span class="comment">// 仍然是 string 拼接</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// ❌ 枚举作为 Dictionary 的 key 不使用 comparer</span></span><br><span class="line">Dictionary&lt;MyEnum, <span class="built_in">int</span>&gt; dict; <span class="comment">// 每次查找装箱</span></span><br><span class="line"><span class="comment">// ✅</span></span><br><span class="line">Dictionary&lt;MyEnum, <span class="built_in">int</span>&gt; dict = <span class="keyword">new</span> Dictionary&lt;MyEnum, <span class="built_in">int</span>&gt;(<span class="keyword">new</span> MyEnumComparer());</span><br></pre>
+
+<h3 id="foreach-旧版本陷阱"><a href="#foreach-旧版本陷阱" class="headerlink" title="foreach 旧版本陷阱"></a>foreach 旧版本陷阱</h3><ul>
+<li>Unity 早期用的 Mono 编译器对 <code>foreach</code> 会产生垃圾（枚举器分配）。</li>
+<li>IL2CPP + C# 9+ 对值类型集合 (<code>List&lt;T&gt;</code>, array) 的 <code>foreach</code> 已优化，无分配。</li>
+<li><strong>问题仍存在</strong>：<code>IEnumerable&lt;T&gt;</code> 接口遍历依然装箱。</li>
+</ul>
+<h3 id="List-x2F-Dictionary-扩容"><a href="#List-x2F-Dictionary-扩容" class="headerlink" title="List &#x2F; Dictionary 扩容"></a>List &#x2F; Dictionary 扩容</h3><ul>
+<li><code>List&lt;T&gt;</code> 初始容量 4，<code>Add</code> 超出容量时扩容为 2 倍，内部数组重新分配 + 拷贝 → GC。</li>
+<li><code>Dictionary&lt;K,V&gt;</code> 同理。</li>
+<li>预知数量时指定容量：</li>
+</ul>
+<pre class="highlight"><span class="line"><span class="keyword">var</span> list = <span class="keyword">new</span> List&lt;<span class="built_in">int</span>&gt;(<span class="number">128</span>);</span><br><span class="line"><span class="keyword">var</span> dict = <span class="keyword">new</span> Dictionary&lt;<span class="built_in">string</span>, <span class="built_in">int</span>&gt;(<span class="number">100</span>);</span><br></pre>
+
+<h3 id="Instantiate-与-Destroy"><a href="#Instantiate-与-Destroy" class="headerlink" title="Instantiate 与 Destroy"></a>Instantiate 与 Destroy</h3><ul>
+<li><code>Instantiate</code>：在 C++ 侧创建对象，C# 侧创建包装 → <strong>产生分配</strong>。</li>
+<li><code>Destroy</code>：仅标记，不立即释放 C# 包装。</li>
+<li>高频创建&#x2F;销毁场景 → 使用对象池而非直接 <code>Instantiate</code>&#x2F;<code>Destroy</code>。</li>
+</ul>
+<hr>
+<h2 id="对象池"><a href="#对象池" class="headerlink" title="对象池"></a>对象池</h2><pre class="highlight"><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">SimplePool</span>&lt;<span class="title">T</span>&gt; <span class="keyword">where</span> <span class="title">T</span> : <span class="title">Component</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> Queue&lt;T&gt; pool = <span class="keyword">new</span> Queue&lt;T&gt;();</span><br><span class="line">    <span class="keyword">private</span> T prefab;</span><br><span class="line">    <span class="keyword">private</span> Transform parent;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SimplePool</span>(<span class="params">T prefab, Transform parent, <span class="built_in">int</span> prewarm = <span class="number">10</span></span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">this</span>.prefab = prefab;</span><br><span class="line">        <span class="keyword">this</span>.parent = parent;</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; prewarm; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">var</span> obj = Object.Instantiate(prefab, parent);</span><br><span class="line">            obj.gameObject.SetActive(<span class="literal">false</span>);</span><br><span class="line">            pool.Enqueue(obj);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">Get</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        T obj = pool.Count &gt; <span class="number">0</span> ? pool.Dequeue() : Object.Instantiate(prefab, parent);</span><br><span class="line">        obj.gameObject.SetActive(<span class="literal">true</span>);</span><br><span class="line">        <span class="keyword">return</span> obj;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Return</span>(<span class="params">T obj</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        obj.gameObject.SetActive(<span class="literal">false</span>);</span><br><span class="line">        obj.transform.SetParent(parent);</span><br><span class="line">        pool.Enqueue(obj);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+
+<p><strong>要点</strong>：预热池避免运行时分配峰值；<code>SetActive</code> 控制可见性；<code>SetParent</code> 保持层级干净。</p>
+<hr>
+<h2 id="Resources-UnloadUnusedAssets"><a href="#Resources-UnloadUnusedAssets" class="headerlink" title="Resources.UnloadUnusedAssets"></a>Resources.UnloadUnusedAssets</h2><ul>
+<li>作用：释放所有未被引用的 <code>UnityEngine.Object</code> 的 C# 包装。</li>
+<li>调用时机：场景加载完成后。</li>
+<li><strong>代价</strong>：遍历所有对象标记 + 清理，主线程阻塞，通常耗时几百毫秒。</li>
+<li>不要在游戏过程中反复调用。</li>
+</ul>
+<hr>
+<h2 id="内存分析切入点"><a href="#内存分析切入点" class="headerlink" title="内存分析切入点"></a>内存分析切入点</h2><ul>
+<li><strong>Unity Profiler → Memory 模块</strong>：看 <code>Total Allocated</code>、<code>GC Allocated per Frame</code>。</li>
+<li><strong>Memory Profiler 包</strong>：Snapshot 对比，揪出未释放的 Texture、Mesh 引用。</li>
+<li>**<code>GC.GetTotalMemory(false)</code>**：纯 C# 托管内存总量，可在代码中打点。</li>
+<li><strong>常驻泄漏源</strong>：静态事件未取消订阅、<code>OnDestroy</code> 未移除回调、<code>DontDestroyOnLoad</code> 累积。</li>
 </ul>
 
   </div>
@@ -505,8 +558,8 @@
           <span style="font-weight: bold;">文章链接：</span><a 
             target="_blank" 
             rel="nofollow noopener noreferrer" 
-            href="https://mrlibertine.github.io/2024/06/07/0aebe7b6b0bb/">
-            https://mrlibertine.github.io/2024/06/07/0aebe7b6b0bb/
+            href="https://mrlibertine.github.io/2019/06/07/0ef0a4467201/">
+            https://mrlibertine.github.io/2019/06/07/0ef0a4467201/
           </a>
         </p>
         <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
@@ -518,13 +571,13 @@
   
     <div class="nav-item-prev">
       <a 
-        href="/2026/01/13/19efe93a808b/" 
+        href="/2019/06/07/48ddfcac233f/" 
         class="nav-link">
         <i class="iconfont icon-left nav-prev-icon"></i>
         <div>
           <div class="nav-label">上一篇</div>
           
-            <div class="nav-title">AI 与 LLM 术语速查 </div>
+            <div class="nav-title">一些比较有用的网站 </div>
           
         </div>
       </a>
@@ -533,12 +586,12 @@
   
     <div class="nav-item-next">
       <a 
-        href="/2023/06/07/9173fa8501d6/" 
+        href="/2019/06/07/6437e08068ed/" 
         class="nav-link">
         <div>
           <div class="nav-label">下一篇</div>
           
-            <div class="nav-title">关于GLSL一些内置函数 </div>
+            <div class="nav-title">Unity Editor 工具脚本速查 </div>
           
         </div>
         <i class="iconfont icon-right nav-next-icon"></i>
@@ -556,7 +609,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#linux%E9%83%A8%E7%BD%B2dotnet-runtime"><span class="toc-text">linux部署dotnet runtime</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dotnet-%E7%A8%8B%E5%BA%8F%E8%87%AA%E5%8C%85%E5%90%AB%E6%A8%A1%E5%BC%8F%E6%93%8D%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-text">dotnet 程序自包含模式操作流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E4%B8%AD%E5%85%B3%E9%97%AD%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="toc-text">Linux中关闭程序的命令</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%80%BC%E7%B1%BB%E5%9E%8B-vs-%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B"><span class="toc-text">值类型 vs 引用类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GC-%E8%A7%A6%E5%8F%91%E6%9D%A1%E4%BB%B6"><span class="toc-text">GC 触发条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81-GC-%E5%88%86%E9%85%8D%E6%BA%90%E5%8F%8A%E4%BC%98%E5%8C%96"><span class="toc-text">常见 GC 分配源及优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#string-%E6%8B%BC%E6%8E%A5"><span class="toc-text">string 拼接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A3%85%E7%AE%B1%E6%8B%86%E7%AE%B1"><span class="toc-text">装箱拆箱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#foreach-%E6%97%A7%E7%89%88%E6%9C%AC%E9%99%B7%E9%98%B1"><span class="toc-text">foreach 旧版本陷阱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#List-x2F-Dictionary-%E6%89%A9%E5%AE%B9"><span class="toc-text">List &#x2F; Dictionary 扩容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Instantiate-%E4%B8%8E-Destroy"><span class="toc-text">Instantiate 与 Destroy</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E6%B1%A0"><span class="toc-text">对象池</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Resources-UnloadUnusedAssets"><span class="toc-text">Resources.UnloadUnusedAssets</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E6%9E%90%E5%88%87%E5%85%A5%E7%82%B9"><span class="toc-text">内存分析切入点</span></a></li></ol>
 </div>
                     </main>
                     <aside class="right-column">
@@ -570,7 +623,7 @@
     style="padding-right: 2px;">
   </i>目录
 </div>
-<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#linux%E9%83%A8%E7%BD%B2dotnet-runtime"><span class="toc-text">linux部署dotnet runtime</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dotnet-%E7%A8%8B%E5%BA%8F%E8%87%AA%E5%8C%85%E5%90%AB%E6%A8%A1%E5%BC%8F%E6%93%8D%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="toc-text">dotnet 程序自包含模式操作流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Linux%E4%B8%AD%E5%85%B3%E9%97%AD%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="toc-text">Linux中关闭程序的命令</span></a></li></ol>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%80%BC%E7%B1%BB%E5%9E%8B-vs-%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B"><span class="toc-text">值类型 vs 引用类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GC-%E8%A7%A6%E5%8F%91%E6%9D%A1%E4%BB%B6"><span class="toc-text">GC 触发条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81-GC-%E5%88%86%E9%85%8D%E6%BA%90%E5%8F%8A%E4%BC%98%E5%8C%96"><span class="toc-text">常见 GC 分配源及优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#string-%E6%8B%BC%E6%8E%A5"><span class="toc-text">string 拼接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A3%85%E7%AE%B1%E6%8B%86%E7%AE%B1"><span class="toc-text">装箱拆箱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#foreach-%E6%97%A7%E7%89%88%E6%9C%AC%E9%99%B7%E9%98%B1"><span class="toc-text">foreach 旧版本陷阱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#List-x2F-Dictionary-%E6%89%A9%E5%AE%B9"><span class="toc-text">List &#x2F; Dictionary 扩容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Instantiate-%E4%B8%8E-Destroy"><span class="toc-text">Instantiate 与 Destroy</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E6%B1%A0"><span class="toc-text">对象池</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Resources-UnloadUnusedAssets"><span class="toc-text">Resources.UnloadUnusedAssets</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E6%9E%90%E5%88%87%E5%85%A5%E7%82%B9"><span class="toc-text">内存分析切入点</span></a></li></ol>
     </article>
   
   
