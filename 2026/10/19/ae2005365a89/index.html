@@ -18,12 +18,12 @@
   <link 
     rel="icon" 
     href="/">
-  <title>Unity 客户端面试 Demo（WebGL 在线体验）</title>
+  <title>Unity 客户端 UI 性能实践：虚拟列表、合批与框架设计</title>
   
     
       <meta 
         property="og:title" 
-        content="Unity 客户端面试 Demo（WebGL 在线体验）">
+        content="Unity 客户端 UI 性能实践：虚拟列表、合批与框架设计">
     
     
       <meta 
@@ -360,45 +360,9 @@
   <div class="tags-list">
     
       <a 
-        href="/tags/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/" 
-        title="杂七杂八">
-        <div class="tags-list-item">杂七杂八</div>
-      </a>
-    
-      <a 
-        href="/tags/Linux/" 
-        title="Linux">
-        <div class="tags-list-item">Linux</div>
-      </a>
-    
-      <a 
-        href="/tags/Unity/" 
-        title="Unity">
-        <div class="tags-list-item">Unity</div>
-      </a>
-    
-      <a 
-        href="/tags/WebGL/" 
-        title="WebGL">
-        <div class="tags-list-item">WebGL</div>
-      </a>
-    
-      <a 
-        href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" 
-        title="性能优化">
-        <div class="tags-list-item">性能优化</div>
-      </a>
-    
-      <a 
-        href="/tags/UGUI/" 
-        title="UGUI">
-        <div class="tags-list-item">UGUI</div>
-      </a>
-    
-      <a 
-        href="/tags/%E4%B8%80%E4%BA%9B%E6%AF%94%E8%BE%83%E6%9C%89%E7%94%A8%E7%9A%84%E7%BD%91%E7%AB%99/" 
-        title="一些比较有用的网站">
-        <div class="tags-list-item">一些比较有用的网站</div>
+        href="/tags/GLSL/" 
+        title="GLSL">
+        <div class="tags-list-item">GLSL</div>
       </a>
     
       <a 
@@ -408,9 +372,45 @@
       </a>
     
       <a 
-        href="/tags/GLSL/" 
-        title="GLSL">
-        <div class="tags-list-item">GLSL</div>
+        href="/tags/%E4%B8%80%E4%BA%9B%E6%AF%94%E8%BE%83%E6%9C%89%E7%94%A8%E7%9A%84%E7%BD%91%E7%AB%99/" 
+        title="一些比较有用的网站">
+        <div class="tags-list-item">一些比较有用的网站</div>
+      </a>
+    
+      <a 
+        href="/tags/UGUI/" 
+        title="UGUI">
+        <div class="tags-list-item">UGUI</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" 
+        title="性能优化">
+        <div class="tags-list-item">性能优化</div>
+      </a>
+    
+      <a 
+        href="/tags/WebGL/" 
+        title="WebGL">
+        <div class="tags-list-item">WebGL</div>
+      </a>
+    
+      <a 
+        href="/tags/Unity/" 
+        title="Unity">
+        <div class="tags-list-item">Unity</div>
+      </a>
+    
+      <a 
+        href="/tags/Linux/" 
+        title="Linux">
+        <div class="tags-list-item">Linux</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/" 
+        title="杂七杂八">
+        <div class="tags-list-item">杂七杂八</div>
       </a>
     
   </div>
@@ -425,7 +425,7 @@
 <article class="card card-content">
   <header>
     <h1 class="post-title">
-      Unity 客户端面试 Demo（WebGL 在线体验）
+      Unity 客户端 UI 性能实践：虚拟列表、合批与框架设计
     </h1>
   </header>
   <div class="post-meta post-show-meta">
@@ -448,7 +448,7 @@
     
     
       <span class="dot"></span>
-      <span>585 字</span>
+      <span>1.2k 字</span>
     
   </div>
   
@@ -502,26 +502,39 @@
   <div 
     id="section" 
     class="post-content">
-    <p>找工作期间做的一个可运行的 Unity 客户端 Demo，把简历里最容易被追问的几块能力（UI 框架、虚拟列表、对象池、DrawCall 合批、技能战斗表现）做成了可以现场操作的页面。整个工程零美术资源依赖：贴图、图集、UI 全部由代码在运行时生成。</p>
-<p>直接在下面就能玩（首次加载需要下载约 10MB 运行时，请稍等）：</p>
-<iframe src="/demo/index.html" width="100%" height="700" frameborder="0" loading="lazy" style="border-radius:8px;border:1px solid #2a3242;background:#0b0e14;"></iframe>
+    <p>一个可以直接在浏览器里运行的 Unity 客户端工程，把 UGUI 里最容易出问题的几块——长列表、对象池、DrawCall 合批、UI 框架、内存分配、遮罩、帧率分布——做成了可实时观察的形式：每一项都能切换参数，当场看帧率、节点数、批次、堆分配的变化。</p>
+<p>整个工程零美术资源依赖：贴图、图集、UI 全部由代码在运行时生成，<code>clone</code> 下来就能跑。</p>
+<p>在下面直接体验（首次加载需要下载约 10MB 运行时，请稍等）：</p>
+<iframe src="/unity-ui-performance/index.html" width="100%" height="700" frameborder="0" loading="lazy" allow="fullscreen" allowfullscreen style="border-radius:8px;border:1px solid #2a3242;background:#0b0e14;"></iframe>
 
 <blockquote>
-<p>建议用电脑浏览器打开；加载后点击画面获取键盘焦点，右上角可全屏。</p>
+<p>建议用电脑浏览器打开；加载后点击画面获取键盘焦点，画面<strong>右上角有全屏按钮</strong>（Esc 退出）。<br>也可以<a href="/unity-ui-performance/index.html">在新窗口单独打开</a>。</p>
 </blockquote>
-<h2 id="演示内容"><a href="#演示内容" class="headerlink" title="演示内容"></a>演示内容</h2><ol>
-<li><strong>虚拟列表</strong> —— 10 万条数据的列表，常驻只有 14 个节点，滚动时”绑定次数”上涨而”创建次数”不涨，直观展示区间回收复用。</li>
-<li><strong>对象池压测</strong> —— 同一套粒子动画，直连 Instantiate vs 池复用，实时对比创建次数、每帧耗时、单帧峰值，自动给出结论。</li>
-<li><strong>DrawCall 合批</strong> —— 160 个视觉相同的元素，共享图集模式只有 4 个 Batch，切到独立纹理直接飙到 160+，现场看合批是怎么被打断的。</li>
-<li><strong>技能战斗</strong> —— 弹道、范围光圈、飘字全部走对象池，1x~12x 并发可调，实时帧率与活跃对象数监控。</li>
+<h2 id="演示内容"><a href="#演示内容" class="headerlink" title="演示内容"></a>演示内容</h2><p><strong>基础优化</strong></p>
+<ol>
+<li><strong>虚拟列表</strong> —— 10 万条数据的列表，常驻只有 14 个节点：滚动时”绑定次数”持续上涨，”创建次数”保持不变，说明节点是在复用而不是反复创建。</li>
+<li><strong>对象池压测</strong> —— 同一套粒子动画，直连 Instantiate 与走池复用分两轮跑，实时对比创建次数、每帧耗时、单帧峰值，最后自动给出结论。</li>
+<li><strong>DrawCall 合批</strong> —— 160 个视觉完全相同的元素，共享图集模式下只有 4 个 Batch，切到独立纹理立刻飙到 160+，可以直观看到合批是怎么被打断的。</li>
+<li><strong>技能战斗</strong> —— 弹道、范围光圈、飘字全部走对象池，1x~12x 并发可调，实时监控帧率与活跃对象数。</li>
+</ol>
+<p><strong>框架与工程深度</strong></p>
+<ol start="5">
+<li><strong>UI 框架</strong> —— 窗口栈是真实在跑的：按 Layer 插入排序（而不是谁后创建谁在上）、模态弹窗阻断下层、三个弹窗请求排队串行显示、事件派发用泛型。页面右侧可以直接跑 10 万次派发，对比泛型与 <code>object</code> 装箱版的耗时和堆分配。</li>
+<li><strong>内存实验室</strong> —— 六种常见写法各跑 2 万轮，测量托管堆净增长：字符串拼接、StringBuilder 复用、装箱、闭包捕获、LINQ、数组遍历。柱状图长度就是垃圾产生量。</li>
+<li><strong>遮罩断批</strong> —— 三列内容完全一致（同图集、同色、同尺寸），只换裁剪方式。元素从 18 增到 72，批次数几乎不变说明合批生效；而 Mask 那列始终比 RectMask2D 多出固定的 2 批。</li>
+<li><strong>帧分析</strong> —— 最近 600 帧的直方图、P50 &#x2F; P95 &#x2F; P99、最慢帧、超过 33ms 的卡顿计数。还提供一个”压力注入”开关，故意每帧烧 CPU，看 P95 立刻变脸。</li>
 </ol>
 <h2 id="几个值得说的技术点"><a href="#几个值得说的技术点" class="headerlink" title="几个值得说的技术点"></a>几个值得说的技术点</h2><ul>
-<li><strong>零资源依赖</strong>：所有 UI 由一套自研 UIKit 在运行时构建，底图三张合一张运行时图集（带 4px 防渗色 padding），不怕现场丢资源。</li>
-<li><strong>合批监控按 UGUI 规则反推</strong>：运行时无法读取 UnityStats，所以按”同材质 + 同贴图连续”的合批条件自己估算 Batch 数，并且只统计演示网格区域，避免字体贴图噪声污染数字。</li>
-<li><strong>WebGL 版的中文坑</strong>：WebGL 拿不到系统字体，<code>CreateDynamicFontFromOSFont</code> 直接返回 null，中文全是豆腐块。所以把中文字库直接打进包内（Resources 加载），这也是所有带中文的 WebGL 项目都会踩的坑。</li>
-<li><strong>部署适配 GitHub Pages</strong>：Pages 不给自定义响应头，Brotli 必挂、多线程（COOP&#x2F;COEP）也开不了，所以构建用了 Gzip 压缩 + Decompression Fallback（pako 内置进 loader，由 JS 自己解压），包体控制在 10MB 左右。</li>
+<li><strong>层级由数据决定，不由创建顺序决定</strong>：后打开的 HUD 如果直接 <code>Add</code> 到列表末尾，会盖住已经开着的弹窗。所以压栈时按 <code>UILayer</code> 枚举值插入，再同步 <code>siblingIndex</code>，而不是依赖 <code>Canvas.sortingOrder</code>（Overlay 下每多一个 sortingOrder 就多一次 Canvas 切分）。</li>
+<li><strong>值类型事件不要走 object</strong>：<code>Publish&lt;T&gt;(T evt)</code> 是泛型方法，<code>T</code> 为 struct 时编译期生成专用代码，全程无装箱；换成 <code>Publish(object)</code> 每次派发都在堆上留一块垃圾。战斗里一帧几百个伤害事件，这个差别会被放大到 GC 层面。</li>
+<li><strong>合批监控按 UGUI 规则反推</strong>：运行时读不到 UnityStats，所以按”同材质 + 同贴图连续”的合批条件自己估算 Batch 数，且遇到 <code>Mask</code> 时按 stencil 规则 +2 并强制断批。只统计演示区域，避免字体贴图干扰统计结果。</li>
+<li><strong>RectMask2D 与 Mask 的差别在模板缓冲</strong>：前者只往材质传一个 <code>_ClipRect</code> 参数，不换材质、不加批次；后者要写模板再还原，每个至少 +2 个 DrawCall，并且子树与外部一定断批。所以滚动列表一律用 RectMask2D，Mask 只留给圆形头像这类非矩形裁剪。</li>
+<li><strong>帧率要看分布不看均值</strong>：59 帧 10ms 加 1 帧 200ms，均值依然是”稳 60”，但玩家感受到的是那一次卡顿。所以记录 P95 &#x2F; P99 与超阈值次数，单帧超标时打一条上下文快照，比事后靠玩家描述去猜有效得多。</li>
+<li><strong>零资源依赖</strong>：所有 UI 由一套自研 UIKit 在运行时构建，底图三张合一张运行时图集（带 4px 防渗色 padding），避免贴图边缘出现细缝。</li>
+<li><strong>WebGL 下的中文字体</strong>：WebGL 拿不到系统字体，<code>CreateDynamicFontFromOSFont</code> 直接返回 null，中文会全部变成方块。解决办法是把中文字库直接打进包内，通过 <code>Resources</code> 加载。</li>
+<li><strong>部署适配 GitHub Pages</strong>：Pages 不提供自定义响应头，Brotli 压缩和线程支持（依赖 COOP&#x2F;COEP）都用不了，因此构建采用 Gzip + Decompression Fallback（解压逻辑内置在 loader 里，由 JS 自行解压），包体控制在 10MB 左右。</li>
 </ul>
-<p>工程源码与 Windows 免安装版（<code>Demo.exe</code>）另有交付，面试时可以现场打开 Unity 源码逐页讲实现。</p>
+<p>工程源码与 Windows 免安装版同步提供，可以对照源码查看每页的实现细节。</p>
 
   </div>
   <div>
@@ -608,7 +621,7 @@
     
       <div class="recent-posts-item">
         <div class="recent-posts-item-title">2026-10-19</div>
-        <a href="/2026/10/19/ae2005365a89/"><div class="recent-posts-item-content">Unity 客户端面试 Demo（WebGL 在线体验）</div></a>
+        <a href="/2026/10/19/ae2005365a89/"><div class="recent-posts-item-content">Unity 客户端 UI 性能实践：虚拟列表、合批与框架设计</div></a>
       </div>
     
       <div class="recent-posts-item">
