@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>C# 与 Unity 内存管理速查</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="C# 与 Unity 内存管理速查">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://mrlibertine.github.io/2019/06/07/0ef0a4467201/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="/img/68339006.png">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2019-06-07">
+      <meta 
+        property="og:article:modified_time" 
+        content="2026-10-22">
+      <meta 
+        property="og:article:author" 
+        content="MrLibertine">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="Unity">
+        
+          <meta 
+            property="og:article:tag" 
+            content="C#">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div class="wrapper">
+      
+        <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">MrLibertine</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav>
+          
+            <div id="local-search" style="display: none">
+              <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容..." />
+              <div id="search-content"></div>
+            </div>
+            
+              <div class="section-wrap">
+                <div class="container">
+                  <div class="columns">
+                    <aside class="left-column">
+                      
+                        <div class="card card-author">
+                          
+  <img 
+    src="/img/68339006.png" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">MrLibertine</p>
+<p class="author-description">designed by MrLibertine</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>18</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>1</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>22</span>
+    <span>标签</span>
+  </a>
+</div>
+
+                        </div>
+                         <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%80%BC%E7%B1%BB%E5%9E%8B-vs-%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B"><span class="toc-text">值类型 vs 引用类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GC-%E8%A7%A6%E5%8F%91%E6%9D%A1%E4%BB%B6"><span class="toc-text">GC 触发条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81-GC-%E5%88%86%E9%85%8D%E6%BA%90%E5%8F%8A%E4%BC%98%E5%8C%96"><span class="toc-text">常见 GC 分配源及优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#string-%E6%8B%BC%E6%8E%A5"><span class="toc-text">string 拼接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A3%85%E7%AE%B1%E6%8B%86%E7%AE%B1"><span class="toc-text">装箱拆箱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#foreach-%E6%97%A7%E7%89%88%E6%9C%AC%E9%99%B7%E9%98%B1"><span class="toc-text">foreach 旧版本陷阱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#List-x2F-Dictionary-%E6%89%A9%E5%AE%B9"><span class="toc-text">List &#x2F; Dictionary 扩容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Instantiate-%E4%B8%8E-Destroy"><span class="toc-text">Instantiate 与 Destroy</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E6%B1%A0"><span class="toc-text">对象池</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Resources-UnloadUnusedAssets"><span class="toc-text">Resources.UnloadUnusedAssets</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E6%9E%90%E5%88%87%E5%85%A5%E7%82%B9"><span class="toc-text">内存分析切入点</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/Unity/">
+        <div class="categories-list-item">
+          Unity
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/AI/" 
+        title="AI">
+        <div class="tags-list-item">AI</div>
+      </a>
+    
+      <a 
+        href="/tags/LLM/" 
+        title="LLM">
+        <div class="tags-list-item">LLM</div>
+      </a>
+    
+      <a 
+        href="/tags/NLP/" 
+        title="NLP">
+        <div class="tags-list-item">NLP</div>
+      </a>
+    
+      <a 
+        href="/tags/RAG/" 
+        title="RAG">
+        <div class="tags-list-item">RAG</div>
+      </a>
+    
+      <a 
+        href="/tags/Unity/" 
+        title="Unity">
+        <div class="tags-list-item">Unity</div>
+      </a>
+    
+      <a 
+        href="/tags/C/" 
+        title="C#">
+        <div class="tags-list-item">C#</div>
+      </a>
+    
+      <a 
+        href="/tags/LayaAir/" 
+        title="LayaAir">
+        <div class="tags-list-item">LayaAir</div>
+      </a>
+    
+      <a 
+        href="/tags/WebView/" 
+        title="WebView">
+        <div class="tags-list-item">WebView</div>
+      </a>
+    
+      <a 
+        href="/tags/Worker/" 
+        title="Worker">
+        <div class="tags-list-item">Worker</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E/" 
+        title="游戏引擎">
+        <div class="tags-list-item">游戏引擎</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/" 
+        title="杂七杂八">
+        <div class="tags-list-item">杂七杂八</div>
+      </a>
+    
+      <a 
+        href="/tags/Linux/" 
+        title="Linux">
+        <div class="tags-list-item">Linux</div>
+      </a>
+    
+      <a 
+        href="/tags/WebGL/" 
+        title="WebGL">
+        <div class="tags-list-item">WebGL</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" 
+        title="性能优化">
+        <div class="tags-list-item">性能优化</div>
+      </a>
+    
+      <a 
+        href="/tags/UGUI/" 
+        title="UGUI">
+        <div class="tags-list-item">UGUI</div>
+      </a>
+    
+      <a 
+        href="/tags/GLSL/" 
+        title="GLSL">
+        <div class="tags-list-item">GLSL</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+                    </aside>
+                    <main class="main-column">
+                      
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      C# 与 Unity 内存管理速查
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2019-06-07T02:00:00.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2019-06-07</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>799 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/Unity/" 
+            class="post-meta-link">
+            Unity
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/C/" 
+            class="post-meta-link">
+            C#
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <h2 id="值类型-vs-引用类型"><a href="#值类型-vs-引用类型" class="headerlink" title="值类型 vs 引用类型"></a>值类型 vs 引用类型</h2><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>分配位置</th>
+<th>回收方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>值类型 (<code>struct</code>, <code>int</code>, <code>float</code>, <code>bool</code>)</td>
+<td>栈 &#x2F; 作为引用类型字段时在堆</td>
+<td>作用域退出自动释放</td>
+</tr>
+<tr>
+<td>引用类型 (<code>class</code>, <code>string</code>, <code>数组</code>, <code>delegate</code>)</td>
+<td>托管堆</td>
+<td>GC 回收</td>
+</tr>
+</tbody></table>
+<p><strong>Unity 特殊规则</strong>：从 <code>UnityEngine.Object</code> 派生的类型（GameObject、MonoBehaviour、Texture 等）由 Unity 的 C++ 侧持有，C# 侧只存句柄。<code>Destroy</code> 只标记 C++ 对象，C# 包装对象待 <code>Resources.UnloadUnusedAssets</code> 或场景切换时释放。</p>
+<hr>
+<h2 id="GC-触发条件"><a href="#GC-触发条件" class="headerlink" title="GC 触发条件"></a>GC 触发条件</h2><ol>
+<li><strong>堆内存分配超过阈值</strong>：Mono 和 IL2CPP 的 GC 阈值不同，分配累积到一定量触发。</li>
+<li><strong><code>System.GC.Collect()</code> 手动调用</strong>：应避免在运行时调用。</li>
+<li><strong>内存不足</strong>：移动端系统全局内存压力。</li>
+</ol>
+<p><strong>IL2CPP 的 GC</strong> 与 Mono 不同——使用 Boehm GC（非分代），每次触发都是全堆扫描，耗时更长。</p>
+<hr>
+<h2 id="常见-GC-分配源及优化"><a href="#常见-GC-分配源及优化" class="headerlink" title="常见 GC 分配源及优化"></a>常见 GC 分配源及优化</h2><h3 id="string-拼接"><a href="#string-拼接" class="headerlink" title="string 拼接"></a>string 拼接</h3><pre class="highlight"><span class="line"><span class="comment">// ❌ 每帧 1 次分配</span></span><br><span class="line"><span class="built_in">string</span> s = <span class="string">&quot;Score: &quot;</span> + score;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ✅ 无分配</span></span><br><span class="line"><span class="built_in">int</span> score;</span><br><span class="line"><span class="comment">// UI Text 直接设数值，或</span></span><br><span class="line">StringBuilder sb = <span class="keyword">new</span> StringBuilder(<span class="number">64</span>);</span><br><span class="line">sb.Clear();</span><br><span class="line">sb.Append(<span class="string">&quot;Score: &quot;</span>);</span><br><span class="line">sb.Append(score);</span><br></pre>
+
+<h3 id="装箱拆箱"><a href="#装箱拆箱" class="headerlink" title="装箱拆箱"></a>装箱拆箱</h3><pre class="highlight"><span class="line"><span class="comment">// ❌ 装箱：int → object</span></span><br><span class="line"><span class="built_in">object</span> obj = <span class="number">42</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ❌ 常见隐藏装箱：Debug.Log 多参数</span></span><br><span class="line">Debug.Log(<span class="string">&quot;Value: &quot;</span> + <span class="keyword">value</span>); <span class="comment">// 仍然是 string 拼接</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// ❌ 枚举作为 Dictionary 的 key 不使用 comparer</span></span><br><span class="line">Dictionary&lt;MyEnum, <span class="built_in">int</span>&gt; dict; <span class="comment">// 每次查找装箱</span></span><br><span class="line"><span class="comment">// ✅</span></span><br><span class="line">Dictionary&lt;MyEnum, <span class="built_in">int</span>&gt; dict = <span class="keyword">new</span> Dictionary&lt;MyEnum, <span class="built_in">int</span>&gt;(<span class="keyword">new</span> MyEnumComparer());</span><br></pre>
+
+<h3 id="foreach-旧版本陷阱"><a href="#foreach-旧版本陷阱" class="headerlink" title="foreach 旧版本陷阱"></a>foreach 旧版本陷阱</h3><ul>
+<li>Unity 早期用的 Mono 编译器对 <code>foreach</code> 会产生垃圾（枚举器分配）。</li>
+<li>IL2CPP + C# 9+ 对值类型集合 (<code>List&lt;T&gt;</code>, array) 的 <code>foreach</code> 已优化，无分配。</li>
+<li><strong>问题仍存在</strong>：<code>IEnumerable&lt;T&gt;</code> 接口遍历依然装箱。</li>
+</ul>
+<h3 id="List-x2F-Dictionary-扩容"><a href="#List-x2F-Dictionary-扩容" class="headerlink" title="List &#x2F; Dictionary 扩容"></a>List &#x2F; Dictionary 扩容</h3><ul>
+<li><code>List&lt;T&gt;</code> 初始容量 4，<code>Add</code> 超出容量时扩容为 2 倍，内部数组重新分配 + 拷贝 → GC。</li>
+<li><code>Dictionary&lt;K,V&gt;</code> 同理。</li>
+<li>预知数量时指定容量：</li>
+</ul>
+<pre class="highlight"><span class="line"><span class="keyword">var</span> list = <span class="keyword">new</span> List&lt;<span class="built_in">int</span>&gt;(<span class="number">128</span>);</span><br><span class="line"><span class="keyword">var</span> dict = <span class="keyword">new</span> Dictionary&lt;<span class="built_in">string</span>, <span class="built_in">int</span>&gt;(<span class="number">100</span>);</span><br></pre>
+
+<h3 id="Instantiate-与-Destroy"><a href="#Instantiate-与-Destroy" class="headerlink" title="Instantiate 与 Destroy"></a>Instantiate 与 Destroy</h3><ul>
+<li><code>Instantiate</code>：在 C++ 侧创建对象，C# 侧创建包装 → <strong>产生分配</strong>。</li>
+<li><code>Destroy</code>：仅标记，不立即释放 C# 包装。</li>
+<li>高频创建&#x2F;销毁场景 → 使用对象池而非直接 <code>Instantiate</code>&#x2F;<code>Destroy</code>。</li>
+</ul>
+<hr>
+<h2 id="对象池"><a href="#对象池" class="headerlink" title="对象池"></a>对象池</h2><pre class="highlight"><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">SimplePool</span>&lt;<span class="title">T</span>&gt; <span class="keyword">where</span> <span class="title">T</span> : <span class="title">Component</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> Queue&lt;T&gt; pool = <span class="keyword">new</span> Queue&lt;T&gt;();</span><br><span class="line">    <span class="keyword">private</span> T prefab;</span><br><span class="line">    <span class="keyword">private</span> Transform parent;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SimplePool</span>(<span class="params">T prefab, Transform parent, <span class="built_in">int</span> prewarm = <span class="number">10</span></span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">this</span>.prefab = prefab;</span><br><span class="line">        <span class="keyword">this</span>.parent = parent;</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; prewarm; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">var</span> obj = Object.Instantiate(prefab, parent);</span><br><span class="line">            obj.gameObject.SetActive(<span class="literal">false</span>);</span><br><span class="line">            pool.Enqueue(obj);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">Get</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        T obj = pool.Count &gt; <span class="number">0</span> ? pool.Dequeue() : Object.Instantiate(prefab, parent);</span><br><span class="line">        obj.gameObject.SetActive(<span class="literal">true</span>);</span><br><span class="line">        <span class="keyword">return</span> obj;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Return</span>(<span class="params">T obj</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        obj.gameObject.SetActive(<span class="literal">false</span>);</span><br><span class="line">        obj.transform.SetParent(parent);</span><br><span class="line">        pool.Enqueue(obj);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+
+<p><strong>要点</strong>：预热池避免运行时分配峰值；<code>SetActive</code> 控制可见性；<code>SetParent</code> 保持层级干净。</p>
+<hr>
+<h2 id="Resources-UnloadUnusedAssets"><a href="#Resources-UnloadUnusedAssets" class="headerlink" title="Resources.UnloadUnusedAssets"></a>Resources.UnloadUnusedAssets</h2><ul>
+<li>作用：释放所有未被引用的 <code>UnityEngine.Object</code> 的 C# 包装。</li>
+<li>调用时机：场景加载完成后。</li>
+<li><strong>代价</strong>：遍历所有对象标记 + 清理，主线程阻塞，通常耗时几百毫秒。</li>
+<li>不要在游戏过程中反复调用。</li>
+</ul>
+<hr>
+<h2 id="内存分析切入点"><a href="#内存分析切入点" class="headerlink" title="内存分析切入点"></a>内存分析切入点</h2><ul>
+<li><strong>Unity Profiler → Memory 模块</strong>：看 <code>Total Allocated</code>、<code>GC Allocated per Frame</code>。</li>
+<li><strong>Memory Profiler 包</strong>：Snapshot 对比，揪出未释放的 Texture、Mesh 引用。</li>
+<li>**<code>GC.GetTotalMemory(false)</code>**：纯 C# 托管内存总量，可在代码中打点。</li>
+<li><strong>常驻泄漏源</strong>：静态事件未取消订阅、<code>OnDestroy</code> 未移除回调、<code>DontDestroyOnLoad</code> 累积。</li>
+</ul>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            MrLibertine
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://mrlibertine.github.io/2019/06/07/0ef0a4467201/">
+            https://mrlibertine.github.io/2019/06/07/0ef0a4467201/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2019/06/07/48ddfcac233f/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">一些比较有用的网站 </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2019/06/07/6437e08068ed/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">Unity Editor 工具脚本速查 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%80%BC%E7%B1%BB%E5%9E%8B-vs-%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B"><span class="toc-text">值类型 vs 引用类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GC-%E8%A7%A6%E5%8F%91%E6%9D%A1%E4%BB%B6"><span class="toc-text">GC 触发条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81-GC-%E5%88%86%E9%85%8D%E6%BA%90%E5%8F%8A%E4%BC%98%E5%8C%96"><span class="toc-text">常见 GC 分配源及优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#string-%E6%8B%BC%E6%8E%A5"><span class="toc-text">string 拼接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A3%85%E7%AE%B1%E6%8B%86%E7%AE%B1"><span class="toc-text">装箱拆箱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#foreach-%E6%97%A7%E7%89%88%E6%9C%AC%E9%99%B7%E9%98%B1"><span class="toc-text">foreach 旧版本陷阱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#List-x2F-Dictionary-%E6%89%A9%E5%AE%B9"><span class="toc-text">List &#x2F; Dictionary 扩容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Instantiate-%E4%B8%8E-Destroy"><span class="toc-text">Instantiate 与 Destroy</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E6%B1%A0"><span class="toc-text">对象池</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Resources-UnloadUnusedAssets"><span class="toc-text">Resources.UnloadUnusedAssets</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E6%9E%90%E5%88%87%E5%85%A5%E7%82%B9"><span class="toc-text">内存分析切入点</span></a></li></ol>
+</div>
+                    </main>
+                    <aside class="right-column">
+                      <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%80%BC%E7%B1%BB%E5%9E%8B-vs-%E5%BC%95%E7%94%A8%E7%B1%BB%E5%9E%8B"><span class="toc-text">值类型 vs 引用类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#GC-%E8%A7%A6%E5%8F%91%E6%9D%A1%E4%BB%B6"><span class="toc-text">GC 触发条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81-GC-%E5%88%86%E9%85%8D%E6%BA%90%E5%8F%8A%E4%BC%98%E5%8C%96"><span class="toc-text">常见 GC 分配源及优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#string-%E6%8B%BC%E6%8E%A5"><span class="toc-text">string 拼接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A3%85%E7%AE%B1%E6%8B%86%E7%AE%B1"><span class="toc-text">装箱拆箱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#foreach-%E6%97%A7%E7%89%88%E6%9C%AC%E9%99%B7%E9%98%B1"><span class="toc-text">foreach 旧版本陷阱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#List-x2F-Dictionary-%E6%89%A9%E5%AE%B9"><span class="toc-text">List &#x2F; Dictionary 扩容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Instantiate-%E4%B8%8E-Destroy"><span class="toc-text">Instantiate 与 Destroy</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E6%B1%A0"><span class="toc-text">对象池</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Resources-UnloadUnusedAssets"><span class="toc-text">Resources.UnloadUnusedAssets</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E6%9E%90%E5%88%87%E5%85%A5%E7%82%B9"><span class="toc-text">内存分析切入点</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-10-19</div>
+        <a href="/2026/10/19/ae2005365a89/"><div class="recent-posts-item-content">Unity 客户端 UI 性能实践：虚拟列表、合批与框架设计</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-06-09</div>
+        <a href="/2026/06/09/76cfdea54713/"><div class="recent-posts-item-content">LayaAir 原生 vs Unity 原生 — 为什么你的 Worker 在原生 App 里不启用</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-01-13</div>
+        <a href="/2026/01/13/19efe93a808b/"><div class="recent-posts-item-content">AI 与 LLM 术语速查</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2024-06-07</div>
+        <a href="/2024/06/07/0aebe7b6b0bb/"><div class="recent-posts-item-content">Linux部署dotnet程序相关</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+                    </aside>
+                  </div>
+                </div>
+              </div>
+    </div>
+    
+      <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2026
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          MrLibertine
+        </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+
+        
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+          
+            
+                  
+                    <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+
+                      
+                        
+                          <script src="/js/main.js"></script>
+                            
+                              <script>
+                                loadScript('/js/lib/busuanzi.min.js') 
+                              </script>
+                              
+                                
+                                  <script>
+                                    var addLazyload = function () {
+                                      var observer = lozad('.lozad', {
+                                        load: function (el) {
+                                          el.srcset = el.getAttribute('data-src')
+                                        },
+                                        loaded: function (el) {
+                                          el.classList.add('loaded')
+                                        },
+                                      })
+                                      observer.observe()
+                                    }
+                                  </script>
+                                  <script>
+                                    loadScript('/js/lib/lozad.min.js', addLazyload)
+                                  </script>
+                                  
+                                    <script src="//instant.page/5.1.0" type="module"
+                                      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+                                    
+                                        
+  </body>
+
+</html>

@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>游戏配置表自动生成工具实现</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="游戏配置表自动生成工具实现">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://mrlibertine.github.io/2022/08/15/5f4375464c70/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="/img/68339006.png">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2022-08-15">
+      <meta 
+        property="og:article:modified_time" 
+        content="2026-10-22">
+      <meta 
+        property="og:article:author" 
+        content="MrLibertine">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="Unity">
+        
+          <meta 
+            property="og:article:tag" 
+            content="C#">
+        
+          <meta 
+            property="og:article:tag" 
+            content="工具">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div class="wrapper">
+      
+        <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">MrLibertine</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav>
+          
+            <div id="local-search" style="display: none">
+              <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容..." />
+              <div id="search-content"></div>
+            </div>
+            
+              <div class="section-wrap">
+                <div class="container">
+                  <div class="columns">
+                    <aside class="left-column">
+                      
+                        <div class="card card-author">
+                          
+  <img 
+    src="/img/68339006.png" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">MrLibertine</p>
+<p class="author-description">designed by MrLibertine</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>18</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>1</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>22</span>
+    <span>标签</span>
+  </a>
+</div>
+
+                        </div>
+                         <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98"><span class="toc-text">问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E6%80%9D%E8%B7%AF"><span class="toc-text">整体思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%A8%E7%BB%93%E6%9E%84%E7%BA%A6%E5%AE%9A"><span class="toc-text">表结构约定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%9F%E6%88%90-C-%E7%B1%BB"><span class="toc-text">生成 C# 类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E9%80%89%E5%9E%8B"><span class="toc-text">序列化选型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E6%9F%A5%E8%AF%A2"><span class="toc-text">运行时查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%BE%91%E5%99%A8%E9%9B%86%E6%88%90"><span class="toc-text">编辑器集成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%A0%E7%A7%8D%E7%89%B9%E6%AE%8A%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%A4%84%E7%90%86"><span class="toc-text">几种特殊类型的处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E7%BB%84%E5%92%8C%E5%88%97%E8%A1%A8"><span class="toc-text">数组和列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%9A%E4%B8%BE"><span class="toc-text">枚举</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E8%81%94%E5%85%B6%E4%BB%96%E8%A1%A8"><span class="toc-text">关联其他表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E8%A1%8C%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-text">多行字符串</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E7%94%A8%E4%BA%86%E4%B8%89%E5%B9%B4%E4%B9%8B%E5%90%8E%E7%9A%84%E6%84%9F%E5%8F%97"><span class="toc-text">实际用了三年之后的感受</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/Unity/">
+        <div class="categories-list-item">
+          Unity
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/AI/" 
+        title="AI">
+        <div class="tags-list-item">AI</div>
+      </a>
+    
+      <a 
+        href="/tags/LLM/" 
+        title="LLM">
+        <div class="tags-list-item">LLM</div>
+      </a>
+    
+      <a 
+        href="/tags/NLP/" 
+        title="NLP">
+        <div class="tags-list-item">NLP</div>
+      </a>
+    
+      <a 
+        href="/tags/RAG/" 
+        title="RAG">
+        <div class="tags-list-item">RAG</div>
+      </a>
+    
+      <a 
+        href="/tags/Unity/" 
+        title="Unity">
+        <div class="tags-list-item">Unity</div>
+      </a>
+    
+      <a 
+        href="/tags/C/" 
+        title="C#">
+        <div class="tags-list-item">C#</div>
+      </a>
+    
+      <a 
+        href="/tags/LayaAir/" 
+        title="LayaAir">
+        <div class="tags-list-item">LayaAir</div>
+      </a>
+    
+      <a 
+        href="/tags/WebView/" 
+        title="WebView">
+        <div class="tags-list-item">WebView</div>
+      </a>
+    
+      <a 
+        href="/tags/Worker/" 
+        title="Worker">
+        <div class="tags-list-item">Worker</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E/" 
+        title="游戏引擎">
+        <div class="tags-list-item">游戏引擎</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/" 
+        title="杂七杂八">
+        <div class="tags-list-item">杂七杂八</div>
+      </a>
+    
+      <a 
+        href="/tags/Linux/" 
+        title="Linux">
+        <div class="tags-list-item">Linux</div>
+      </a>
+    
+      <a 
+        href="/tags/WebGL/" 
+        title="WebGL">
+        <div class="tags-list-item">WebGL</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" 
+        title="性能优化">
+        <div class="tags-list-item">性能优化</div>
+      </a>
+    
+      <a 
+        href="/tags/UGUI/" 
+        title="UGUI">
+        <div class="tags-list-item">UGUI</div>
+      </a>
+    
+      <a 
+        href="/tags/GLSL/" 
+        title="GLSL">
+        <div class="tags-list-item">GLSL</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+                    </aside>
+                    <main class="main-column">
+                      
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      游戏配置表自动生成工具实现
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2022-08-15T02:00:00.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2022-08-15</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>1.8k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/Unity/" 
+            class="post-meta-link">
+            Unity
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/C/" 
+            class="post-meta-link">
+            C#
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/%E5%B7%A5%E5%85%B7/" 
+            class="post-meta-link">
+            工具
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>游戏里到处都是配置表：装备属性、技能参数、关卡掉落、NPC 对话……策划在 Excel 里填数据，程序要把它变成代码里能用的东西。</p>
+<p>最原始的做法：策划填好 Excel，程序手动转成 CSV 或手写 JSON，然后代码里 Load 进来按行解析。问题很明显——</p>
+<p>每次策划加一列、改个字段名，程序都得跟着改读取逻辑，来回沟通成本高，还容易出 bug（表头拼错、索引对不上、类型搞混）。</p>
+<p>我们需要一个工具：<strong>策划只管在 Excel 里填数据，跑一下工具，自动生成对应的 C# 类和序列化数据，代码里直接用。</strong></p>
+<hr>
+<h2 id="整体思路"><a href="#整体思路" class="headerlink" title="整体思路"></a>整体思路</h2><pre class="highlight"><span class="line">Excel 文件  →  工具读取  →  生成 C# 类 + 二进制数据  →  游戏运行时加载</span><br></pre>
+
+<p>分两步：</p>
+<ol>
+<li><strong>生成阶段（编辑器下）</strong>：读 Excel，按规则生成 <code>.cs</code> 文件和序列化后的数据文件（我们选的二进制，比 JSON 快、省空间）</li>
+<li><strong>运行时阶段</strong>：加载二进制数据，反序列化成强类型对象，直接拿属性访问</li>
+</ol>
+<hr>
+<h2 id="表结构约定"><a href="#表结构约定" class="headerlink" title="表结构约定"></a>表结构约定</h2><p>让策划按固定格式填，工具才能正确解析。Excel 里一张表长这样：</p>
+<table>
+<thead>
+<tr>
+<th>第一行</th>
+<th>id</th>
+<th>name</th>
+<th>attack</th>
+<th>defense</th>
+<th>skillIds</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>第二行</td>
+<td>int</td>
+<td>string</td>
+<td>int</td>
+<td>int</td>
+<td>int[]</td>
+</tr>
+<tr>
+<td>第三行</td>
+<td>编号</td>
+<td>名称</td>
+<td>攻击力</td>
+<td>防御力</td>
+<td>技能组</td>
+</tr>
+<tr>
+<td>数据行</td>
+<td>1001</td>
+<td>铁剑</td>
+<td>15</td>
+<td>0</td>
+<td>101,102</td>
+</tr>
+<tr>
+<td>数据行</td>
+<td>1002</td>
+<td>皮甲</td>
+<td>0</td>
+<td>8</td>
+<td>201</td>
+</tr>
+</tbody></table>
+<p>规则很简单：</p>
+<ul>
+<li><strong>第一行是字段名</strong>，生成 C# 类的时候用它做属性名</li>
+<li><strong>第二行是字段类型</strong>，决定 C# 属性的类型和序列化怎么读写</li>
+<li><strong>第三行是中文注释</strong>，直接生成 <code>&lt;summary&gt;</code> 注释</li>
+<li><strong>第四行开始是数据</strong></li>
+</ul>
+<hr>
+<h2 id="生成-C-类"><a href="#生成-C-类" class="headerlink" title="生成 C# 类"></a>生成 C# 类</h2><p>工具读 Excel 的前三行就能生成类了。核心逻辑：</p>
+<pre class="highlight"><span class="line"><span class="comment">// 读取表头</span></span><br><span class="line"><span class="keyword">var</span> fieldNames = sheet.GetRow(<span class="number">0</span>);  <span class="comment">// id, name, attack, defense, skillIds</span></span><br><span class="line"><span class="keyword">var</span> fieldTypes = sheet.GetRow(<span class="number">1</span>);  <span class="comment">// int, string, int, int, int[]</span></span><br><span class="line"><span class="keyword">var</span> fieldDescs = sheet.GetRow(<span class="number">2</span>);  <span class="comment">// 编号, 名称, 攻击力, 防御力, 技能组</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> sb = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">sb.AppendLine(<span class="string">&quot;/// &lt;summary&gt;&quot;</span>);</span><br><span class="line">sb.AppendLine(<span class="string">$&quot;/// 自动生成，对应 <span class="subst">&#123;excelFileName&#125;</span>&quot;</span>);</span><br><span class="line">sb.AppendLine(<span class="string">&quot;/// &lt;/summary&gt;&quot;</span>);</span><br><span class="line">sb.AppendLine(<span class="string">$&quot;public class <span class="subst">&#123;className&#125;</span>&quot;</span>);</span><br><span class="line">sb.AppendLine(<span class="string">&quot;&#123;&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; fieldNames.Count; i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 注释</span></span><br><span class="line">    sb.AppendLine(<span class="string">$&quot;    /// &lt;summary&gt;<span class="subst">&#123;fieldDescs[i]&#125;</span>&lt;/summary&gt;&quot;</span>);</span><br><span class="line">    <span class="comment">// 字段</span></span><br><span class="line">    sb.AppendLine(<span class="string">$&quot;    public <span class="subst">&#123;MapType(fieldTypes[i])&#125;</span> <span class="subst">&#123;fieldNames[i]&#125;</span> &#123;&#123; get; set; &#125;&#125;&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">sb.AppendLine(<span class="string">&quot;&#125;&quot;</span>);</span><br></pre>
+
+<p>生成的代码大概这样：</p>
+<pre class="highlight"><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 自动生成，对应 Item.xlsx</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ItemCfg</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span>编号<span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> id &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span>名称<span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">string</span> name &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span>攻击力<span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> attack &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span>防御力<span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span> defense &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span>技能组<span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="keyword">public</span> <span class="built_in">int</span>[] skillIds &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br></pre>
+
+<p>策划加了列，重跑一下工具就会重新生成 <code>.cs</code>，编译报错的地方就是要改的业务代码——比以前手动维护靠谱多了。</p>
+<hr>
+<h2 id="序列化选型"><a href="#序列化选型" class="headerlink" title="序列化选型"></a>序列化选型</h2><p>序列化就是把数据行写成二进制文件。我们选了最朴素的方式：<strong>手写 BinaryWriter &#x2F; BinaryReader，不用 protobuf 也不用 MessagePack。</strong></p>
+<p>理由：</p>
+<ul>
+<li>依赖零，不引入第三方库</li>
+<li>性能足够好，二进制流直接内存复制</li>
+<li>类型严格可控，不会因为库的版本升级导致老数据读不出来</li>
+</ul>
+<pre class="highlight"><span class="line"><span class="comment">// 写入</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Serialize</span>(<span class="params">BinaryWriter writer, ItemCfg cfg</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    writer.Write(cfg.id);</span><br><span class="line">    writer.Write(cfg.name);</span><br><span class="line">    writer.Write(cfg.attack);</span><br><span class="line">    writer.Write(cfg.defense);</span><br><span class="line">    <span class="comment">// int[] 先写长度，再写内容</span></span><br><span class="line">    writer.Write(cfg.skillIds.Length);</span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> id <span class="keyword">in</span> cfg.skillIds)</span><br><span class="line">        writer.Write(id);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 读取</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ItemCfg <span class="title">Deserialize</span>(<span class="params">BinaryReader reader</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ItemCfg</span><br><span class="line">    &#123;</span><br><span class="line">        id = reader.ReadInt32(),</span><br><span class="line">        name = reader.ReadString(),</span><br><span class="line">        attack = reader.ReadInt32(),</span><br><span class="line">        defense = reader.ReadInt32(),</span><br><span class="line">        skillIds = ReadIntArray(reader)</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre>
+
+<p>序列化代码也是工具自动生成的，根据第二行的类型字段决定用 <code>reader.ReadInt32()</code> 还是 <code>reader.ReadString()</code>。</p>
+<hr>
+<h2 id="运行时查询"><a href="#运行时查询" class="headerlink" title="运行时查询"></a>运行时查询</h2><p>所有配置表加载后统一放在一个管理类里，按 id 索引：</p>
+<pre class="highlight"><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CfgManager</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> Dictionary&lt;<span class="built_in">int</span>, ItemCfg&gt; _items;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Load</span>()</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 读取二进制文件，批量反序列化</span></span><br><span class="line">        <span class="keyword">var</span> bytes = Resources.Load&lt;TextAsset&gt;(<span class="string">&quot;Configs/Item&quot;</span>).bytes;</span><br><span class="line">        <span class="keyword">using</span> (<span class="keyword">var</span> reader = <span class="keyword">new</span> BinaryReader(<span class="keyword">new</span> MemoryStream(bytes)))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">int</span> count = reader.ReadInt32();</span><br><span class="line">            _items = <span class="keyword">new</span> Dictionary&lt;<span class="built_in">int</span>, ItemCfg&gt;(count);</span><br><span class="line">            <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; count; i++)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">var</span> cfg = ItemSerializer.Deserialize(reader);</span><br><span class="line">                _items[cfg.id] = cfg;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 业务代码里用</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ItemCfg <span class="title">GetItem</span>(<span class="params"><span class="built_in">int</span> id</span>)</span> =&gt; _items.TryGetValue(id, <span class="keyword">out</span> <span class="keyword">var</span> cfg) ? cfg : <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用时</span></span><br><span class="line"><span class="keyword">var</span> cfg = CfgManager.Instance.GetItem(<span class="number">1001</span>);</span><br><span class="line">Debug.Log(<span class="string">$&quot;<span class="subst">&#123;cfg.name&#125;</span>: 攻击力 <span class="subst">&#123;cfg.attack&#125;</span>, 防御力 <span class="subst">&#123;cfg.defense&#125;</span>&quot;</span>);</span><br></pre>
+
+<p>强类型的好处：打 <code>cfg.</code> 就有完整代码补全，传错字段编译报错，不用担心中途手滑写错字符串。</p>
+<hr>
+<h2 id="编辑器集成"><a href="#编辑器集成" class="headerlink" title="编辑器集成"></a>编辑器集成</h2><p>在 Unity 编辑器里加了菜单项，策划改完 Excel 点一下就行：</p>
+<pre class="highlight"><span class="line">[<span class="meta">MenuItem(<span class="string">&quot;Tools/生成配置表&quot;</span>)</span>]</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">GenerateAllConfigs</span>()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> excelDir = Application.dataPath + <span class="string">&quot;/../Configs/Excel&quot;</span>;</span><br><span class="line">    <span class="keyword">var</span> csDir = Application.dataPath + <span class="string">&quot;/Scripts/Configs/AutoGen&quot;</span>;</span><br><span class="line">    <span class="keyword">var</span> dataDir = Application.dataPath + <span class="string">&quot;/Resources/Configs&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 清空旧文件</span></span><br><span class="line">    <span class="keyword">if</span> (Directory.Exists(csDir)) Directory.Delete(csDir, <span class="literal">true</span>);</span><br><span class="line">    <span class="keyword">if</span> (Directory.Exists(dataDir)) Directory.Delete(dataDir, <span class="literal">true</span>);</span><br><span class="line">    Directory.CreateDirectory(csDir);</span><br><span class="line">    Directory.CreateDirectory(dataDir);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> excelFile <span class="keyword">in</span> Directory.GetFiles(excelDir, <span class="string">&quot;*.xlsx&quot;</span>))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 1. 读 Excel</span></span><br><span class="line">        <span class="keyword">var</span> table = ReadExcel(excelFile);</span><br><span class="line">        <span class="comment">// 2. 生成 .cs</span></span><br><span class="line">        GenerateCSharp(table, csDir);</span><br><span class="line">        <span class="comment">// 3. 生成二进制数据</span></span><br><span class="line">        GenerateBinary(table, dataDir);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    AssetDatabase.Refresh();</span><br><span class="line">    Debug.Log(<span class="string">&quot;配置表生成完成&quot;</span>);</span><br><span class="line">&#125;</span><br></pre>
+
+<p>读 Excel 用 EPPlus 还是 NPOI 都可以，我们选的 EPPlus（免费版够用），读取接口很简单：</p>
+<pre class="highlight"><span class="line"><span class="keyword">using</span> (<span class="keyword">var</span> package = <span class="keyword">new</span> ExcelPackage(<span class="keyword">new</span> FileInfo(excelPath)))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> sheet = package.Workbook.Worksheets[<span class="number">0</span>];</span><br><span class="line">    <span class="comment">// 读行列 ...</span></span><br><span class="line">&#125;</span><br></pre>
+
+<hr>
+<h2 id="几种特殊类型的处理"><a href="#几种特殊类型的处理" class="headerlink" title="几种特殊类型的处理"></a>几种特殊类型的处理</h2><h3 id="数组和列表"><a href="#数组和列表" class="headerlink" title="数组和列表"></a>数组和列表</h3><p>表里填 <code>101,102,103</code> 这种逗号分隔的格式，生成代码里自动处理：</p>
+<pre class="highlight"><span class="line"><span class="comment">// 序列化侧</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="built_in">int</span>[] <span class="title">ParseIntArray</span>(<span class="params"><span class="built_in">string</span> cell</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">string</span>.IsNullOrEmpty(cell)) <span class="keyword">return</span> Array.Empty&lt;<span class="built_in">int</span>&gt;();</span><br><span class="line">    <span class="keyword">return</span> cell.Split(<span class="string">&#x27;,&#x27;</span>).Select(<span class="built_in">int</span>.Parse).ToArray();</span><br><span class="line">&#125;</span><br></pre>
+
+<h3 id="枚举"><a href="#枚举" class="headerlink" title="枚举"></a>枚举</h3><p>类型行写 <code>enum:QualityType</code>，工具就知道要生成枚举属性，并且在序列化代码里用 <code>(QualityType)reader.ReadInt32()</code> 做强转。</p>
+<h3 id="关联其他表"><a href="#关联其他表" class="headerlink" title="关联其他表"></a>关联其他表</h3><p>类型行写 <code>ref:ItemCfg</code>，表示这个字段是另一个表的 id。生成的注释里标注这是外键引用，方便使用方理解。</p>
+<h3 id="多行字符串"><a href="#多行字符串" class="headerlink" title="多行字符串"></a>多行字符串</h3><p>偶尔需要配大段文本。约定用 <code>\n</code> 当换行符，序列化时存成 string，运行时切分。</p>
+<hr>
+<h2 id="实际用了三年之后的感受"><a href="#实际用了三年之后的感受" class="headerlink" title="实际用了三年之后的感受"></a>实际用了三年之后的感受</h2><p>好处很明显：</p>
+<ul>
+<li>策划可以随便改表、加列，不用等程序手动对接</li>
+<li>属性访问有代码补全，打错字直接编译报错</li>
+<li>二进制数据比 JSON 加载快得多，内存占用也小</li>
+<li>够简单，全链路代码自己能维护</li>
+</ul>
+<p>不够好的地方：</p>
+<ul>
+<li>每次小改都要重新生成整个 DLL 对应的序列化代码（二进制本身可以增量）</li>
+<li>复杂嵌套结构（表里套子表）支持起来比较麻烦，不如直接换用 ScriptableObject</li>
+<li>多人协作时 Excel 的 diff 基本没法看，策划之间改表冲突不好解决</li>
+</ul>
+<p>考虑后面引入类似 Luban 的方案，但目前这个自研工具完全够用，也没有迁移的需求。</p>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这个工具的核心价值不在于技术多牛，在于把”程序手写配置读取代码”这件容易出错的事自动化了。代码量不大，几天就能写完，但省下来的沟通成本和 debug 时间持续了三年。</p>
+<p>如果你项目里还在手动解析 Excel 转配置，可以考虑花一个工作日搭一套类似的东西——越早做越值。</p>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            MrLibertine
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://mrlibertine.github.io/2022/08/15/5f4375464c70/">
+            https://mrlibertine.github.io/2022/08/15/5f4375464c70/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2023/06/07/55bfbef301ef/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">关于GLSL一些知识 </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2022/07/01/5f3db1e0307f/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">为什么我们把 Lua 热更新迁移到 ILRuntime </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98"><span class="toc-text">问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E6%80%9D%E8%B7%AF"><span class="toc-text">整体思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%A8%E7%BB%93%E6%9E%84%E7%BA%A6%E5%AE%9A"><span class="toc-text">表结构约定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%9F%E6%88%90-C-%E7%B1%BB"><span class="toc-text">生成 C# 类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E9%80%89%E5%9E%8B"><span class="toc-text">序列化选型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E6%9F%A5%E8%AF%A2"><span class="toc-text">运行时查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%BE%91%E5%99%A8%E9%9B%86%E6%88%90"><span class="toc-text">编辑器集成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%A0%E7%A7%8D%E7%89%B9%E6%AE%8A%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%A4%84%E7%90%86"><span class="toc-text">几种特殊类型的处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E7%BB%84%E5%92%8C%E5%88%97%E8%A1%A8"><span class="toc-text">数组和列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%9A%E4%B8%BE"><span class="toc-text">枚举</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E8%81%94%E5%85%B6%E4%BB%96%E8%A1%A8"><span class="toc-text">关联其他表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E8%A1%8C%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-text">多行字符串</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E7%94%A8%E4%BA%86%E4%B8%89%E5%B9%B4%E4%B9%8B%E5%90%8E%E7%9A%84%E6%84%9F%E5%8F%97"><span class="toc-text">实际用了三年之后的感受</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+</div>
+                    </main>
+                    <aside class="right-column">
+                      <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%97%AE%E9%A2%98"><span class="toc-text">问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B4%E4%BD%93%E6%80%9D%E8%B7%AF"><span class="toc-text">整体思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A1%A8%E7%BB%93%E6%9E%84%E7%BA%A6%E5%AE%9A"><span class="toc-text">表结构约定</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%9F%E6%88%90-C-%E7%B1%BB"><span class="toc-text">生成 C# 类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E9%80%89%E5%9E%8B"><span class="toc-text">序列化选型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E6%9F%A5%E8%AF%A2"><span class="toc-text">运行时查询</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E8%BE%91%E5%99%A8%E9%9B%86%E6%88%90"><span class="toc-text">编辑器集成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%A0%E7%A7%8D%E7%89%B9%E6%AE%8A%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%A4%84%E7%90%86"><span class="toc-text">几种特殊类型的处理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E7%BB%84%E5%92%8C%E5%88%97%E8%A1%A8"><span class="toc-text">数组和列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%9A%E4%B8%BE"><span class="toc-text">枚举</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E8%81%94%E5%85%B6%E4%BB%96%E8%A1%A8"><span class="toc-text">关联其他表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E8%A1%8C%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-text">多行字符串</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E7%94%A8%E4%BA%86%E4%B8%89%E5%B9%B4%E4%B9%8B%E5%90%8E%E7%9A%84%E6%84%9F%E5%8F%97"><span class="toc-text">实际用了三年之后的感受</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-10-19</div>
+        <a href="/2026/10/19/ae2005365a89/"><div class="recent-posts-item-content">Unity 客户端 UI 性能实践：虚拟列表、合批与框架设计</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-06-09</div>
+        <a href="/2026/06/09/76cfdea54713/"><div class="recent-posts-item-content">LayaAir 原生 vs Unity 原生 — 为什么你的 Worker 在原生 App 里不启用</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-01-13</div>
+        <a href="/2026/01/13/19efe93a808b/"><div class="recent-posts-item-content">AI 与 LLM 术语速查</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2024-06-07</div>
+        <a href="/2024/06/07/0aebe7b6b0bb/"><div class="recent-posts-item-content">Linux部署dotnet程序相关</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+                    </aside>
+                  </div>
+                </div>
+              </div>
+    </div>
+    
+      <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2026
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          MrLibertine
+        </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+
+        
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+          
+            
+                  
+                    <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+
+                      
+                        
+                          <script src="/js/main.js"></script>
+                            
+                              <script>
+                                loadScript('/js/lib/busuanzi.min.js') 
+                              </script>
+                              
+                                
+                                  <script>
+                                    var addLazyload = function () {
+                                      var observer = lozad('.lozad', {
+                                        load: function (el) {
+                                          el.srcset = el.getAttribute('data-src')
+                                        },
+                                        loaded: function (el) {
+                                          el.classList.add('loaded')
+                                        },
+                                      })
+                                      observer.observe()
+                                    }
+                                  </script>
+                                  <script>
+                                    loadScript('/js/lib/lozad.min.js', addLazyload)
+                                  </script>
+                                  
+                                    <script src="//instant.page/5.1.0" type="module"
+                                      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+                                    
+                                        
+  </body>
+
+</html>

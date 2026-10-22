@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>Unity 渲染与性能速查</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="Unity 渲染与性能速查">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://mrlibertine.github.io/2019/06/07/ab4f9b416054/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="/img/68339006.png">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2019-06-07">
+      <meta 
+        property="og:article:modified_time" 
+        content="2026-10-22">
+      <meta 
+        property="og:article:author" 
+        content="MrLibertine">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="Unity">
+        
+          <meta 
+            property="og:article:tag" 
+            content="GLSL">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div class="wrapper">
+      
+        <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">MrLibertine</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav>
+          
+            <div id="local-search" style="display: none">
+              <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容..." />
+              <div id="search-content"></div>
+            </div>
+            
+              <div class="section-wrap">
+                <div class="container">
+                  <div class="columns">
+                    <aside class="left-column">
+                      
+                        <div class="card card-author">
+                          
+  <img 
+    src="/img/68339006.png" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">MrLibertine</p>
+<p class="author-description">designed by MrLibertine</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>18</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>1</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>22</span>
+    <span>标签</span>
+  </a>
+</div>
+
+                        </div>
+                         <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#DrawCall-%E4%B8%8E-SetPass-Call"><span class="toc-text">DrawCall 与 SetPass Call</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%88%E6%89%B9%E7%AD%96%E7%95%A5%E5%AF%B9%E7%85%A7"><span class="toc-text">合批策略对照</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Overdraw%EF%BC%88%E8%BF%87%E5%BA%A6%E7%BB%98%E5%88%B6%EF%BC%89"><span class="toc-text">Overdraw（过度绘制）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LOD-x2F-MipMap-x2F-%E5%89%94%E9%99%A4"><span class="toc-text">LOD &#x2F; MipMap &#x2F; 剔除</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Canvas-%E6%B8%B2%E6%9F%93%E6%A8%A1%E5%BC%8F"><span class="toc-text">Canvas 渲染模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UI-%E5%90%88%E6%89%B9%E6%9D%A1%E4%BB%B6"><span class="toc-text">UI 合批条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%B9%E7%90%86%E5%8E%8B%E7%BC%A9%E6%A0%BC%E5%BC%8F"><span class="toc-text">纹理压缩格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Frame-Debugger-%E9%80%9F%E6%9F%A5"><span class="toc-text">Frame Debugger 速查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%8F%82%E8%80%83%EF%BC%88%E7%A7%BB%E5%8A%A8%E7%AB%AF%EF%BC%89"><span class="toc-text">常用性能指标参考（移动端）</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/Unity/">
+        <div class="categories-list-item">
+          Unity
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/AI/" 
+        title="AI">
+        <div class="tags-list-item">AI</div>
+      </a>
+    
+      <a 
+        href="/tags/LLM/" 
+        title="LLM">
+        <div class="tags-list-item">LLM</div>
+      </a>
+    
+      <a 
+        href="/tags/NLP/" 
+        title="NLP">
+        <div class="tags-list-item">NLP</div>
+      </a>
+    
+      <a 
+        href="/tags/RAG/" 
+        title="RAG">
+        <div class="tags-list-item">RAG</div>
+      </a>
+    
+      <a 
+        href="/tags/Unity/" 
+        title="Unity">
+        <div class="tags-list-item">Unity</div>
+      </a>
+    
+      <a 
+        href="/tags/C/" 
+        title="C#">
+        <div class="tags-list-item">C#</div>
+      </a>
+    
+      <a 
+        href="/tags/LayaAir/" 
+        title="LayaAir">
+        <div class="tags-list-item">LayaAir</div>
+      </a>
+    
+      <a 
+        href="/tags/WebView/" 
+        title="WebView">
+        <div class="tags-list-item">WebView</div>
+      </a>
+    
+      <a 
+        href="/tags/Worker/" 
+        title="Worker">
+        <div class="tags-list-item">Worker</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E/" 
+        title="游戏引擎">
+        <div class="tags-list-item">游戏引擎</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/" 
+        title="杂七杂八">
+        <div class="tags-list-item">杂七杂八</div>
+      </a>
+    
+      <a 
+        href="/tags/Linux/" 
+        title="Linux">
+        <div class="tags-list-item">Linux</div>
+      </a>
+    
+      <a 
+        href="/tags/WebGL/" 
+        title="WebGL">
+        <div class="tags-list-item">WebGL</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" 
+        title="性能优化">
+        <div class="tags-list-item">性能优化</div>
+      </a>
+    
+      <a 
+        href="/tags/UGUI/" 
+        title="UGUI">
+        <div class="tags-list-item">UGUI</div>
+      </a>
+    
+      <a 
+        href="/tags/GLSL/" 
+        title="GLSL">
+        <div class="tags-list-item">GLSL</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+                    </aside>
+                    <main class="main-column">
+                      
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      Unity 渲染与性能速查
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2019-06-07T02:00:00.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2019-06-07</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>965 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/Unity/" 
+            class="post-meta-link">
+            Unity
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/GLSL/" 
+            class="post-meta-link">
+            GLSL
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <h2 id="DrawCall-与-SetPass-Call"><a href="#DrawCall-与-SetPass-Call" class="headerlink" title="DrawCall 与 SetPass Call"></a>DrawCall 与 SetPass Call</h2><ul>
+<li><strong>DrawCall</strong>：CPU 向 GPU 发起的一次绘制指令。每次 DrawCall 都有 CPU 开销（状态设置），是渲染性能的主要瓶颈之一。</li>
+<li><strong>SetPass Call</strong>：与 Shader Pass 绑定。一个 Shader 有多个 Pass 时，一次材质切换对应一个 SetPass。比 DrawCall 更昂贵。</li>
+</ul>
+<p><strong>SRP Batcher（URP&#x2F;HDRP）</strong>：</p>
+<ul>
+<li>核心思路不是减少 DrawCall 数量，而是减少每次 DrawCall 的 GPU 状态设置开销。</li>
+<li>适用条件：Shader 必须兼容 SRP Batcher（使用 <code>CBUFFER</code> 声明的内置 <code>UnityPerDraw</code> 变量）。</li>
+<li>可以在 Frame Debugger 中查看是否被 Batcher 处理。</li>
+</ul>
+<hr>
+<h2 id="合批策略对照"><a href="#合批策略对照" class="headerlink" title="合批策略对照"></a>合批策略对照</h2><table>
+<thead>
+<tr>
+<th>合批方式</th>
+<th>原理</th>
+<th>适用场景</th>
+<th>限制</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Static Batching</td>
+<td>运行时合并静态物体网格为一个大 Mesh</td>
+<td>完全静止的物体（建筑、地面）</td>
+<td>增加内存（额外存合批后的巨大 Mesh）</td>
+</tr>
+<tr>
+<td>Dynamic Batching</td>
+<td>每帧动态合并小网格</td>
+<td>顶点数少的动态物体（&lt; 300 顶点）</td>
+<td>顶点&#x2F;属性数限制、多 Pass Shader 无效</td>
+</tr>
+<tr>
+<td>GPU Instancing</td>
+<td>GPU 用同一 Mesh+Material 绘制多个实例，仅变换矩阵不同</td>
+<td>大量相同模型（草、子弹）</td>
+<td>需要 Instancing 兼容的 Shader</td>
+</tr>
+<tr>
+<td>SRP Batcher</td>
+<td>缓存材质属性，减少 SetPass 开销</td>
+<td>URP&#x2F;HDRP 下的通用场景</td>
+<td>需要 SRP Batcher 兼容 Shader</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="Overdraw（过度绘制）"><a href="#Overdraw（过度绘制）" class="headerlink" title="Overdraw（过度绘制）"></a>Overdraw（过度绘制）</h2><ul>
+<li><strong>定义</strong>：同一像素被多次绘制，填充率浪费。</li>
+<li><strong>检测</strong>：Scene View → 左上角下拉 → Overdraw 模式。越白越严重。</li>
+<li><strong>优化策略</strong>：<ul>
+<li>UI 层减少重叠（空白的 RaycastTarget 关闭）。</li>
+<li>粒子特效缩小 Quad，用圆形 Mesh 代替方形。</li>
+<li>半透明物体排序靠后，先渲染不透明。</li>
+<li>Forward 渲染路径下半透明无深度写入，叠加数层 Overdraw 严重。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="LOD-x2F-MipMap-x2F-剔除"><a href="#LOD-x2F-MipMap-x2F-剔除" class="headerlink" title="LOD &#x2F; MipMap &#x2F; 剔除"></a>LOD &#x2F; MipMap &#x2F; 剔除</h2><table>
+<thead>
+<tr>
+<th>技术</th>
+<th>作用</th>
+<th>配置位置</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LOD (Level of Detail)</td>
+<td>距离越远切换为低面数模型</td>
+<td>LOD Group 组件</td>
+</tr>
+<tr>
+<td>MipMap</td>
+<td>距离越远使用低分辨率纹理</td>
+<td>纹理导入设置 <code>Generate Mip Maps</code></td>
+</tr>
+<tr>
+<td>Frustum Culling</td>
+<td>视锥体外物体不渲染</td>
+<td>自动，无需配置</td>
+</tr>
+<tr>
+<td>Occlusion Culling</td>
+<td>被遮挡物体不渲染</td>
+<td>Window → Rendering → Occlusion Culling，需烘焙</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="Canvas-渲染模式"><a href="#Canvas-渲染模式" class="headerlink" title="Canvas 渲染模式"></a>Canvas 渲染模式</h2><table>
+<thead>
+<tr>
+<th>模式</th>
+<th>渲染方式</th>
+<th>性能特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Screen Space - Overlay</td>
+<td>直接覆盖屏幕，无相机</td>
+<td>最轻量，适合 HUD</td>
+</tr>
+<tr>
+<td>Screen Space - Camera</td>
+<td>绑定相机，可受相机后期影响</td>
+<td>适合需要特效的 UI</td>
+</tr>
+<tr>
+<td>World Space</td>
+<td>作为 3D 空间物体，可旋转移动</td>
+<td>适合血条、漂浮文字、VR UI</td>
+</tr>
+</tbody></table>
+<p><strong>性能关键</strong>：Canvas 上任何子节点变化（位置、颜色、文本）都会触发 Canvas 重建（Rebuild），子节点多时开销大。用子 Canvas 隔离变化频繁的 UI 区域。</p>
+<hr>
+<h2 id="UI-合批条件"><a href="#UI-合批条件" class="headerlink" title="UI 合批条件"></a>UI 合批条件</h2><ul>
+<li>同一 Canvas 下。</li>
+<li>使用<strong>同一材质</strong>（等于同一图集 + 同一 Shader）。</li>
+<li>渲染层级相邻（无不同材质的 UI 打断）。</li>
+<li>不再重叠的 UI 元素之间无 RaycastTarget 阻断合批（可把不需要点击的 Image 关闭 RaycastTarget）。</li>
+</ul>
+<p><strong>打断合批的因素</strong>：</p>
+<ul>
+<li>夹入不同图集的 Image。</li>
+<li>字体纹理与图集交替。</li>
+<li>ScrollRect 内的 Mask 组件（每层 Mask 至少多 2 个 DrawCall）。</li>
+</ul>
+<hr>
+<h2 id="纹理压缩格式"><a href="#纹理压缩格式" class="headerlink" title="纹理压缩格式"></a>纹理压缩格式</h2><table>
+<thead>
+<tr>
+<th>平台</th>
+<th>推荐格式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>iOS</td>
+<td>ASTC</td>
+<td>高质量 + 任意尺寸，A 系列芯片支持</td>
+</tr>
+<tr>
+<td>Android</td>
+<td>ASTC &#x2F; ETC2</td>
+<td>ASTC 中高端设备，ETC2 兼容全覆盖</td>
+</tr>
+<tr>
+<td>Windows</td>
+<td>DXT5 (BC3) &#x2F; BC7</td>
+<td>BC7 质量最高但文件更大</td>
+</tr>
+<tr>
+<td>WebGL</td>
+<td>DXT &#x2F; ETC2</td>
+<td>根据浏览器底层选择</td>
+</tr>
+</tbody></table>
+<ul>
+<li>非 2 的幂纹理（NPOT）在部分平台无法压缩，统一用 POT 尺寸。</li>
+<li>带 Alpha 通道的纹理注意格式选择（ASTC 4×4 带 Alpha，ETC2 需 RGBA 扩展）。</li>
+</ul>
+<hr>
+<h2 id="Frame-Debugger-速查"><a href="#Frame-Debugger-速查" class="headerlink" title="Frame Debugger 速查"></a>Frame Debugger 速查</h2><ul>
+<li>路径：Window → Analysis → Frame Debugger → Enable。</li>
+<li>可以看到每一帧的 DrawCall 序列、SetPass 切换、Shader 属性变化。</li>
+<li>定位问题：某个 DrawCall 为什么没合批？它的材质、层级、Shader 是否与前一个相同？</li>
+</ul>
+<hr>
+<h2 id="常用性能指标参考（移动端）"><a href="#常用性能指标参考（移动端）" class="headerlink" title="常用性能指标参考（移动端）"></a>常用性能指标参考（移动端）</h2><table>
+<thead>
+<tr>
+<th>指标</th>
+<th>建议上限</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DrawCall</td>
+<td>200-400（视项目复杂度）</td>
+</tr>
+<tr>
+<td>SetPass Call</td>
+<td>&lt; 100</td>
+</tr>
+<tr>
+<td>三角形数</td>
+<td>&lt; 200K（中低端）</td>
+</tr>
+<tr>
+<td>纹理内存</td>
+<td>&lt; 200MB</td>
+</tr>
+<tr>
+<td>帧率</td>
+<td>30fps 稳定即可（高要求 60fps）</td>
+</tr>
+</tbody></table>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            MrLibertine
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://mrlibertine.github.io/2019/06/07/ab4f9b416054/">
+            https://mrlibertine.github.io/2019/06/07/ab4f9b416054/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2019/06/07/044db01d498a/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">Unity 架构与设计速查 </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2019/06/07/47f6275d35a1/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">移动端 Shader 优化速查 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#DrawCall-%E4%B8%8E-SetPass-Call"><span class="toc-text">DrawCall 与 SetPass Call</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%88%E6%89%B9%E7%AD%96%E7%95%A5%E5%AF%B9%E7%85%A7"><span class="toc-text">合批策略对照</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Overdraw%EF%BC%88%E8%BF%87%E5%BA%A6%E7%BB%98%E5%88%B6%EF%BC%89"><span class="toc-text">Overdraw（过度绘制）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LOD-x2F-MipMap-x2F-%E5%89%94%E9%99%A4"><span class="toc-text">LOD &#x2F; MipMap &#x2F; 剔除</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Canvas-%E6%B8%B2%E6%9F%93%E6%A8%A1%E5%BC%8F"><span class="toc-text">Canvas 渲染模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UI-%E5%90%88%E6%89%B9%E6%9D%A1%E4%BB%B6"><span class="toc-text">UI 合批条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%B9%E7%90%86%E5%8E%8B%E7%BC%A9%E6%A0%BC%E5%BC%8F"><span class="toc-text">纹理压缩格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Frame-Debugger-%E9%80%9F%E6%9F%A5"><span class="toc-text">Frame Debugger 速查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%8F%82%E8%80%83%EF%BC%88%E7%A7%BB%E5%8A%A8%E7%AB%AF%EF%BC%89"><span class="toc-text">常用性能指标参考（移动端）</span></a></li></ol>
+</div>
+                    </main>
+                    <aside class="right-column">
+                      <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#DrawCall-%E4%B8%8E-SetPass-Call"><span class="toc-text">DrawCall 与 SetPass Call</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%88%E6%89%B9%E7%AD%96%E7%95%A5%E5%AF%B9%E7%85%A7"><span class="toc-text">合批策略对照</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Overdraw%EF%BC%88%E8%BF%87%E5%BA%A6%E7%BB%98%E5%88%B6%EF%BC%89"><span class="toc-text">Overdraw（过度绘制）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#LOD-x2F-MipMap-x2F-%E5%89%94%E9%99%A4"><span class="toc-text">LOD &#x2F; MipMap &#x2F; 剔除</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Canvas-%E6%B8%B2%E6%9F%93%E6%A8%A1%E5%BC%8F"><span class="toc-text">Canvas 渲染模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UI-%E5%90%88%E6%89%B9%E6%9D%A1%E4%BB%B6"><span class="toc-text">UI 合批条件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BA%B9%E7%90%86%E5%8E%8B%E7%BC%A9%E6%A0%BC%E5%BC%8F"><span class="toc-text">纹理压缩格式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Frame-Debugger-%E9%80%9F%E6%9F%A5"><span class="toc-text">Frame Debugger 速查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%E5%8F%82%E8%80%83%EF%BC%88%E7%A7%BB%E5%8A%A8%E7%AB%AF%EF%BC%89"><span class="toc-text">常用性能指标参考（移动端）</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-10-19</div>
+        <a href="/2026/10/19/ae2005365a89/"><div class="recent-posts-item-content">Unity 客户端 UI 性能实践：虚拟列表、合批与框架设计</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-06-09</div>
+        <a href="/2026/06/09/76cfdea54713/"><div class="recent-posts-item-content">LayaAir 原生 vs Unity 原生 — 为什么你的 Worker 在原生 App 里不启用</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-01-13</div>
+        <a href="/2026/01/13/19efe93a808b/"><div class="recent-posts-item-content">AI 与 LLM 术语速查</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2024-06-07</div>
+        <a href="/2024/06/07/0aebe7b6b0bb/"><div class="recent-posts-item-content">Linux部署dotnet程序相关</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+                    </aside>
+                  </div>
+                </div>
+              </div>
+    </div>
+    
+      <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2026
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          MrLibertine
+        </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+
+        
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+          
+            
+                  
+                    <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+
+                      
+                        
+                          <script src="/js/main.js"></script>
+                            
+                              <script>
+                                loadScript('/js/lib/busuanzi.min.js') 
+                              </script>
+                              
+                                
+                                  <script>
+                                    var addLazyload = function () {
+                                      var observer = lozad('.lozad', {
+                                        load: function (el) {
+                                          el.srcset = el.getAttribute('data-src')
+                                        },
+                                        loaded: function (el) {
+                                          el.classList.add('loaded')
+                                        },
+                                      })
+                                      observer.observe()
+                                    }
+                                  </script>
+                                  <script>
+                                    loadScript('/js/lib/lozad.min.js', addLazyload)
+                                  </script>
+                                  
+                                    <script src="//instant.page/5.1.0" type="module"
+                                      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+                                    
+                                        
+  </body>
+
+</html>

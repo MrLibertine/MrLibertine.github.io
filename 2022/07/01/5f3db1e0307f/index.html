@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>为什么我们把 Lua 热更新迁移到 ILRuntime</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="为什么我们把 Lua 热更新迁移到 ILRuntime">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://mrlibertine.github.io/2022/07/01/5f3db1e0307f/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="/img/68339006.png">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2022-07-01">
+      <meta 
+        property="og:article:modified_time" 
+        content="2026-10-22">
+      <meta 
+        property="og:article:author" 
+        content="MrLibertine">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="Unity">
+        
+          <meta 
+            property="og:article:tag" 
+            content="C#">
+        
+          <meta 
+            property="og:article:tag" 
+            content="ILRuntime">
+        
+          <meta 
+            property="og:article:tag" 
+            content="Lua">
+        
+          <meta 
+            property="og:article:tag" 
+            content="热更新">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div class="wrapper">
+      
+        <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">MrLibertine</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav>
+          
+            <div id="local-search" style="display: none">
+              <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容..." />
+              <div id="search-content"></div>
+            </div>
+            
+              <div class="section-wrap">
+                <div class="container">
+                  <div class="columns">
+                    <aside class="left-column">
+                      
+                        <div class="card card-author">
+                          
+  <img 
+    src="/img/68339006.png" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">MrLibertine</p>
+<p class="author-description">designed by MrLibertine</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>18</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>1</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>22</span>
+    <span>标签</span>
+  </a>
+</div>
+
+                        </div>
+                         <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lua-%E6%96%B9%E6%A1%88%E5%93%AA%E9%87%8C%E4%B8%8D%E5%A5%BD%E7%94%A8"><span class="toc-text">Lua 方案哪里不好用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%A6%81%E5%90%8C%E6%97%B6%E5%86%99%E4%B8%A4%E9%97%A8%E8%AF%AD%E8%A8%80"><span class="toc-text">1. 要同时写两门语言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-C-%E5%92%8C-Lua-%E4%BA%92%E7%9B%B8%E8%B0%83%E7%94%A8%E5%A4%AA%E6%85%A2%E4%BA%86"><span class="toc-text">2. C# 和 Lua 互相调用太慢了</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%B7%A5%E5%85%B7%E9%93%BE%E5%A4%AA%E5%BC%B1"><span class="toc-text">3. 工具链太弱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%96%B0%E4%BA%BA%E4%B8%8A%E6%89%8B%E6%85%A2"><span class="toc-text">4. 新人上手慢</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E4%BA%86-ILRuntime"><span class="toc-text">为什么选了 ILRuntime</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E6%AF%94"><span class="toc-text">对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E5%A5%BD%E5%9C%A8%E5%93%AA"><span class="toc-text">具体好在哪</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%AA%E5%86%99%E4%B8%80%E9%97%A8%E8%AF%AD%E8%A8%80"><span class="toc-text">只写一门语言</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E8%AF%95%E4%B8%8D%E5%86%8D%E6%8A%98%E8%85%BE"><span class="toc-text">调试不再折腾</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%A8%E8%AF%AD%E8%A8%80%E8%B0%83%E7%94%A8%E5%BF%AB%E4%BA%86%E5%BE%88%E5%A4%9A"><span class="toc-text">跨语言调用快了很多</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%AF%E4%BB%A5%E7%9B%B4%E6%8E%A5%E5%A4%8D%E7%94%A8%E4%B8%BB%E5%B7%A5%E7%A8%8B%E7%9A%84%E4%BB%A3%E7%A0%81"><span class="toc-text">可以直接复用主工程的代码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E5%AE%9E%E6%B5%8B"><span class="toc-text">性能实测</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%8E%E4%B9%88%E8%BF%81%E7%9A%84"><span class="toc-text">怎么迁的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91"><span class="toc-text">踩过的坑</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%B3%9B%E5%9E%8B%E6%94%AF%E6%8C%81%E4%B8%8D%E5%AE%8C%E6%95%B4"><span class="toc-text">1. 泛型支持不完整</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8F%8D%E5%B0%84%E6%AF%94%E5%8E%9F%E7%94%9F%E6%85%A2"><span class="toc-text">2. 反射比原生慢</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%87%AA%E5%AE%9A%E4%B9%89-struct-%E8%B7%A8%E8%BE%B9%E7%95%8C%E6%9C%89%E6%8B%B7%E8%B4%9D%E5%BC%80%E9%94%80"><span class="toc-text">3. 自定义 struct 跨边界有拷贝开销</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%B0%83%E8%AF%95%E5%99%A8%E5%92%8C-Unity-%E7%89%88%E6%9C%AC%E7%9A%84%E5%85%BC%E5%AE%B9"><span class="toc-text">4. 调试器和 Unity 版本的兼容</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8D%A2%E6%88%90-ILRuntime-%E4%B9%8B%E5%90%8E%E7%9A%84%E5%8F%98%E5%8C%96"><span class="toc-text">换成 ILRuntime 之后的变化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%83%85%E5%86%B5%E4%B8%8D%E7%94%A8%E8%BF%81"><span class="toc-text">什么情况不用迁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/Unity/">
+        <div class="categories-list-item">
+          Unity
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/AI/" 
+        title="AI">
+        <div class="tags-list-item">AI</div>
+      </a>
+    
+      <a 
+        href="/tags/LLM/" 
+        title="LLM">
+        <div class="tags-list-item">LLM</div>
+      </a>
+    
+      <a 
+        href="/tags/NLP/" 
+        title="NLP">
+        <div class="tags-list-item">NLP</div>
+      </a>
+    
+      <a 
+        href="/tags/RAG/" 
+        title="RAG">
+        <div class="tags-list-item">RAG</div>
+      </a>
+    
+      <a 
+        href="/tags/Unity/" 
+        title="Unity">
+        <div class="tags-list-item">Unity</div>
+      </a>
+    
+      <a 
+        href="/tags/C/" 
+        title="C#">
+        <div class="tags-list-item">C#</div>
+      </a>
+    
+      <a 
+        href="/tags/LayaAir/" 
+        title="LayaAir">
+        <div class="tags-list-item">LayaAir</div>
+      </a>
+    
+      <a 
+        href="/tags/WebView/" 
+        title="WebView">
+        <div class="tags-list-item">WebView</div>
+      </a>
+    
+      <a 
+        href="/tags/Worker/" 
+        title="Worker">
+        <div class="tags-list-item">Worker</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E/" 
+        title="游戏引擎">
+        <div class="tags-list-item">游戏引擎</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/" 
+        title="杂七杂八">
+        <div class="tags-list-item">杂七杂八</div>
+      </a>
+    
+      <a 
+        href="/tags/Linux/" 
+        title="Linux">
+        <div class="tags-list-item">Linux</div>
+      </a>
+    
+      <a 
+        href="/tags/WebGL/" 
+        title="WebGL">
+        <div class="tags-list-item">WebGL</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" 
+        title="性能优化">
+        <div class="tags-list-item">性能优化</div>
+      </a>
+    
+      <a 
+        href="/tags/UGUI/" 
+        title="UGUI">
+        <div class="tags-list-item">UGUI</div>
+      </a>
+    
+      <a 
+        href="/tags/GLSL/" 
+        title="GLSL">
+        <div class="tags-list-item">GLSL</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+                    </aside>
+                    <main class="main-column">
+                      
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      为什么我们把 Lua 热更新迁移到 ILRuntime
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2022-07-01T10:50:00.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2022-07-01</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>2.2k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/Unity/" 
+            class="post-meta-link">
+            Unity
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/C/" 
+            class="post-meta-link">
+            C#
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/ILRuntime/" 
+            class="post-meta-link">
+            ILRuntime
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/Lua/" 
+            class="post-meta-link">
+            Lua
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/%E7%83%AD%E6%9B%B4%E6%96%B0/" 
+            class="post-meta-link">
+            热更新
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>Unity 项目做热更，过去几年大家基本都选 Lua。xLua、ToLua、sLua 三套方案，用的人多，踩坑文章也多。我们的项目也一样——战斗逻辑、UI、网络协议，全用 Lua 写的，通过 ToLua 和 C# 互调。</p>
+<p>但项目写了快两年，Lua 代码越来越多，改一个功能要跨两门语言来回跳，维护起来越来越吃力。我们花了三个月调研和试跑，最终决定把热更方案从 Lua 换成 ILRuntime。这篇文章把当时怎么想的、怎么做的、踩了什么坑记下来。</p>
+<hr>
+<h2 id="Lua-方案哪里不好用"><a href="#Lua-方案哪里不好用" class="headerlink" title="Lua 方案哪里不好用"></a>Lua 方案哪里不好用</h2><h3 id="1-要同时写两门语言"><a href="#1-要同时写两门语言" class="headerlink" title="1. 要同时写两门语言"></a>1. 要同时写两门语言</h3><p>C# 和 Lua 差别太大了。C# 是静态类型，编译期就能发现传错参数；Lua 是动态类型，传了个 nil 进去只能运行时崩。</p>
+<p>结果就是：日常开发脑子里要记两套规则，查 bug 要开两个调试器，C# 一个 Lua 一个。一旦 bug 出在 C# 调 Lua 或者 Lua 调 C# 的边界上，两边调用栈是断的，只能靠猜。</p>
+<p>还有错误处理方式不统一。C# 用 <code>try-catch</code>，Lua 用 <code>pcall</code>。Lua 里抛的错传到 C# 会丢掉栈信息，线上 crash 定位起来非常花时间。</p>
+<h3 id="2-C-和-Lua-互相调用太慢了"><a href="#2-C-和-Lua-互相调用太慢了" class="headerlink" title="2. C# 和 Lua 互相调用太慢了"></a>2. C# 和 Lua 互相调用太慢了</h3><p>每次 C# 调 Lua 函数，代码长这样：</p>
+<pre class="highlight"><span class="line">LuaFunction func = luaState.GetFunction(<span class="string">&quot;BattleSystem.OnDamage&quot;</span>);</span><br><span class="line">func.BeginPCall();</span><br><span class="line">func.Push(attackerId);</span><br><span class="line">func.Push(targetId);</span><br><span class="line">func.Push(damage);</span><br><span class="line">func.PCall();</span><br><span class="line">func.EndPCall();</span><br></pre>
+
+<p>参数要一个一个 Push 进去，完事还要 EndPCall。不光写起来烦，还有三个性能问题：</p>
+<ul>
+<li><strong>值类型装箱</strong>：<code>int</code>、<code>float</code> 这种值类型传过去会临时装箱，产生 GC 垃圾</li>
+<li><strong>字符串拷贝</strong>：C# string 和 Lua 的 char* 互转，每次都要分配新内存</li>
+<li><strong>委托注册</strong>：C# 的方法暴露给 Lua 要注册委托，委托对象本身也是 GC 负担</li>
+</ul>
+<p>战斗中一帧可能要跨语言调几千次，GC 一多帧率就掉。</p>
+<h3 id="3-工具链太弱"><a href="#3-工具链太弱" class="headerlink" title="3. 工具链太弱"></a>3. 工具链太弱</h3><ul>
+<li>没有编译检查。改了个函数名，调用方不会报错，跑起来才发现传了个 nil</li>
+<li>想重命名一个变量，只能用全局搜索替换，漏掉一个就出 bug</li>
+<li>代码补全不好用。C# 的类在 Lua 里怎么提示全靠 EmmyLua 注解维护，经常跟不上</li>
+<li>没有包管理器。用个第三方库基本就是下载 zip 拷进来</li>
+</ul>
+<h3 id="4-新人上手慢"><a href="#4-新人上手慢" class="headerlink" title="4. 新人上手慢"></a>4. 新人上手慢</h3><p>招进来的 Unity 开发，C# 本来就熟，但要学会写 Lua 热更代码，还得搞清楚 ToLua 怎么桥接 C# 类、项目自己的 Lua 框架怎么搭的。这个阶段一般要一两周。</p>
+<hr>
+<h2 id="为什么选了-ILRuntime"><a href="#为什么选了-ILRuntime" class="headerlink" title="为什么选了 ILRuntime"></a>为什么选了 ILRuntime</h2><p>ILRuntime 干的事可以一句话说清楚：<strong>热更代码也用 C# 写，编译成 DLL，运行时由 ILRuntime 解释执行，不用换语言。</strong></p>
+<h3 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h3><table>
+<thead>
+<tr>
+<th></th>
+<th>Lua</th>
+<th>ILRuntime</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>热更用什么语言写</td>
+<td>Lua</td>
+<td>C#</td>
+</tr>
+<tr>
+<td>类型检查</td>
+<td>没有，跑起来才知道</td>
+<td>编译期就能查出来</td>
+</tr>
+<tr>
+<td>跨语言调用</td>
+<td>Push&#x2F;Pop 栈操作，有装箱</td>
+<td>委托或适配器，无装箱</td>
+</tr>
+<tr>
+<td>调试</td>
+<td>单独的 Lua 调试器</td>
+<td>跟主工程用同一个 VS &#x2F; Rider</td>
+</tr>
+<tr>
+<td>热更代码能不能直接用主工程的类</td>
+<td>不能，要写桥接层</td>
+<td>可以，直接 using 引用</td>
+</tr>
+<tr>
+<td>包体增加</td>
+<td>+2.1MB（Lua 解释器）</td>
+<td>+0.8MB（ILRuntime）</td>
+</tr>
+</tbody></table>
+<h3 id="具体好在哪"><a href="#具体好在哪" class="headerlink" title="具体好在哪"></a>具体好在哪</h3><h4 id="只写一门语言"><a href="#只写一门语言" class="headerlink" title="只写一门语言"></a>只写一门语言</h4><p>不用在 C# 和 Lua 之间切来切去。热更代码和主工程都是 C#，类型系统是一致的，改接口的时候编译器会立刻标红所有受影响的调用。</p>
+<h4 id="调试不再折腾"><a href="#调试不再折腾" class="headerlink" title="调试不再折腾"></a>调试不再折腾</h4><p>ILRuntime 的热更 DLL 可以直接在 VS 或 Rider 里打断点。主工程的代码和热更代码的调用栈在同一个窗口里，从断点一步一步走就能定位问题，不用再猜。</p>
+<h4 id="跨语言调用快了很多"><a href="#跨语言调用快了很多" class="headerlink" title="跨语言调用快了很多"></a>跨语言调用快了很多</h4><p>用 ILRuntime 后，热更代码调主工程是这样：</p>
+<pre class="highlight"><span class="line"><span class="comment">// 热更 DLL 里直接写，跟写普通 C# 没区别</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">BattleSystem</span> : <span class="title">ILogicSystem</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnDamage</span>(<span class="params"><span class="built_in">int</span> attackerId, <span class="built_in">int</span> targetId, <span class="built_in">float</span> damage</span>)</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> target = EntityManager.GetEntity(targetId);</span><br><span class="line">        target.GetComponent&lt;HealthComponent&gt;().TakeDamage(damage);</span><br><span class="line">        EventBus.Emit(<span class="keyword">new</span> DamageEvent(attackerId, targetId, damage));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre>
+
+<p>没有 Push &#x2F; Pop，没有装箱，没有字符串拷贝。跨边界的开销基本只剩一次适配器分发，跟 Lua 方案比小了一个量级。</p>
+<h4 id="可以直接复用主工程的代码"><a href="#可以直接复用主工程的代码" class="headerlink" title="可以直接复用主工程的代码"></a>可以直接复用主工程的代码</h4><p>热更 DLL 里直接 <code>using</code> 主工程的命名空间，用主工程定义的接口、类型、工具类。不需要像 Lua 那样子给每个要用到的 C# 类写镜像表和桥接代码。</p>
+<h4 id="性能实测"><a href="#性能实测" class="headerlink" title="性能实测"></a>性能实测</h4><p>在 iPhone 12 和红米 K40 上跑了一组对比：</p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>Lua</th>
+<th>ILRuntime</th>
+<th>改善</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>单帧跨语言调用 5000 次</td>
+<td>3.2ms</td>
+<td>0.8ms</td>
+<td>快 4 倍</td>
+</tr>
+<tr>
+<td>战斗初始化</td>
+<td>180ms</td>
+<td>95ms</td>
+<td>快近一半</td>
+</tr>
+<tr>
+<td>战斗状态每帧 GC</td>
+<td>12.4KB</td>
+<td>3.1KB</td>
+<td>少 3&#x2F;4</td>
+</tr>
+</tbody></table>
+<p>并不是说 ILRuntime 解释执行本身比 Lua JIT 快。之所以整体更快，是因为省掉了跨语言 Marshalling 的开销，也没有双 GC（Lua 一个、C# 一个）同时跑。</p>
+<hr>
+<h2 id="怎么迁的"><a href="#怎么迁的" class="headerlink" title="怎么迁的"></a>怎么迁的</h2><p>整体花了 12 周，3 个开发。</p>
+<p><strong>第一周到第二周：小范围试跑</strong></p>
+<p>搭好 ILRuntime 基本环境，验证类继承、接口、泛型、委托、协程这些核心功能能不能跑通。选了一个独立的设置界面模块移植过去，确认全套流程没问题。</p>
+<p><strong>第三周到第五周：搭框架</strong></p>
+<ul>
+<li>定义热更层要用到的接口（<code>ILogicSystem</code>、<code>IView</code>、<code>IDataModel</code> 等）</li>
+<li>把主工程需要暴露给热更的类型注册好 Adapter</li>
+<li>热更 DLL 的下载、校验、加载流程替换掉原来 Lua 那套</li>
+</ul>
+<p><strong>第六周到第十一周：搬业务代码</strong></p>
+<p>按”网络协议→数据层→战斗逻辑→UI 层”的顺序，一个模块一个模块搬。每搬完一个，先保留 Lua 旧版，用开关控制跑新版还是旧版，确认稳定了再全量切。</p>
+<p><strong>第十二周：清理</strong></p>
+<p>全量切到 ILRuntime 后，删掉项目里所有 Lua 代码和 ToLua 桥接层。包体小了 2.1MB。</p>
+<hr>
+<h2 id="踩过的坑"><a href="#踩过的坑" class="headerlink" title="踩过的坑"></a>踩过的坑</h2><h3 id="1-泛型支持不完整"><a href="#1-泛型支持不完整" class="headerlink" title="1. 泛型支持不完整"></a>1. 泛型支持不完整</h3><p>ILRuntime 的泛型没有原生 CLR 那么全。<code>List&lt;T&gt;</code> 之类的基础容器能用，但自定义泛型类加泛型方法组合有时会炸。</p>
+<p>处理方式：</p>
+<ul>
+<li>尽量用主工程已经注册好的泛型类型</li>
+<li>自定义泛型在主工程里包一层具体类型再暴露出去</li>
+<li>别在热更新里用 <code>MakeGenericType</code> 动态造泛型</li>
+</ul>
+<h3 id="2-反射比原生慢"><a href="#2-反射比原生慢" class="headerlink" title="2. 反射比原生慢"></a>2. 反射比原生慢</h3><p>ILRuntime 里的反射比 CLR 原生反射慢一个数量级。高频调用的地方不能用反射，要用 Adapter 预先绑定。</p>
+<pre class="highlight"><span class="line"><span class="comment">// 主工程里提前注册，避免热更侧运行时反射</span></span><br><span class="line">appDomain.RegisterCrossBindingAdaptor(<span class="keyword">new</span> BattleSystemAdapter());</span><br><span class="line">appDomain.RegisterCrossBindingAdaptor(<span class="keyword">new</span> EntityManagerAdapter());</span><br></pre>
+
+<h3 id="3-自定义-struct-跨边界有拷贝开销"><a href="#3-自定义-struct-跨边界有拷贝开销" class="headerlink" title="3. 自定义 struct 跨边界有拷贝开销"></a>3. 自定义 struct 跨边界有拷贝开销</h3><p>虽然没装箱了，但自定义 struct 跨主工程和热更 DLL 传递仍然会拷贝一份。原则：</p>
+<ul>
+<li>跨边界的 struct 控制在 4 个字段以内</li>
+<li>大的数据结构用 class</li>
+<li><code>Vector3</code>、<code>Quaternion</code> 这种引擎内置的 ILRuntime 已经优化过，正常用</li>
+</ul>
+<h3 id="4-调试器和-Unity-版本的兼容"><a href="#4-调试器和-Unity-版本的兼容" class="headerlink" title="4. 调试器和 Unity 版本的兼容"></a>4. 调试器和 Unity 版本的兼容</h3><p>ILRuntime 调试器依赖 <code>Mono.Cecil</code>，Unity 2021 以上版本要手动调 Assembly Definition 的引用关系，不然符号加载会失败。最好在试跑阶段就定好版本组合。</p>
+<hr>
+<h2 id="换成-ILRuntime-之后的变化"><a href="#换成-ILRuntime-之后的变化" class="headerlink" title="换成 ILRuntime 之后的变化"></a>换成 ILRuntime 之后的变化</h2><table>
+<thead>
+<tr>
+<th></th>
+<th>之前（Lua）</th>
+<th>之后（ILRuntime）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>新人上手</td>
+<td>1-2 周</td>
+<td>2-3 天</td>
+</tr>
+<tr>
+<td>线上 bug 定位</td>
+<td>4-6 小时</td>
+<td>半小时到一小时</td>
+</tr>
+<tr>
+<td>战斗中帧率（中端机）</td>
+<td>42-48 FPS</td>
+<td>55-60 FPS</td>
+</tr>
+<tr>
+<td>每帧 GC</td>
+<td>12.4KB</td>
+<td>3.1KB</td>
+</tr>
+<tr>
+<td>编译期类型检查</td>
+<td>没有</td>
+<td>有</td>
+</tr>
+<tr>
+<td>包体增加</td>
+<td>+2.1MB</td>
+<td>+0.8MB</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="什么情况不用迁"><a href="#什么情况不用迁" class="headerlink" title="什么情况不用迁"></a>什么情况不用迁</h2><p>不是所有项目都适合换 ILRuntime。这些情况继续用 Lua 更合适：</p>
+<ol>
+<li>团队 Lua 已经用得很熟了，有自己的一套框架和工具，重写一遍不值当</li>
+<li>热更代码就那么几行配置脚本，引入 ILRuntime 属于杀鸡用牛刀</li>
+<li>项目需要跟外部的 Lua 代码配合（比如和 Cocos2d-x 共享同一套逻辑层）</li>
+<li>目标平台对 IL2CPP 加反射有硬限制，需要提前验证 ILRuntime 能不能跑</li>
+</ol>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>换 ILRuntime 最大的原因不是它跑得更快，而是只用一门语言写代码这件事省太多事了。不用在 C# 和 Lua 之间折腾、一个调试器就能看到完整调用栈、改了接口编译期就报错——这些东西在日常开发中的价值比跑分差距大得多。</p>
+<p>如果你们的 Lua 项目也陷入了跨语言调试花时间、新人上手慢、维护越来越累的困境，可以认真评估一下 ILRuntime。但动手之前一定先把试跑做透：泛型支持到什么程度、反射性能够不够、目标平台能不能跑通，这三样是决定成败的关键。</p>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            MrLibertine
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://mrlibertine.github.io/2022/07/01/5f3db1e0307f/">
+            https://mrlibertine.github.io/2022/07/01/5f3db1e0307f/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+    <div class="nav-item-prev">
+      <a 
+        href="/2022/08/15/5f4375464c70/" 
+        class="nav-link">
+        <i class="iconfont icon-left nav-prev-icon"></i>
+        <div>
+          <div class="nav-label">上一篇</div>
+          
+            <div class="nav-title">游戏配置表自动生成工具实现 </div>
+          
+        </div>
+      </a>
+    </div>
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2020/06/08/05e38aca0f79/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">#《代码整洁之道》读书笔记 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lua-%E6%96%B9%E6%A1%88%E5%93%AA%E9%87%8C%E4%B8%8D%E5%A5%BD%E7%94%A8"><span class="toc-text">Lua 方案哪里不好用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%A6%81%E5%90%8C%E6%97%B6%E5%86%99%E4%B8%A4%E9%97%A8%E8%AF%AD%E8%A8%80"><span class="toc-text">1. 要同时写两门语言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-C-%E5%92%8C-Lua-%E4%BA%92%E7%9B%B8%E8%B0%83%E7%94%A8%E5%A4%AA%E6%85%A2%E4%BA%86"><span class="toc-text">2. C# 和 Lua 互相调用太慢了</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%B7%A5%E5%85%B7%E9%93%BE%E5%A4%AA%E5%BC%B1"><span class="toc-text">3. 工具链太弱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%96%B0%E4%BA%BA%E4%B8%8A%E6%89%8B%E6%85%A2"><span class="toc-text">4. 新人上手慢</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E4%BA%86-ILRuntime"><span class="toc-text">为什么选了 ILRuntime</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E6%AF%94"><span class="toc-text">对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E5%A5%BD%E5%9C%A8%E5%93%AA"><span class="toc-text">具体好在哪</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%AA%E5%86%99%E4%B8%80%E9%97%A8%E8%AF%AD%E8%A8%80"><span class="toc-text">只写一门语言</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E8%AF%95%E4%B8%8D%E5%86%8D%E6%8A%98%E8%85%BE"><span class="toc-text">调试不再折腾</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%A8%E8%AF%AD%E8%A8%80%E8%B0%83%E7%94%A8%E5%BF%AB%E4%BA%86%E5%BE%88%E5%A4%9A"><span class="toc-text">跨语言调用快了很多</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%AF%E4%BB%A5%E7%9B%B4%E6%8E%A5%E5%A4%8D%E7%94%A8%E4%B8%BB%E5%B7%A5%E7%A8%8B%E7%9A%84%E4%BB%A3%E7%A0%81"><span class="toc-text">可以直接复用主工程的代码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E5%AE%9E%E6%B5%8B"><span class="toc-text">性能实测</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%8E%E4%B9%88%E8%BF%81%E7%9A%84"><span class="toc-text">怎么迁的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91"><span class="toc-text">踩过的坑</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%B3%9B%E5%9E%8B%E6%94%AF%E6%8C%81%E4%B8%8D%E5%AE%8C%E6%95%B4"><span class="toc-text">1. 泛型支持不完整</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8F%8D%E5%B0%84%E6%AF%94%E5%8E%9F%E7%94%9F%E6%85%A2"><span class="toc-text">2. 反射比原生慢</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%87%AA%E5%AE%9A%E4%B9%89-struct-%E8%B7%A8%E8%BE%B9%E7%95%8C%E6%9C%89%E6%8B%B7%E8%B4%9D%E5%BC%80%E9%94%80"><span class="toc-text">3. 自定义 struct 跨边界有拷贝开销</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%B0%83%E8%AF%95%E5%99%A8%E5%92%8C-Unity-%E7%89%88%E6%9C%AC%E7%9A%84%E5%85%BC%E5%AE%B9"><span class="toc-text">4. 调试器和 Unity 版本的兼容</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8D%A2%E6%88%90-ILRuntime-%E4%B9%8B%E5%90%8E%E7%9A%84%E5%8F%98%E5%8C%96"><span class="toc-text">换成 ILRuntime 之后的变化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%83%85%E5%86%B5%E4%B8%8D%E7%94%A8%E8%BF%81"><span class="toc-text">什么情况不用迁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+</div>
+                    </main>
+                    <aside class="right-column">
+                      <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-text">背景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lua-%E6%96%B9%E6%A1%88%E5%93%AA%E9%87%8C%E4%B8%8D%E5%A5%BD%E7%94%A8"><span class="toc-text">Lua 方案哪里不好用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%A6%81%E5%90%8C%E6%97%B6%E5%86%99%E4%B8%A4%E9%97%A8%E8%AF%AD%E8%A8%80"><span class="toc-text">1. 要同时写两门语言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-C-%E5%92%8C-Lua-%E4%BA%92%E7%9B%B8%E8%B0%83%E7%94%A8%E5%A4%AA%E6%85%A2%E4%BA%86"><span class="toc-text">2. C# 和 Lua 互相调用太慢了</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%B7%A5%E5%85%B7%E9%93%BE%E5%A4%AA%E5%BC%B1"><span class="toc-text">3. 工具链太弱</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%96%B0%E4%BA%BA%E4%B8%8A%E6%89%8B%E6%85%A2"><span class="toc-text">4. 新人上手慢</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E4%BA%86-ILRuntime"><span class="toc-text">为什么选了 ILRuntime</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%B9%E6%AF%94"><span class="toc-text">对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E5%A5%BD%E5%9C%A8%E5%93%AA"><span class="toc-text">具体好在哪</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%AA%E5%86%99%E4%B8%80%E9%97%A8%E8%AF%AD%E8%A8%80"><span class="toc-text">只写一门语言</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E8%AF%95%E4%B8%8D%E5%86%8D%E6%8A%98%E8%85%BE"><span class="toc-text">调试不再折腾</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B7%A8%E8%AF%AD%E8%A8%80%E8%B0%83%E7%94%A8%E5%BF%AB%E4%BA%86%E5%BE%88%E5%A4%9A"><span class="toc-text">跨语言调用快了很多</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%AF%E4%BB%A5%E7%9B%B4%E6%8E%A5%E5%A4%8D%E7%94%A8%E4%B8%BB%E5%B7%A5%E7%A8%8B%E7%9A%84%E4%BB%A3%E7%A0%81"><span class="toc-text">可以直接复用主工程的代码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E5%AE%9E%E6%B5%8B"><span class="toc-text">性能实测</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%8E%E4%B9%88%E8%BF%81%E7%9A%84"><span class="toc-text">怎么迁的</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B8%A9%E8%BF%87%E7%9A%84%E5%9D%91"><span class="toc-text">踩过的坑</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%B3%9B%E5%9E%8B%E6%94%AF%E6%8C%81%E4%B8%8D%E5%AE%8C%E6%95%B4"><span class="toc-text">1. 泛型支持不完整</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8F%8D%E5%B0%84%E6%AF%94%E5%8E%9F%E7%94%9F%E6%85%A2"><span class="toc-text">2. 反射比原生慢</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%87%AA%E5%AE%9A%E4%B9%89-struct-%E8%B7%A8%E8%BE%B9%E7%95%8C%E6%9C%89%E6%8B%B7%E8%B4%9D%E5%BC%80%E9%94%80"><span class="toc-text">3. 自定义 struct 跨边界有拷贝开销</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%B0%83%E8%AF%95%E5%99%A8%E5%92%8C-Unity-%E7%89%88%E6%9C%AC%E7%9A%84%E5%85%BC%E5%AE%B9"><span class="toc-text">4. 调试器和 Unity 版本的兼容</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8D%A2%E6%88%90-ILRuntime-%E4%B9%8B%E5%90%8E%E7%9A%84%E5%8F%98%E5%8C%96"><span class="toc-text">换成 ILRuntime 之后的变化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%83%85%E5%86%B5%E4%B8%8D%E7%94%A8%E8%BF%81"><span class="toc-text">什么情况不用迁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-10-19</div>
+        <a href="/2026/10/19/ae2005365a89/"><div class="recent-posts-item-content">Unity 客户端 UI 性能实践：虚拟列表、合批与框架设计</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-06-09</div>
+        <a href="/2026/06/09/76cfdea54713/"><div class="recent-posts-item-content">LayaAir 原生 vs Unity 原生 — 为什么你的 Worker 在原生 App 里不启用</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-01-13</div>
+        <a href="/2026/01/13/19efe93a808b/"><div class="recent-posts-item-content">AI 与 LLM 术语速查</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2024-06-07</div>
+        <a href="/2024/06/07/0aebe7b6b0bb/"><div class="recent-posts-item-content">Linux部署dotnet程序相关</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+                    </aside>
+                  </div>
+                </div>
+              </div>
+    </div>
+    
+      <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2026
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          MrLibertine
+        </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+
+        
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+          
+            
+                  
+                    <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+
+                      
+                        
+                          <script src="/js/main.js"></script>
+                            
+                              <script>
+                                loadScript('/js/lib/busuanzi.min.js') 
+                              </script>
+                              
+                                
+                                  <script>
+                                    var addLazyload = function () {
+                                      var observer = lozad('.lozad', {
+                                        load: function (el) {
+                                          el.srcset = el.getAttribute('data-src')
+                                        },
+                                        loaded: function (el) {
+                                          el.classList.add('loaded')
+                                        },
+                                      })
+                                      observer.observe()
+                                    }
+                                  </script>
+                                  <script>
+                                    loadScript('/js/lib/lozad.min.js', addLazyload)
+                                  </script>
+                                  
+                                    <script src="//instant.page/5.1.0" type="module"
+                                      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+                                    
+                                        
+  </body>
+
+</html>
