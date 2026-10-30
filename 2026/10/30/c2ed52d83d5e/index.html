@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>用 Cocos Creator 复刻我的 UI 性能实验室</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="用 Cocos Creator 复刻我的 UI 性能实验室">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://mrlibertine.github.io/2026/10/30/c2ed52d83d5e/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="/img/68339006.png">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2026-10-30">
+      <meta 
+        property="og:article:modified_time" 
+        content="2026-10-30">
+      <meta 
+        property="og:article:author" 
+        content="MrLibertine">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="性能优化">
+        
+          <meta 
+            property="og:article:tag" 
+            content="Cocos Creator">
+        
+          <meta 
+            property="og:article:tag" 
+            content="UI">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div class="wrapper">
+      
+        <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">MrLibertine</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav>
+          
+            <div id="local-search" style="display: none">
+              <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容..." />
+              <div id="search-content"></div>
+            </div>
+            
+              <div class="section-wrap">
+                <div class="container">
+                  <div class="columns">
+                    <aside class="left-column">
+                      
+                        <div class="card card-author">
+                          
+  <img 
+    src="/img/68339006.png" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">MrLibertine</p>
+<p class="author-description">designed by MrLibertine</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>19</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>1</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>24</span>
+    <span>标签</span>
+  </a>
+</div>
+
+                        </div>
+                         <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E8%AF%B4%E7%BB%93%E8%AE%BA"><span class="toc-text">先说结论</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E4%B8%80%EF%BC%9A%E8%99%9A%E6%8B%9F%E5%88%97%E8%A1%A8"><span class="toc-text">实验一：虚拟列表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E4%BA%8C%EF%BC%9A%E4%BC%A4%E5%AE%B3%E9%A3%98%E5%AD%97-%E5%AF%B9%E8%B1%A1%E6%B1%A0"><span class="toc-text">实验二：伤害飘字 + 对象池</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E4%B8%89%EF%BC%9A%E5%90%88%E6%89%B9%E5%AF%B9%E6%AF%94%E5%BC%80%E5%85%B3"><span class="toc-text">实验三：合批对比开关</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E-Unity-x2F-LayaAir-%E8%BF%87%E6%9D%A5%E7%9A%84%E6%98%A0%E5%B0%84%E8%A1%A8"><span class="toc-text">从 Unity &#x2F; LayaAir 过来的映射表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E7%BB%AD"><span class="toc-text">后续</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/Unity/">
+        <div class="categories-list-item">
+          Unity
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/Unity/" 
+        title="Unity">
+        <div class="tags-list-item">Unity</div>
+      </a>
+    
+      <a 
+        href="/tags/C/" 
+        title="C#">
+        <div class="tags-list-item">C#</div>
+      </a>
+    
+      <a 
+        href="/tags/GLSL/" 
+        title="GLSL">
+        <div class="tags-list-item">GLSL</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" 
+        title="性能优化">
+        <div class="tags-list-item">性能优化</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%B7%A5%E5%85%B7/" 
+        title="工具">
+        <div class="tags-list-item">工具</div>
+      </a>
+    
+      <a 
+        href="/tags/UI/" 
+        title="UI">
+        <div class="tags-list-item">UI</div>
+      </a>
+    
+      <a 
+        href="/tags/Cocos-Creator/" 
+        title="Cocos Creator">
+        <div class="tags-list-item">Cocos Creator</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%98%85%E8%AF%BB%E7%90%86%E8%A7%A3/" 
+        title="阅读理解">
+        <div class="tags-list-item">阅读理解</div>
+      </a>
+    
+      <a 
+        href="/tags/%E4%B8%80%E4%BA%9B%E6%AF%94%E8%BE%83%E6%9C%89%E7%94%A8%E7%9A%84%E7%BD%91%E7%AB%99/" 
+        title="一些比较有用的网站">
+        <div class="tags-list-item">一些比较有用的网站</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%83%AD%E6%9B%B4%E6%96%B0/" 
+        title="热更新">
+        <div class="tags-list-item">热更新</div>
+      </a>
+    
+      <a 
+        href="/tags/Lua/" 
+        title="Lua">
+        <div class="tags-list-item">Lua</div>
+      </a>
+    
+      <a 
+        href="/tags/ILRuntime/" 
+        title="ILRuntime">
+        <div class="tags-list-item">ILRuntime</div>
+      </a>
+    
+      <a 
+        href="/tags/UGUI/" 
+        title="UGUI">
+        <div class="tags-list-item">UGUI</div>
+      </a>
+    
+      <a 
+        href="/tags/WebGL/" 
+        title="WebGL">
+        <div class="tags-list-item">WebGL</div>
+      </a>
+    
+      <a 
+        href="/tags/Linux/" 
+        title="Linux">
+        <div class="tags-list-item">Linux</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/" 
+        title="杂七杂八">
+        <div class="tags-list-item">杂七杂八</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+                    </aside>
+                    <main class="main-column">
+                      
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      用 Cocos Creator 复刻我的 UI 性能实验室
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2026-10-30T09:00:00.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2026-10-30</span>
+    </time>
+    
+    
+      <span class="dot"></span>
+      <span>1.6k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" 
+            class="post-meta-link">
+            性能优化
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/Cocos-Creator/" 
+            class="post-meta-link">
+            Cocos Creator
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/UI/" 
+            class="post-meta-link">
+            UI
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <p>之前用 Unity WebGL 做过一个在线性能实验室，把虚拟列表、合批、对象池、遮罩断批、帧率分布这些 UI 性能的关键机制做成了可实时调参的实验。这次把其中三个核心实验用 <strong>Cocos Creator 3.8</strong> 复刻了一遍，一是验证这些机制在 Cocos 里的表现，二是正好系统地过一遍 Cocos 的组件模型和 API。</p>
+<p>三个实验：<strong>虚拟列表（10 万条数据）、伤害飘字 + 对象池、合批对比开关</strong>。全部代码贴在文中，可直接放进 3.8 项目跑。</p>
+<h2 id="先说结论"><a href="#先说结论" class="headerlink" title="先说结论"></a>先说结论</h2><p>三套机制在 Cocos 里的行为和 Unity 几乎一致，验证了它们是渲染架构层面的通用规律，不是某家引擎的专利：</p>
+<table>
+<thead>
+<tr>
+<th>机制</th>
+<th>解决的问题</th>
+<th>Cocos 侧实现</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>虚拟列表</td>
+<td>元素太多</td>
+<td>content 高度撑满 + 滚动反算可见区间 + 节点池复用</td>
+</tr>
+<tr>
+<td>对象池</td>
+<td>频繁创建销毁 → GC 峰值</td>
+<td>飘字上飘结束后回池，instantiate&#x2F;destroy 次数归零</td>
+</tr>
+<tr>
+<td>合批</td>
+<td>批次太多</td>
+<td>160 个 Sprite 共享图集 &#x3D; 个位数 Batch，独立纹理 &#x3D; 160+</td>
+</tr>
+</tbody></table>
+<p>顺带一提 Cocos 3.8 的调试面板很方便：<code>debug.setDisplayStats(true)</code> 就能在预览窗口左下角看到 FPS 和 DrawCall，做这类实验连 Profiler 都不用开。</p>
+<h2 id="实验一：虚拟列表"><a href="#实验一：虚拟列表" class="headerlink" title="实验一：虚拟列表"></a>实验一：虚拟列表</h2><p>10 万条数据，常驻节点只有十几个。核心就三件事：</p>
+<ol>
+<li><strong>content 高度撑满真实数据高度</strong> —— 滚动条的长度和手感才对</li>
+<li>监听 <code>scrolling</code> 事件，由 <code>content.position.y</code> 反算当前可见区间 <code>[first, last]</code></li>
+<li>区间外的节点回池，区间内的从池里取出摆位 —— <strong>滚动过程零创建零销毁</strong></li>
+</ol>
+<pre class="highlight"><span class="line"><span class="meta">@ccclass</span>(<span class="string">&#x27;VirtualList&#x27;</span>)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">class</span> <span class="title class_">VirtualList</span> <span class="keyword">extends</span> <span class="title class_ inherited__">Component</span> &#123;</span><br><span class="line">    <span class="meta">@property</span>(<span class="title class_">ScrollView</span>) <span class="attr">scrollView</span>: <span class="title class_">ScrollView</span> = <span class="literal">null</span>!;</span><br><span class="line">    <span class="meta">@property</span>(<span class="title class_">Prefab</span>) <span class="attr">itemPrefab</span>: <span class="title class_">Prefab</span> = <span class="literal">null</span>!;</span><br><span class="line">    <span class="meta">@property</span> totalItems = <span class="number">100000</span>;</span><br><span class="line">    <span class="meta">@property</span> itemHeight = <span class="number">48</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="attr">pool</span>: <span class="title class_">Node</span>[] = [];</span><br><span class="line">    <span class="keyword">private</span> <span class="attr">active</span>: &#123; <span class="attr">node</span>: <span class="title class_">Node</span>, <span class="attr">idx</span>: <span class="built_in">number</span> &#125;[] = [];</span><br><span class="line"></span><br><span class="line">    <span class="title function_">onLoad</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">const</span> content = <span class="variable language_">this</span>.<span class="property">scrollView</span>.<span class="property">content</span>!;</span><br><span class="line">        <span class="comment">// 1. 撑满真实高度</span></span><br><span class="line">        content.<span class="title function_">getComponent</span>(<span class="title class_">UITransform</span>)!.<span class="property">height</span> = <span class="variable language_">this</span>.<span class="property">totalItems</span> * <span class="variable language_">this</span>.<span class="property">itemHeight</span>;</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">scrollView</span>.<span class="property">node</span>.<span class="title function_">on</span>(<span class="string">&#x27;scrolling&#x27;</span>, <span class="variable language_">this</span>.<span class="property">refresh</span>, <span class="variable language_">this</span>);</span><br><span class="line">        <span class="variable language_">this</span>.<span class="title function_">refresh</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">refresh</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">const</span> offset = -<span class="variable language_">this</span>.<span class="property">content</span>.<span class="property">position</span>.<span class="property">y</span>;   <span class="comment">// 已滚动像素</span></span><br><span class="line">        <span class="keyword">const</span> viewH = <span class="variable language_">this</span>.<span class="property">scrollView</span>.<span class="property">node</span>.<span class="title function_">getComponent</span>(<span class="title class_">UITransform</span>)!.<span class="property">height</span>;</span><br><span class="line">        <span class="keyword">const</span> first = <span class="title class_">Math</span>.<span class="title function_">max</span>(<span class="number">0</span>, <span class="title class_">Math</span>.<span class="title function_">floor</span>(offset / <span class="variable language_">this</span>.<span class="property">itemHeight</span>) - <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">const</span> last = <span class="title class_">Math</span>.<span class="title function_">min</span>(<span class="variable language_">this</span>.<span class="property">totalItems</span> - <span class="number">1</span>, <span class="title class_">Math</span>.<span class="title function_">ceil</span>((offset + <span class="variable language_">this</span>.<span class="property">viewH</span>) / <span class="variable language_">this</span>.<span class="property">itemHeight</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 回收区间外的</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="variable language_">this</span>.<span class="property">active</span>.<span class="property">length</span> - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">            <span class="keyword">const</span> it = <span class="variable language_">this</span>.<span class="property">active</span>[i];</span><br><span class="line">            <span class="keyword">if</span> (it.<span class="property">idx</span> &lt; first || it.<span class="property">idx</span> &gt; last) &#123;</span><br><span class="line">                <span class="variable language_">this</span>.<span class="title function_">recycle</span>(it.<span class="property">node</span>);</span><br><span class="line">                <span class="variable language_">this</span>.<span class="property">active</span>.<span class="title function_">splice</span>(i, <span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 补齐区间内的</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> i = first; i &lt;= last; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="variable language_">this</span>.<span class="property">active</span>.<span class="title function_">some</span>(<span class="function"><span class="params">a</span> =&gt;</span> a.<span class="property">idx</span> === i)) <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">const</span> n = <span class="variable language_">this</span>.<span class="title function_">acquire</span>(i);</span><br><span class="line">            n.<span class="title function_">setPosition</span>(<span class="number">0</span>, -i * <span class="variable language_">this</span>.<span class="property">itemHeight</span>, <span class="number">0</span>);  <span class="comment">// item anchor = (0.5, 1)</span></span><br><span class="line">            <span class="variable language_">this</span>.<span class="property">active</span>.<span class="title function_">push</span>(&#123; <span class="attr">node</span>: n, <span class="attr">idx</span>: i &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">acquire</span>(<span class="attr">idx</span>: <span class="built_in">number</span>): <span class="title class_">Node</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> n = <span class="variable language_">this</span>.<span class="property">pool</span>.<span class="title function_">pop</span>() ?? <span class="title function_">instantiate</span>(<span class="variable language_">this</span>.<span class="property">itemPrefab</span>);</span><br><span class="line">        n.<span class="title function_">setParent</span>(<span class="variable language_">this</span>.<span class="property">content</span>);</span><br><span class="line">        n.<span class="title function_">getComponent</span>(<span class="title class_">Label</span>)!.<span class="property">string</span> = <span class="string">`第 <span class="subst">$&#123;idx + <span class="number">1</span>&#125;</span> 条`</span>;</span><br><span class="line">        <span class="keyword">return</span> n;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">recycle</span>(<span class="params">n: Node</span>) &#123; n.<span class="title function_">removeFromParent</span>(); <span class="variable language_">this</span>.<span class="property">pool</span>.<span class="title function_">push</span>(n); &#125;</span><br><span class="line">&#125;</span><br></pre>
+
+<p>做对照模式时故意留了个反例开关：全量创建 3000 个节点直接滚动 —— 卡顿肉眼可见，和虚拟模式的丝滑形成对比。10 万条全量创建连试都不用试。</p>
+<p><strong>一个移植细节</strong>：item 节点的 Anchor 必须设成 <code>(0.5, 1)</code>（顶部中间），摆位公式 <code>-index * itemHeight</code> 才成立。Unity 的 RectTransform 锚点体系在这就能直接平移过来。</p>
+<h2 id="实验二：伤害飘字-对象池"><a href="#实验二：伤害飘字-对象池" class="headerlink" title="实验二：伤害飘字 + 对象池"></a>实验二：伤害飘字 + 对象池</h2><p>点击屏幕喷一波飘字（40 个），上飘渐隐后结束生命周期。两个模式对比：</p>
+<ul>
+<li><strong>池化模式</strong>：结束后 <code>removeFromParent</code> 回池，Gc 计数纹丝不动</li>
+<li><strong>new&#x2F;destroy 模式</strong>：每次 <code>instantiate</code> + <code>destroy</code>，计数狂涨 —— 对应的就是 GC 峰值和掉帧</li>
+</ul>
+<pre class="highlight"><span class="line"><span class="keyword">private</span> <span class="title function_">spawnOne</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="attr">n</span>: <span class="title class_">Node</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable language_">this</span>.<span class="property">usePool</span> &amp;&amp; <span class="variable language_">this</span>.<span class="property">pool</span>.<span class="property">length</span> &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        n = <span class="variable language_">this</span>.<span class="property">pool</span>.<span class="title function_">pop</span>()!;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        n = <span class="title function_">instantiate</span>(<span class="variable language_">this</span>.<span class="property">floatPrefab</span>);</span><br><span class="line">        <span class="variable language_">this</span>.<span class="property">churn</span>++;                    <span class="comment">// 只有新建才计入</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ... 摆位、随机伤害数字</span></span><br><span class="line">    <span class="title function_">tween</span>(n).<span class="title function_">by</span>(<span class="number">0.9</span>, &#123; <span class="attr">position</span>: <span class="keyword">new</span> <span class="title class_">Vec3</span>(<span class="number">0</span>, <span class="variable language_">this</span>.<span class="property">floatHeight</span>, <span class="number">0</span>) &#125;).<span class="title function_">start</span>();</span><br><span class="line">    <span class="title function_">tween</span>(op).<span class="title function_">delay</span>(<span class="number">0.3</span>).<span class="title function_">to</span>(<span class="number">0.6</span>, &#123; <span class="attr">opacity</span>: <span class="number">0</span> &#125;).<span class="title function_">call</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="title class_">Tween</span>.<span class="title function_">stopAllByTarget</span>(n);</span><br><span class="line">        <span class="keyword">if</span> (<span class="variable language_">this</span>.<span class="property">usePool</span>) &#123;</span><br><span class="line">            n.<span class="title function_">removeFromParent</span>();        <span class="comment">// 回池，不销毁</span></span><br><span class="line">            <span class="variable language_">this</span>.<span class="property">pool</span>.<span class="title function_">push</span>(n);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            n.<span class="title function_">destroy</span>();</span><br><span class="line">            <span class="variable language_">this</span>.<span class="property">churn</span>++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;).<span class="title function_">start</span>();</span><br><span class="line">&#125;</span><br></pre>
+
+<p><strong>容易漏的一行</strong>：从池里复用节点前必须 <code>Tween.stopAllByTarget(n)</code>，否则上一个生命周期的 tween 还挂着，复用时会串动画。这类坑在 Unity 里对应的是协程没停干净就回池，一个道理。</p>
+<p>对象池解决的是「频繁创建销毁 → GC 峰值 → 掉帧」，和虚拟列表（元素太多）、合批（批次太多）不是一回事，三个问题经常被混为一谈。</p>
+<h2 id="实验三：合批对比开关"><a href="#实验三：合批对比开关" class="headerlink" title="实验三：合批对比开关"></a>实验三：合批对比开关</h2><p>160 个 Sprite 网格排布，一个按钮切换两种模式：</p>
+<ul>
+<li><strong>共享图集</strong>：全部引用同一个 SpriteFrame → DrawCall 个位数</li>
+<li><strong>独立贴图</strong>：运行时为每个 Sprite 生成一张独立纹理 → DrawCall 160+</li>
+</ul>
+<pre class="highlight"><span class="line"><span class="comment">// 运行时造一张 16x16 纯色纹理，每张颜色不同，强制断批</span></span><br><span class="line"><span class="keyword">private</span> <span class="title function_">makeUniqueFrame</span>(<span class="attr">i</span>: <span class="built_in">number</span>): <span class="title class_">SpriteFrame</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> tex = <span class="keyword">new</span> <span class="title class_">Texture2D</span>();</span><br><span class="line">    tex.<span class="title function_">reset</span>(&#123; <span class="attr">width</span>: <span class="number">16</span>, <span class="attr">height</span>: <span class="number">16</span>, <span class="attr">format</span>: <span class="title class_">Texture2D</span>.<span class="property">PixelFormat</span>.<span class="property">RGBA8888</span> &#125;);</span><br><span class="line">    <span class="keyword">const</span> data = <span class="keyword">new</span> <span class="title class_">Uint8Array</span>(<span class="number">16</span> * <span class="number">16</span> * <span class="number">4</span>);</span><br><span class="line">    <span class="keyword">const</span> c = <span class="keyword">new</span> <span class="title class_">Color</span>();</span><br><span class="line">    <span class="title class_">Color</span>.<span class="title function_">fromHSV</span>(c, (i * <span class="number">0.618</span>) % <span class="number">1</span>, <span class="number">0.75</span>, <span class="number">0.95</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> p = <span class="number">0</span>; p &lt; <span class="number">256</span>; p++) &#123;</span><br><span class="line">        data[p * <span class="number">4</span>] = c.<span class="property">r</span>; data[p * <span class="number">4</span> + <span class="number">1</span>] = c.<span class="property">g</span>; data[p * <span class="number">4</span> + <span class="number">2</span>] = c.<span class="property">b</span>; data[p * <span class="number">4</span> + <span class="number">3</span>] = <span class="number">255</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    tex.<span class="title function_">uploadData</span>(data);</span><br><span class="line">    <span class="keyword">const</span> sf = <span class="keyword">new</span> <span class="title class_">SpriteFrame</span>();</span><br><span class="line">    sf.<span class="property">texture</span> = tex;</span><br><span class="line">    <span class="keyword">return</span> sf;</span><br><span class="line">&#125;</span><br></pre>
+
+<p>在调试面板里切换按钮，DrawCall 数字从个位数跳到 160+ 再跳回来，<strong>这就是合批的全部本质：同材质同纹理的物体合成一个绘制批次</strong>。断批三要素 —— 不同纹理、不同材质参数、遮挡组件（Mask 的 stencil 写入）—— 前两个这个实验直接演示了。</p>
+<p>之前在 Unity 实验室里验证过 Mask 比 RectMask2D 恒定多 2 个批次（stencil 写入 + 还原），Cocos 的 Mask 组件同样是 stencil 方案，这个结论可以直接迁移。</p>
+<h2 id="从-Unity-x2F-LayaAir-过来的映射表"><a href="#从-Unity-x2F-LayaAir-过来的映射表" class="headerlink" title="从 Unity &#x2F; LayaAir 过来的映射表"></a>从 Unity &#x2F; LayaAir 过来的映射表</h2><p>这次复刻顺手整理的心智映射，对两边都有经验的人应该是最快的上手路径：</p>
+<table>
+<thead>
+<tr>
+<th>Unity</th>
+<th>LayaAir</th>
+<th>Cocos Creator 3.x</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GameObject</td>
+<td>Sprite&#x2F;Node</td>
+<td>Node</td>
+</tr>
+<tr>
+<td>MonoBehaviour</td>
+<td>组件基类</td>
+<td>Component（onLoad&#x2F;start&#x2F;update 几乎同名）</td>
+</tr>
+<tr>
+<td>Prefab</td>
+<td>预制</td>
+<td>Prefab</td>
+</tr>
+<tr>
+<td>RectTransform</td>
+<td>锚点系统</td>
+<td>UITransform</td>
+</tr>
+<tr>
+<td>AssetBundle</td>
+<td>加载策略</td>
+<td>Bundle</td>
+</tr>
+<tr>
+<td>Coroutine</td>
+<td>Tween</td>
+<td>tween &#x2F; Tween 类</td>
+</tr>
+<tr>
+<td>SpriteAtlas</td>
+<td>图集</td>
+<td>SpriteAtlas &#x2F; 动态合图</td>
+</tr>
+</tbody></table>
+<p>引擎 API 只是名字不同，<strong>渲染架构和性能机制是相通的</strong>：批次怎么合、GC 什么时候炸、列表怎么复用，这些问题在任何 2D 引擎里都长一个样。</p>
+<h2 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h2><ul>
+<li>完整工程整理后放出构建版，浏览器可直接打开</li>
+<li>如果继续往下做，下一批实验是：Mask vs RectMask2D（Cocos 里对应 Mask 组件类型）、文本节点的断批行为、同屏 Spine 实例数量的内存曲线</li>
+</ul>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            MrLibertine
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://mrlibertine.github.io/2026/10/30/c2ed52d83d5e/">
+            https://mrlibertine.github.io/2026/10/30/c2ed52d83d5e/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2026/10/19/ae2005365a89/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">Unity 客户端 UI 性能实践：虚拟列表、合批与框架设计 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E8%AF%B4%E7%BB%93%E8%AE%BA"><span class="toc-text">先说结论</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E4%B8%80%EF%BC%9A%E8%99%9A%E6%8B%9F%E5%88%97%E8%A1%A8"><span class="toc-text">实验一：虚拟列表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E4%BA%8C%EF%BC%9A%E4%BC%A4%E5%AE%B3%E9%A3%98%E5%AD%97-%E5%AF%B9%E8%B1%A1%E6%B1%A0"><span class="toc-text">实验二：伤害飘字 + 对象池</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E4%B8%89%EF%BC%9A%E5%90%88%E6%89%B9%E5%AF%B9%E6%AF%94%E5%BC%80%E5%85%B3"><span class="toc-text">实验三：合批对比开关</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E-Unity-x2F-LayaAir-%E8%BF%87%E6%9D%A5%E7%9A%84%E6%98%A0%E5%B0%84%E8%A1%A8"><span class="toc-text">从 Unity &#x2F; LayaAir 过来的映射表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E7%BB%AD"><span class="toc-text">后续</span></a></li></ol>
+</div>
+                    </main>
+                    <aside class="right-column">
+                      <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E8%AF%B4%E7%BB%93%E8%AE%BA"><span class="toc-text">先说结论</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E4%B8%80%EF%BC%9A%E8%99%9A%E6%8B%9F%E5%88%97%E8%A1%A8"><span class="toc-text">实验一：虚拟列表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E4%BA%8C%EF%BC%9A%E4%BC%A4%E5%AE%B3%E9%A3%98%E5%AD%97-%E5%AF%B9%E8%B1%A1%E6%B1%A0"><span class="toc-text">实验二：伤害飘字 + 对象池</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E9%AA%8C%E4%B8%89%EF%BC%9A%E5%90%88%E6%89%B9%E5%AF%B9%E6%AF%94%E5%BC%80%E5%85%B3"><span class="toc-text">实验三：合批对比开关</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E-Unity-x2F-LayaAir-%E8%BF%87%E6%9D%A5%E7%9A%84%E6%98%A0%E5%B0%84%E8%A1%A8"><span class="toc-text">从 Unity &#x2F; LayaAir 过来的映射表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E7%BB%AD"><span class="toc-text">后续</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-10-30</div>
+        <a href="/2026/10/30/c2ed52d83d5e/"><div class="recent-posts-item-content">用 Cocos Creator 复刻我的 UI 性能实验室</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-10-19</div>
+        <a href="/2026/10/19/ae2005365a89/"><div class="recent-posts-item-content">Unity 客户端 UI 性能实践：虚拟列表、合批与框架设计</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-06-09</div>
+        <a href="/2026/06/09/76cfdea54713/"><div class="recent-posts-item-content">LayaAir 原生 vs Unity 原生 — 为什么你的 Worker 在原生 App 里不启用</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-01-13</div>
+        <a href="/2026/01/13/19efe93a808b/"><div class="recent-posts-item-content">AI 与 LLM 术语速查</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+                    </aside>
+                  </div>
+                </div>
+              </div>
+    </div>
+    
+      <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2026
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          MrLibertine
+        </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+
+        
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+          
+            
+                  
+                    <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+
+                      
+                        
+                          <script src="/js/main.js"></script>
+                            
+                              <script>
+                                loadScript('/js/lib/busuanzi.min.js') 
+                              </script>
+                              
+                                
+                                  <script>
+                                    var addLazyload = function () {
+                                      var observer = lozad('.lozad', {
+                                        load: function (el) {
+                                          el.srcset = el.getAttribute('data-src')
+                                        },
+                                        loaded: function (el) {
+                                          el.classList.add('loaded')
+                                        },
+                                      })
+                                      observer.observe()
+                                    }
+                                  </script>
+                                  <script>
+                                    loadScript('/js/lib/lozad.min.js', addLazyload)
+                                  </script>
+                                  
+                                    <script src="//instant.page/5.1.0" type="module"
+                                      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+                                    
+                                        
+  </body>
+
+</html>
