@@ -48,6 +48,16 @@
       transition: color .2s, border-color .2s;
     }
     #back:hover { color: #e6ecf5; border-color: #3d4a5e; }
+    /* 被文章 iframe 嵌入时：藏掉「返回博客」，右下角给一颗全屏按钮 */
+    #full {
+      position: fixed; right: 12px; bottom: 12px; z-index: 11;
+      display: none; width: 30px; height: 30px; padding: 0;
+      color: #8b97a8; background: rgba(11, 14, 20, .62);
+      border: 1px solid #2a3342; border-radius: 8px;
+      font-size: 13px; line-height: 1; cursor: pointer;
+      transition: color .2s, border-color .2s;
+    }
+    #full:hover { color: #e6ecf5; border-color: #3d4a5e; }
     #err {
       position: fixed; left: 0; right: 0; bottom: 0; z-index: 12;
       display: none; padding: 12px 16px; font-size: 12px; line-height: 1.6;
@@ -58,6 +68,7 @@
 </head>
 <body>
   <a id="back" href="https://mrlibertine.github.io/">← 返回博客</a>
+  <button id="full" title="全屏查看（Esc 退出）">⛶</button>
 
   <div id="boot">
     <div class="name">COCOS CREATOR 3.8 · TYPESCRIPT</div>
@@ -81,6 +92,23 @@
     (function () {
       var boot = document.getElementById('boot');
       var errBox = document.getElementById('err');
+
+      // 被文章页 iframe 嵌进来时：画布宽度有限，「返回博客」会压到顶栏，改给全屏按钮。
+      var embedded = false;
+      try { embedded = window.self !== window.top; } catch (e) { embedded = true; }
+      if (embedded) {
+        document.getElementById('back').style.display = 'none';
+        var fullBtn = document.getElementById('full');
+        fullBtn.style.display = 'block';
+        fullBtn.addEventListener('click', function () {
+          var el = document.documentElement;
+          if (el.requestFullscreen) el.requestFullscreen();
+          else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+        });
+        document.addEventListener('fullscreenchange', function () {
+          fullBtn.textContent = document.fullscreenElement ? '✕' : '⛶';
+        });
+      }
 
       function fail(msg) {
         errBox.style.display = 'block';
