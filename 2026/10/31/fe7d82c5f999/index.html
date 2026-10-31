@@ -551,12 +551,7 @@
   <div 
     id="section" 
     class="post-content">
-    <div style="padding:14px 16px;border:1px solid #1f6feb33;border-radius:8px;background:#1f6feb0d;margin-bottom:18px">
-<strong>在线演示</strong>：<a href="https://mrlibertine.github.io/cocos-perf-lab/">mrlibertine.github.io/cocos-perf-lab/</a><br>
-10 个可交互实验，全部数字都是运行时实时测出来的。建议桌面 Chrome / Edge 打开，1280 以上宽度。
-</div>
-
-<div class="perf-embed">
+    <div class="perf-embed">
 <iframe src="/cocos-perf-lab/index.html" frameborder="0" loading="lazy" allow="fullscreen" allowfullscreen></iframe>
 </div>
 <style>
@@ -568,7 +563,7 @@
 </style>
 
 <blockquote>
-<p>画面太小看不清时，点右下角 ⛶ 全屏；也可以<a href="/cocos-perf-lab/index.html">在新窗口单独打开</a>。</p>
+<p>10 个可交互实验，数字全部运行时实测。画面看不清就点右下角 ⛶ 全屏，或<a href="/cocos-perf-lab/index.html">在新窗口单独打开</a>。</p>
 </blockquote>
 <p>之前用 Unity WebGL 做过一个 UI 性能实验室，把长列表、合批、对象池、遮罩断批、帧率分布这些容易出问题的点做成了可实时观察的形式。这次用 <strong>Cocos Creator 3.8.8 + TypeScript</strong> 完整复刻了一遍——不是抄三个片段，而是把那个工程的整体结构（入口 + 核心库 + 10 个页面）搬过来重写。</p>
 <p>两个约束是刻意的：</p>
@@ -767,7 +762,7 @@
 </tr>
 </tbody></table>
 <h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>复刻这件事的价值不在于「Cocos 也能做」，而在于<strong>同一批性能规律换了引擎还成立</strong>：虚拟列表的复用逻辑、合批的四条件、Stencil 的固定代价、P95 才是玩家感受，这些跟引擎无关，换到 LayaAir 也是一样的结论。</p>
-<p>工程放在本地 <code>PerfLab</code>，如果你想要一份可运行版本或者某页的实现细节，可以邮件找我：<a href="mailto:&#x63;&#x67;&#x65;&#110;&#x67;&#112;&#101;&#x6e;&#103;&#64;&#103;&#109;&#x61;&#105;&#108;&#x2e;&#99;&#x6f;&#x6d;">&#x63;&#x67;&#x65;&#110;&#x67;&#112;&#101;&#x6e;&#103;&#64;&#103;&#109;&#x61;&#105;&#108;&#x2e;&#99;&#x6f;&#x6d;</a>。</p>
+<p>工程放在本地 <code>PerfLab</code>，如果你想要一份可运行版本或者某页的实现细节，可以邮件找我：<a href="mailto:&#x63;&#103;&#101;&#110;&#103;&#x70;&#101;&#110;&#x67;&#x40;&#x67;&#109;&#97;&#105;&#108;&#x2e;&#x63;&#x6f;&#x6d;">&#x63;&#103;&#101;&#110;&#103;&#x70;&#101;&#110;&#x67;&#x40;&#x67;&#109;&#97;&#105;&#108;&#x2e;&#x63;&#x6f;&#x6d;</a>。</p>
 <hr>
 <p>相关：之前那篇 Unity 版的实验室 → <a href="/2026/10/19/ae2005365a89/">Unity 客户端 UI 性能实践：虚拟列表、合批与框架设计</a></p>
 
