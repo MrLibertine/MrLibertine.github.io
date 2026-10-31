@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>用 Cocos Creator 3.8 复刻我的 UI 性能实验室：10 个实验，零编辑器接线</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="用 Cocos Creator 3.8 复刻我的 UI 性能实验室：10 个实验，零编辑器接线">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://mrlibertine.github.io/2026/10/31/fe7d82c5f999/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="/img/68339006.png">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2026-10-31">
+      <meta 
+        property="og:article:modified_time" 
+        content="2026-10-31">
+      <meta 
+        property="og:article:author" 
+        content="MrLibertine">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="性能优化">
+        
+          <meta 
+            property="og:article:tag" 
+            content="Cocos Creator">
+        
+          <meta 
+            property="og:article:tag" 
+            content="UI">
+        
+          <meta 
+            property="og:article:tag" 
+            content="TypeScript">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div class="wrapper">
+      
+        <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">MrLibertine</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav>
+          
+            <div id="local-search" style="display: none">
+              <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容..." />
+              <div id="search-content"></div>
+            </div>
+            
+              <div class="section-wrap">
+                <div class="container">
+                  <div class="columns">
+                    <aside class="left-column">
+                      
+                        <div class="card card-author">
+                          
+  <img 
+    src="/img/68339006.png" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">MrLibertine</p>
+<p class="author-description">designed by MrLibertine</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>19</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>2</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>25</span>
+    <span>标签</span>
+  </a>
+</div>
+
+                        </div>
+                         <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E4%B8%AA%E9%A1%B5%E9%9D%A2%E5%90%84%E8%87%AA%E8%83%BD%E9%AA%8C%E8%AF%81%E4%BB%80%E4%B9%88"><span class="toc-text">10 个页面各自能验证什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E5%88%97%E8%A1%A8%EF%BC%9A14-%E4%B8%AA%E8%8A%82%E7%82%B9%E6%BB%9A-10-%E4%B8%87%E6%9D%A1"><span class="toc-text">虚拟列表：14 个节点滚 10 万条</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%88%E6%89%B9%EF%BC%9A1-%E6%89%B9-vs-160-%E6%89%B9"><span class="toc-text">合批：1 批 vs 160 批</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%81%AE%E7%BD%A9%EF%BC%9AStencil-%E6%98%AF%E5%9B%BA%E5%AE%9A%E6%88%90%E6%9C%AC"><span class="toc-text">遮罩：Stencil 是固定成本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UI-%E6%A1%86%E6%9E%B6%EF%BC%9A%E7%AA%97%E5%8F%A3%E6%A0%88%E6%98%AF%E7%9C%9F%E7%9A%84%E5%9C%A8%E8%B7%91"><span class="toc-text">UI 框架：窗口栈是真的在跑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E5%AE%9E%E9%AA%8C%E5%AE%A4%EF%BC%9A%E8%80%81%E5%AE%9E%E8%AF%B4%EF%BC%8C%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%8D%E7%BB%99%E5%A0%86%E6%95%B0%E6%8D%AE"><span class="toc-text">内存实验室：老实说，浏览器不给堆数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A7%BB%E6%A4%8D%E6%97%B6%E8%B8%A9%E7%9A%84-5-%E4%B8%AA%E5%9D%91"><span class="toc-text">移植时踩的 5 个坑</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%BF%90%E8%A1%8C%E6%97%B6%E5%88%9B%E5%BB%BA%E7%9A%84%E8%8A%82%E7%82%B9%E9%BB%98%E8%AE%A4%E4%B8%8D%E5%9C%A8-UI-%E5%B1%82"><span class="toc-text">1. 运行时创建的节点默认不在 UI 层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Mask-%E5%92%8C-Sprite-%E4%B8%8D%E8%83%BD%E6%8C%82%E5%9C%A8%E5%90%8C%E4%B8%80%E4%B8%AA%E8%8A%82%E7%82%B9%E4%B8%8A"><span class="toc-text">2. Mask 和 Sprite 不能挂在同一个节点上</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Button-target-%E8%A6%81%E7%9A%84%E6%98%AF-Node%EF%BC%8C%E4%B8%8D%E6%98%AF-Sprite"><span class="toc-text">3. Button.target 要的是 Node，不是 Sprite</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%B8%80%E6%AC%A1-stretch-%E4%B8%8D%E5%A4%9F%EF%BC%8C%E8%A6%81%E6%8C%82-Widget-%E4%B8%94-AlignMode-ALWAYS"><span class="toc-text">4. 一次 stretch 不够，要挂 Widget 且 AlignMode.ALWAYS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-setRect-%E6%98%AF%E6%8C%89%E7%88%B6%E8%8A%82%E7%82%B9%E3%80%8C%E5%BD%93%E5%89%8D%E3%80%8D%E5%B0%BA%E5%AF%B8%E7%AE%97%E7%9A%84"><span class="toc-text">5. setRect 是按父节点「当前」尺寸算的</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%8B%E5%86%99%E9%A1%B9%E7%9B%AE-%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%9E%84%E5%BB%BA"><span class="toc-text">手写项目 + 命令行构建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E-Unity-x2F-LayaAir-%E8%BF%87%E6%9D%A5%E7%9A%84%E6%98%A0%E5%B0%84%E8%A1%A8"><span class="toc-text">从 Unity &#x2F; LayaAir 过来的映射表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%90%8E"><span class="toc-text">最后</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/Unity/">
+        <div class="categories-list-item">
+          Unity
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Cocos-Creator/">
+        <div class="categories-list-item">
+          Cocos-Creator
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/Unity/" 
+        title="Unity">
+        <div class="tags-list-item">Unity</div>
+      </a>
+    
+      <a 
+        href="/tags/C/" 
+        title="C#">
+        <div class="tags-list-item">C#</div>
+      </a>
+    
+      <a 
+        href="/tags/GLSL/" 
+        title="GLSL">
+        <div class="tags-list-item">GLSL</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" 
+        title="性能优化">
+        <div class="tags-list-item">性能优化</div>
+      </a>
+    
+      <a 
+        href="/tags/TypeScript/" 
+        title="TypeScript">
+        <div class="tags-list-item">TypeScript</div>
+      </a>
+    
+      <a 
+        href="/tags/%E5%B7%A5%E5%85%B7/" 
+        title="工具">
+        <div class="tags-list-item">工具</div>
+      </a>
+    
+      <a 
+        href="/tags/UI/" 
+        title="UI">
+        <div class="tags-list-item">UI</div>
+      </a>
+    
+      <a 
+        href="/tags/Cocos-Creator/" 
+        title="Cocos Creator">
+        <div class="tags-list-item">Cocos Creator</div>
+      </a>
+    
+      <a 
+        href="/tags/%E9%98%85%E8%AF%BB%E7%90%86%E8%A7%A3/" 
+        title="阅读理解">
+        <div class="tags-list-item">阅读理解</div>
+      </a>
+    
+      <a 
+        href="/tags/%E4%B8%80%E4%BA%9B%E6%AF%94%E8%BE%83%E6%9C%89%E7%94%A8%E7%9A%84%E7%BD%91%E7%AB%99/" 
+        title="一些比较有用的网站">
+        <div class="tags-list-item">一些比较有用的网站</div>
+      </a>
+    
+      <a 
+        href="/tags/%E7%83%AD%E6%9B%B4%E6%96%B0/" 
+        title="热更新">
+        <div class="tags-list-item">热更新</div>
+      </a>
+    
+      <a 
+        href="/tags/Lua/" 
+        title="Lua">
+        <div class="tags-list-item">Lua</div>
+      </a>
+    
+      <a 
+        href="/tags/ILRuntime/" 
+        title="ILRuntime">
+        <div class="tags-list-item">ILRuntime</div>
+      </a>
+    
+      <a 
+        href="/tags/UGUI/" 
+        title="UGUI">
+        <div class="tags-list-item">UGUI</div>
+      </a>
+    
+      <a 
+        href="/tags/WebGL/" 
+        title="WebGL">
+        <div class="tags-list-item">WebGL</div>
+      </a>
+    
+      <a 
+        href="/tags/Linux/" 
+        title="Linux">
+        <div class="tags-list-item">Linux</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+                    </aside>
+                    <main class="main-column">
+                      
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      用 Cocos Creator 3.8 复刻我的 UI 性能实验室：10 个实验，零编辑器接线
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2026-10-31T15:59:00.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2026-10-31</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/Cocos-Creator/" 
+          class="post-meta-link">
+          Cocos Creator
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>2.6k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" 
+            class="post-meta-link">
+            性能优化
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/Cocos-Creator/" 
+            class="post-meta-link">
+            Cocos Creator
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/UI/" 
+            class="post-meta-link">
+            UI
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/TypeScript/" 
+            class="post-meta-link">
+            TypeScript
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <div style="padding:14px 16px;border:1px solid #1f6feb33;border-radius:8px;background:#1f6feb0d;margin-bottom:18px">
+<strong>在线演示</strong>：<a href="https://mrlibertine.github.io/cocos-perf-lab/">mrlibertine.github.io/cocos-perf-lab/</a><br>
+10 个可交互实验，全部数字都是运行时实时测出来的。建议桌面 Chrome / Edge 打开，1280 以上宽度。
+</div>
+
+<p>之前用 Unity WebGL 做过一个 UI 性能实验室，把长列表、合批、对象池、遮罩断批、帧率分布这些容易出问题的点做成了可实时观察的形式。这次用 <strong>Cocos Creator 3.8.8 + TypeScript</strong> 完整复刻了一遍——不是抄三个片段，而是把那个工程的整体结构（入口 + 核心库 + 10 个页面）搬过来重写。</p>
+<p>两个约束是刻意的：</p>
+<ol>
+<li><strong>零编辑器接线</strong>。场景里只有一个空节点挂一个 <code>LabApp</code> 组件，所有面板、按钮、滚动列表、遮罩全部用代码创建，没有任何 Prefab、没有 SpriteFrame 资源文件（圆角矩形和圆点都是运行时用 <code>Texture2D</code> 现生成的）。</li>
+<li><strong>命令行构建</strong>。项目文件是脚本生成 + 手写的，构建走 <code>CocosCreator.exe --build</code>，不依赖打开编辑器点按钮。</li>
+</ol>
+<p>结果是 3,584 行 TypeScript、10 个页面、10 个核心模块。</p>
+<p><img src="/img/cocos-perf-lab/overview.png" alt="概览页" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/img/cocos-perf-lab/overview.png" class="lozad post-image"></p>
+<h2 id="10-个页面各自能验证什么"><a href="#10-个页面各自能验证什么" class="headerlink" title="10 个页面各自能验证什么"></a>10 个页面各自能验证什么</h2><table>
+<thead>
+<tr>
+<th>页面</th>
+<th>验证什么</th>
+<th>页面上能看到的关键数字</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>概览</td>
+<td>全工程地图</td>
+<td>当前 FPS、帧耗时、估算批次数、渲染元素数</td>
+</tr>
+<tr>
+<td>虚拟列表</td>
+<td>10 万条数据的滚动复用</td>
+<td>常驻节点 14 个、累计复用次数、单帧重排耗时</td>
+</tr>
+<tr>
+<td>对象池</td>
+<td>直连创建 vs 池化</td>
+<td>两段各 3 秒的平均&#x2F;峰值帧耗时、创建次数</td>
+</tr>
+<tr>
+<td>合批</td>
+<td>贴图来源对 Batch 的影响</td>
+<td>共享图集 &#x3D; 1 批，独立纹理 &#x3D; 160 批</td>
+</tr>
+<tr>
+<td>战斗</td>
+<td>弹道 &#x2F; 飘字 &#x2F; 光圈三套池 + 倍速</td>
+<td>三套池的活跃&#x2F;空闲数、按帧派发耗时</td>
+</tr>
+<tr>
+<td>UI 框架</td>
+<td>窗口栈 &#x2F; 弹窗队列 &#x2F; 事件总线</td>
+<td>栈深度、模态数、泛型 vs 装箱派发 10 万次耗时</td>
+</tr>
+<tr>
+<td>内存实验室</td>
+<td>六种写法的分配差异</td>
+<td>每轮耗时 + 每轮新建对象数</td>
+</tr>
+<tr>
+<td>遮罩断批</td>
+<td>Stencil Mask 的固定代价</td>
+<td>无遮罩 1 批 &#x2F; 单层 3 批 &#x2F; 嵌套两层 6 批</td>
+</tr>
+<tr>
+<td>帧分析</td>
+<td>均值骗人的地方</td>
+<td>P50 &#x2F; P95 &#x2F; P99、&gt;33ms 卡顿计数、直方图</td>
+</tr>
+<tr>
+<td>架构</td>
+<td>分层与可深挖点</td>
+<td>表现层 &#x2F; 框架层 &#x2F; 基础层 &#x2F; 引擎层</td>
+</tr>
+</tbody></table>
+<p>下面挑几个有信息量的说。</p>
+<h2 id="虚拟列表：14-个节点滚-10-万条"><a href="#虚拟列表：14-个节点滚-10-万条" class="headerlink" title="虚拟列表：14 个节点滚 10 万条"></a>虚拟列表：14 个节点滚 10 万条</h2><p><img src="/img/cocos-perf-lab/virtual-list.png" alt="虚拟列表" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/img/cocos-perf-lab/virtual-list.png" class="lozad post-image"></p>
+<p><code>content</code> 高度按真实数据撑满（10 万 × 64px ≈ 6.4M px），滚动时由 <code>content.position.y</code> 反算可见区间，区间外回池、区间内摆位。跑起来常驻节点数是 14，<code>Content</code> 节点一次都没重建过。</p>
+<p>有个细节值得记下来：<code>content</code> 高度按 10 万 × 64px 撑到 640 万像素。这个量级下 <code>UITransform</code> 的 float 精度还够用（Unity 侧同理），但<strong>再上一个量级就得做「分段偏移」</strong>——按段重置 <code>content</code> 的 y，同时补一个逻辑偏移量，否则滚动条百分比会开始抖。代码里只留了这条注释，没有实现，因为当前数据量用不到；我不想为了显得完整而写一段永远跑不到的代码。</p>
+<h2 id="合批：1-批-vs-160-批"><a href="#合批：1-批-vs-160-批" class="headerlink" title="合批：1 批 vs 160 批"></a>合批：1 批 vs 160 批</h2><p><img src="/img/cocos-perf-lab/batch.png" alt="合批" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/img/cocos-perf-lab/batch.png" class="lozad post-image"></p>
+<p>160 个视觉完全一样的方块，只换贴图来源：</p>
+<ul>
+<li><strong>共享图集</strong>（运行时从一张 4×4 图集里切）：<strong>1 批</strong></li>
+<li><strong>独立纹理</strong>（每个方块一张独立贴图）：<strong>160 批</strong></li>
+</ul>
+<p>这里踩了一个坑值得记下来：一开始把整块面板传进估算器，共享图集模式也测出「4 批 &#x2F; 4 张纹理」。原因是<strong>系统字体的每个 <code>Label</code> 实例都持有自己的动态字型纹理</strong>，一个标题加一个脚注就顶掉两个批次。把 160 个方块单独挂到一个纯容器节点下、只统计这一层，才得到干净的数字——这件事本身就是 UI 图集优化的重点：Cocos 里系统字体的 Label 天然不并批，正式项目里必须换成位图字体或把 Label 独立管制。</p>
+<h2 id="遮罩：Stencil-是固定成本"><a href="#遮罩：Stencil-是固定成本" class="headerlink" title="遮罩：Stencil 是固定成本"></a>遮罩：Stencil 是固定成本</h2><p><img src="/img/cocos-perf-lab/mask.png" alt="遮罩" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/img/cocos-perf-lab/mask.png" class="lozad post-image"></p>
+<p>同样 36 个方块，只改裁剪方式：</p>
+<table>
+<thead>
+<tr>
+<th>列</th>
+<th>批次</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>无遮罩</td>
+<td>1 批</td>
+<td>内容溢出到区域外也不会被裁</td>
+</tr>
+<tr>
+<td>Mask（单层）</td>
+<td>3 批</td>
+<td>每个 Mask 固定 +2（写模板 + 还原），且与外部必然断批</td>
+</tr>
+<tr>
+<td>Mask（嵌套两层）</td>
+<td>6 批</td>
+<td>两层 &#x3D; +4，叠得更狠</td>
+</tr>
+</tbody></table>
+<p>这段和 Unity 的结论完全一致：UGUI 里的 <code>RectMask2D</code> 是廉价版本，<code>Mask</code> 走 Stencil 就贵；Cocos 只有 Stencil 这一条路，所以<strong>能用「更换内容显示范围」解决的就别上 Mask</strong>。</p>
+<h2 id="UI-框架：窗口栈是真的在跑"><a href="#UI-框架：窗口栈是真的在跑" class="headerlink" title="UI 框架：窗口栈是真的在跑"></a>UI 框架：窗口栈是真的在跑</h2><p><img src="/img/cocos-perf-lab/framework.png" alt="UI 框架" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/img/cocos-perf-lab/framework.png" class="lozad post-image"></p>
+<p>窗口栈按 <code>Layer</code> 插入而不是按创建顺序追加，弹窗队列保证同时只有一个模态糊在上面，事件总线做了泛型版和装箱版两条通路对照派发 10 万次。模态遮罩是真实铺满舞台的 <code>Button</code>，点上去会打日志告诉你「被挡住了」——不是画个半透明矩形假装拦截。</p>
+<h2 id="内存实验室：老实说，浏览器不给堆数据"><a href="#内存实验室：老实说，浏览器不给堆数据" class="headerlink" title="内存实验室：老实说，浏览器不给堆数据"></a>内存实验室：老实说，浏览器不给堆数据</h2><p>这一页原本的设想和 Unity 版一样，测每轮循环在堆上留了多少垃圾。实测下来：<code>performance.memory.usedJSHeapSize</code> 在普通页面里<strong>只在 GC 检查点刷新</strong>，我特意分配 8MB <code>Uint8Array</code> 验证，读数一动不动（差值为 0）。也就是说，任何「堆净增长」的对比在浏览器里都是假的。</p>
+<p>所以页面改成了：<strong>耗时是真实测的，分配数按循环里真实 new 出来的对象数标注</strong>，并且把这句话直接写在页面上：</p>
+<ul>
+<li>字符串拼接 20,000 轮：每轮新建 2 万个字符串</li>
+<li>预格式化缓存：只新建 64 个（查表复用）</li>
+<li>装箱 &#x2F; 闭包：各 2 万个</li>
+<li><code>for</code> 循环基线：1 个</li>
+</ul>
+<p>比编一个漂亮的「+1.2 MB」诚实，而且面试时这本身就是个可以展开讲的点——<strong>测量口径比数字重要</strong>。</p>
+<h2 id="移植时踩的-5-个坑"><a href="#移植时踩的-5-个坑" class="headerlink" title="移植时踩的 5 个坑"></a>移植时踩的 5 个坑</h2><p>这部分是这次复刻最实在的收获，每条都是运行时「什么都看不到」或者「控制台一直报错」之后查出来的。</p>
+<h3 id="1-运行时创建的节点默认不在-UI-层"><a href="#1-运行时创建的节点默认不在-UI-层" class="headerlink" title="1. 运行时创建的节点默认不在 UI 层"></a>1. 运行时创建的节点默认不在 UI 层</h3><p><code>new Node()</code> 的 layer 是 <code>Layers.Enum.DEFAULT</code>（1073741824），而 UI 相机的 <code>visibility</code> 是 <code>UI_2D</code>（41943040）。全部代码建 UI 时，如果忘了设 <code>node.layer = Layers.Enum.UI_2D</code>，画面就是纯灰底——<strong>没有任何报错</strong>。我最后加了个兜底：</p>
+<pre class="highlight"><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">newUINode</span>(<span class="params">name: <span class="built_in">string</span></span>): <span class="title class_">Node</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> n = <span class="keyword">new</span> <span class="title class_">Node</span>(name);</span><br><span class="line">    n.<span class="property">layer</span> = <span class="title class_">Layers</span>.<span class="property">Enum</span>.<span class="property">UI_2D</span>;</span><br><span class="line">    <span class="keyword">return</span> n;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 入口处递归兜底，防止漏网的节点</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">fixLayer</span>(<span class="params">root: Node</span>) &#123;</span><br><span class="line">    root.<span class="property">layer</span> = <span class="title class_">Layers</span>.<span class="property">Enum</span>.<span class="property">UI_2D</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">const</span> c <span class="keyword">of</span> root.<span class="property">children</span>) <span class="title function_">fixLayer</span>(c);</span><br><span class="line">&#125;</span><br></pre>
+
+<h3 id="2-Mask-和-Sprite-不能挂在同一个节点上"><a href="#2-Mask-和-Sprite-不能挂在同一个节点上" class="headerlink" title="2. Mask 和 Sprite 不能挂在同一个节点上"></a>2. <code>Mask</code> 和 <code>Sprite</code> 不能挂在同一个节点上</h3><p>报错是 <code>Can&#39;t add renderable component to this node because it already have one</code>。遮罩必须是一个「带 Mask 的空包装节点 + 里面一层 Sprite」的结构，不能一个节点两件事都干。</p>
+<h3 id="3-Button-target-要的是-Node，不是-Sprite"><a href="#3-Button-target-要的是-Node，不是-Sprite" class="headerlink" title="3. Button.target 要的是 Node，不是 Sprite"></a>3. <code>Button.target</code> 要的是 Node，不是 Sprite</h3><p>Unity 里 <code>Button.targetGraphic</code> 接的是 Graphic 组件，Cocos 里 <code>target</code> 是 <code>Node</code>。写成 <code>b.target = sprite</code> 会在按下时炸在 <code>Vec3.copy</code> 里，报 <code>Cannot read properties of undefined (reading &#39;x&#39;)</code>。</p>
+<h3 id="4-一次-stretch-不够，要挂-Widget-且-AlignMode-ALWAYS"><a href="#4-一次-stretch-不够，要挂-Widget-且-AlignMode-ALWAYS" class="headerlink" title="4. 一次 stretch 不够，要挂 Widget 且 AlignMode.ALWAYS"></a>4. 一次 <code>stretch</code> 不够，要挂 <code>Widget</code> 且 <code>AlignMode.ALWAYS</code></h3><p>想让背景和内容区跟着 Canvas 尺寸变，只在初始化时算一次像素是不行的——窗口 resize 后位置就错了。要挂 <code>Widget</code> 并把 <code>alignMode</code> 设成 <code>ALWAYS</code>。</p>
+<h3 id="5-setRect-是按父节点「当前」尺寸算的"><a href="#5-setRect-是按父节点「当前」尺寸算的" class="headerlink" title="5. setRect 是按父节点「当前」尺寸算的"></a>5. <code>setRect</code> 是按父节点「当前」尺寸算的</h3><p>这个坑最隐蔽：先创建窗口卡片（默认尺寸），子节点的横向拉伸按当时的父尺寸算好；等外层再调 <code>setContentSize(344, 196)</code>，标题栏还停在旧宽度上——表现就是标题栏缩成一小块、文字和骨架条挤在一起。</p>
+<p><strong>结论：先定父节点尺寸，再挂子节点。</strong> 所有布局函数都按这个顺序写。</p>
+<h2 id="手写项目-命令行构建"><a href="#手写项目-命令行构建" class="headerlink" title="手写项目 + 命令行构建"></a>手写项目 + 命令行构建</h2><p>项目不是用编辑器新建的，是靠一个 Python 脚本生成 + 手写场景：</p>
+<ul>
+<li><code>package.json</code>（<code>creator.version</code> &#x2F; <code>uuid</code>）、<code>settings/v2/packages/project.json</code>（设计分辨率 1280×720）、<code>tsconfig.json</code></li>
+<li>**每个资源都要有 <code>.meta</code>**：<code>.ts.meta</code>（<code>ver 4.0.24</code>, <code>importer: typescript</code>，uuid v4）、目录的 <code>.meta</code>（<code>importer: directory</code>）、场景的 <code>.meta</code>（<code>importer: scene</code>）</li>
+<li>场景 <code>lab.scene</code> 是一个 JSON 对象数组，手写时最麻烦的是组件里 <code>__type__</code> 要填<strong>压缩后的脚本 uuid</strong>。Cocos 的压缩规则是「保留前 5 位十六进制，之后每 3 位压成 2 个 base64 字符」：</li>
+</ul>
+<pre class="highlight"><span class="line"><span class="keyword">def</span> <span class="title function_">compress_uuid</span>(<span class="params">u</span>):</span><br><span class="line">    h = u.replace(<span class="string">&#x27;-&#x27;</span>, <span class="string">&#x27;&#x27;</span>).lower(); out = h[:<span class="number">5</span>]</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>, <span class="number">32</span>, <span class="number">3</span>):</span><br><span class="line">        a, b, c = <span class="built_in">int</span>(h[i], <span class="number">16</span>), <span class="built_in">int</span>(h[i+<span class="number">1</span>], <span class="number">16</span>), <span class="built_in">int</span>(h[i+<span class="number">2</span>], <span class="number">16</span>)</span><br><span class="line">        out += B64[(a &lt;&lt; <span class="number">2</span>) | (b &gt;&gt; <span class="number">2</span>)] + B64[((b &amp; <span class="number">3</span>) &lt;&lt; <span class="number">4</span>) | c]</span><br><span class="line">    <span class="keyword">return</span> out</span><br></pre>
+
+<p>构建就是一行命令：</p>
+<pre class="highlight"><span class="line">CocosCreator.exe <span class="literal">--project</span> E:\cocos\PerfLab `</span><br><span class="line">  <span class="literal">--build</span> <span class="string">&quot;platform=web-mobile;debug=false;startScene=&lt;scene-uuid&gt;;md5Cache=false&quot;</span></span><br></pre>
+
+<p>两个环境上的坑：<strong>WorkBuddy 注入的 <code>ELECTRON_RUN_AS_NODE</code> 会让 CocosCreator（Electron 应用）直接把 <code>--project</code> 当非法参数</strong>，报 <code>bad option: --project</code> 然后秒退；另外环境里存在 <code>HTTP_PROXY</code> &#x2F; <code>http_proxy</code> 这种大小写重名的键时，PowerShell 的 <code>Start-Process</code> 会报「字典中的关键字重复」。启动前清掉这些环境变量就好了。</p>
+<p>产物 4.3 MB，直接丢进 Hexo 的 <code>source/cocos-perf-lab/</code>，构建时原样拷贝到 <code>public/</code>，不需要额外配置。</p>
+<h2 id="从-Unity-x2F-LayaAir-过来的映射表"><a href="#从-Unity-x2F-LayaAir-过来的映射表" class="headerlink" title="从 Unity &#x2F; LayaAir 过来的映射表"></a>从 Unity &#x2F; LayaAir 过来的映射表</h2><table>
+<thead>
+<tr>
+<th>需求</th>
+<th>Unity (UGUI)</th>
+<th>Cocos Creator 3.8</th>
+<th>LayaAir</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>矩形变换</td>
+<td><code>RectTransform</code> + anchor</td>
+<td><code>UITransform</code> + anchorPoint &#x2F; Widget</td>
+<td><code>UIComponent</code></td>
+</tr>
+<tr>
+<td>文本</td>
+<td><code>Text</code></td>
+<td><code>Label</code>（系统字体带动态字型纹理）</td>
+<td><code>Text</code></td>
+</tr>
+<tr>
+<td>九宫格</td>
+<td><code>Image.type = Sliced</code></td>
+<td><code>Sprite.type = SLICED</code></td>
+<td><code>Image.sizeGrid</code></td>
+</tr>
+<tr>
+<td>遮罩</td>
+<td><code>Mask</code> &#x2F; <code>RectMask2D</code></td>
+<td><code>Mask</code>（只有 Stencil 一种）</td>
+<td><code>mask</code></td>
+</tr>
+<tr>
+<td>滚动</td>
+<td><code>ScrollRect</code></td>
+<td><code>ScrollView</code>（可直接用 <code>position</code> 自己算）</td>
+<td><code>List</code> &#x2F; <code>Panel</code></td>
+</tr>
+<tr>
+<td>对象池</td>
+<td>手写 &#x2F; <code>ObjectPool</code></td>
+<td>手写（引擎侧没有 UI 节点池）</td>
+<td>手写</td>
+</tr>
+<tr>
+<td>布局</td>
+<td><code>LayoutGroup</code></td>
+<td><code>Layout</code> + Widget</td>
+<td>手写</td>
+</tr>
+<tr>
+<td>事件</td>
+<td><code>UnityEvent</code></td>
+<td><code>node.on(Button.EventType.CLICK)</code></td>
+<td><code>on(Event.CLICK)</code></td>
+</tr>
+</tbody></table>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>复刻这件事的价值不在于「Cocos 也能做」，而在于<strong>同一批性能规律换了引擎还成立</strong>：虚拟列表的复用逻辑、合批的四条件、Stencil 的固定代价、P95 才是玩家感受，这些跟引擎无关，换到 LayaAir 也是一样的结论。</p>
+<p>工程放在本地 <code>PerfLab</code>，如果你想要一份可运行版本或者某页的实现细节，可以邮件找我：<a href="mailto:&#99;&#103;&#101;&#x6e;&#x67;&#x70;&#101;&#x6e;&#103;&#x40;&#103;&#x6d;&#97;&#x69;&#x6c;&#x2e;&#99;&#x6f;&#109;">&#99;&#103;&#101;&#x6e;&#x67;&#x70;&#101;&#x6e;&#103;&#x40;&#103;&#x6d;&#97;&#x69;&#x6c;&#x2e;&#99;&#x6f;&#109;</a>。</p>
+<hr>
+<p>相关：之前那篇 Unity 版的实验室 → <a href="/2026/10/19/ae2005365a89/">Unity 客户端 UI 性能实践：虚拟列表、合批与框架设计</a></p>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            MrLibertine
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://mrlibertine.github.io/2026/10/31/fe7d82c5f999/">
+            https://mrlibertine.github.io/2026/10/31/fe7d82c5f999/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2026/10/19/ae2005365a89/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">Unity 客户端 UI 性能实践：虚拟列表、合批与框架设计 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E4%B8%AA%E9%A1%B5%E9%9D%A2%E5%90%84%E8%87%AA%E8%83%BD%E9%AA%8C%E8%AF%81%E4%BB%80%E4%B9%88"><span class="toc-text">10 个页面各自能验证什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E5%88%97%E8%A1%A8%EF%BC%9A14-%E4%B8%AA%E8%8A%82%E7%82%B9%E6%BB%9A-10-%E4%B8%87%E6%9D%A1"><span class="toc-text">虚拟列表：14 个节点滚 10 万条</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%88%E6%89%B9%EF%BC%9A1-%E6%89%B9-vs-160-%E6%89%B9"><span class="toc-text">合批：1 批 vs 160 批</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%81%AE%E7%BD%A9%EF%BC%9AStencil-%E6%98%AF%E5%9B%BA%E5%AE%9A%E6%88%90%E6%9C%AC"><span class="toc-text">遮罩：Stencil 是固定成本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UI-%E6%A1%86%E6%9E%B6%EF%BC%9A%E7%AA%97%E5%8F%A3%E6%A0%88%E6%98%AF%E7%9C%9F%E7%9A%84%E5%9C%A8%E8%B7%91"><span class="toc-text">UI 框架：窗口栈是真的在跑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E5%AE%9E%E9%AA%8C%E5%AE%A4%EF%BC%9A%E8%80%81%E5%AE%9E%E8%AF%B4%EF%BC%8C%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%8D%E7%BB%99%E5%A0%86%E6%95%B0%E6%8D%AE"><span class="toc-text">内存实验室：老实说，浏览器不给堆数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A7%BB%E6%A4%8D%E6%97%B6%E8%B8%A9%E7%9A%84-5-%E4%B8%AA%E5%9D%91"><span class="toc-text">移植时踩的 5 个坑</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%BF%90%E8%A1%8C%E6%97%B6%E5%88%9B%E5%BB%BA%E7%9A%84%E8%8A%82%E7%82%B9%E9%BB%98%E8%AE%A4%E4%B8%8D%E5%9C%A8-UI-%E5%B1%82"><span class="toc-text">1. 运行时创建的节点默认不在 UI 层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Mask-%E5%92%8C-Sprite-%E4%B8%8D%E8%83%BD%E6%8C%82%E5%9C%A8%E5%90%8C%E4%B8%80%E4%B8%AA%E8%8A%82%E7%82%B9%E4%B8%8A"><span class="toc-text">2. Mask 和 Sprite 不能挂在同一个节点上</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Button-target-%E8%A6%81%E7%9A%84%E6%98%AF-Node%EF%BC%8C%E4%B8%8D%E6%98%AF-Sprite"><span class="toc-text">3. Button.target 要的是 Node，不是 Sprite</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%B8%80%E6%AC%A1-stretch-%E4%B8%8D%E5%A4%9F%EF%BC%8C%E8%A6%81%E6%8C%82-Widget-%E4%B8%94-AlignMode-ALWAYS"><span class="toc-text">4. 一次 stretch 不够，要挂 Widget 且 AlignMode.ALWAYS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-setRect-%E6%98%AF%E6%8C%89%E7%88%B6%E8%8A%82%E7%82%B9%E3%80%8C%E5%BD%93%E5%89%8D%E3%80%8D%E5%B0%BA%E5%AF%B8%E7%AE%97%E7%9A%84"><span class="toc-text">5. setRect 是按父节点「当前」尺寸算的</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%8B%E5%86%99%E9%A1%B9%E7%9B%AE-%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%9E%84%E5%BB%BA"><span class="toc-text">手写项目 + 命令行构建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E-Unity-x2F-LayaAir-%E8%BF%87%E6%9D%A5%E7%9A%84%E6%98%A0%E5%B0%84%E8%A1%A8"><span class="toc-text">从 Unity &#x2F; LayaAir 过来的映射表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%90%8E"><span class="toc-text">最后</span></a></li></ol>
+</div>
+                    </main>
+                    <aside class="right-column">
+                      <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#10-%E4%B8%AA%E9%A1%B5%E9%9D%A2%E5%90%84%E8%87%AA%E8%83%BD%E9%AA%8C%E8%AF%81%E4%BB%80%E4%B9%88"><span class="toc-text">10 个页面各自能验证什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%99%9A%E6%8B%9F%E5%88%97%E8%A1%A8%EF%BC%9A14-%E4%B8%AA%E8%8A%82%E7%82%B9%E6%BB%9A-10-%E4%B8%87%E6%9D%A1"><span class="toc-text">虚拟列表：14 个节点滚 10 万条</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%88%E6%89%B9%EF%BC%9A1-%E6%89%B9-vs-160-%E6%89%B9"><span class="toc-text">合批：1 批 vs 160 批</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%81%AE%E7%BD%A9%EF%BC%9AStencil-%E6%98%AF%E5%9B%BA%E5%AE%9A%E6%88%90%E6%9C%AC"><span class="toc-text">遮罩：Stencil 是固定成本</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UI-%E6%A1%86%E6%9E%B6%EF%BC%9A%E7%AA%97%E5%8F%A3%E6%A0%88%E6%98%AF%E7%9C%9F%E7%9A%84%E5%9C%A8%E8%B7%91"><span class="toc-text">UI 框架：窗口栈是真的在跑</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E5%AE%9E%E9%AA%8C%E5%AE%A4%EF%BC%9A%E8%80%81%E5%AE%9E%E8%AF%B4%EF%BC%8C%E6%B5%8F%E8%A7%88%E5%99%A8%E4%B8%8D%E7%BB%99%E5%A0%86%E6%95%B0%E6%8D%AE"><span class="toc-text">内存实验室：老实说，浏览器不给堆数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A7%BB%E6%A4%8D%E6%97%B6%E8%B8%A9%E7%9A%84-5-%E4%B8%AA%E5%9D%91"><span class="toc-text">移植时踩的 5 个坑</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%BF%90%E8%A1%8C%E6%97%B6%E5%88%9B%E5%BB%BA%E7%9A%84%E8%8A%82%E7%82%B9%E9%BB%98%E8%AE%A4%E4%B8%8D%E5%9C%A8-UI-%E5%B1%82"><span class="toc-text">1. 运行时创建的节点默认不在 UI 层</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Mask-%E5%92%8C-Sprite-%E4%B8%8D%E8%83%BD%E6%8C%82%E5%9C%A8%E5%90%8C%E4%B8%80%E4%B8%AA%E8%8A%82%E7%82%B9%E4%B8%8A"><span class="toc-text">2. Mask 和 Sprite 不能挂在同一个节点上</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Button-target-%E8%A6%81%E7%9A%84%E6%98%AF-Node%EF%BC%8C%E4%B8%8D%E6%98%AF-Sprite"><span class="toc-text">3. Button.target 要的是 Node，不是 Sprite</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E4%B8%80%E6%AC%A1-stretch-%E4%B8%8D%E5%A4%9F%EF%BC%8C%E8%A6%81%E6%8C%82-Widget-%E4%B8%94-AlignMode-ALWAYS"><span class="toc-text">4. 一次 stretch 不够，要挂 Widget 且 AlignMode.ALWAYS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-setRect-%E6%98%AF%E6%8C%89%E7%88%B6%E8%8A%82%E7%82%B9%E3%80%8C%E5%BD%93%E5%89%8D%E3%80%8D%E5%B0%BA%E5%AF%B8%E7%AE%97%E7%9A%84"><span class="toc-text">5. setRect 是按父节点「当前」尺寸算的</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%8B%E5%86%99%E9%A1%B9%E7%9B%AE-%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%9E%84%E5%BB%BA"><span class="toc-text">手写项目 + 命令行构建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%8E-Unity-x2F-LayaAir-%E8%BF%87%E6%9D%A5%E7%9A%84%E6%98%A0%E5%B0%84%E8%A1%A8"><span class="toc-text">从 Unity &#x2F; LayaAir 过来的映射表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%90%8E"><span class="toc-text">最后</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-10-31</div>
+        <a href="/2026/10/31/fe7d82c5f999/"><div class="recent-posts-item-content">用 Cocos Creator 3.8 复刻我的 UI 性能实验室：10 个实验，零编辑器接线</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-10-19</div>
+        <a href="/2026/10/19/ae2005365a89/"><div class="recent-posts-item-content">Unity 客户端 UI 性能实践：虚拟列表、合批与框架设计</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-06-09</div>
+        <a href="/2026/06/09/76cfdea54713/"><div class="recent-posts-item-content">LayaAir 原生 vs Unity 原生 — 为什么你的 Worker 在原生 App 里不启用</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-01-13</div>
+        <a href="/2026/01/13/19efe93a808b/"><div class="recent-posts-item-content">AI 与 LLM 术语速查</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+                    </aside>
+                  </div>
+                </div>
+              </div>
+    </div>
+    
+      <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2026
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          MrLibertine
+        </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+
+        
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+          
+            
+                  
+                    <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+
+                      
+                        
+                          <script src="/js/main.js"></script>
+                            
+                              <script>
+                                loadScript('/js/lib/busuanzi.min.js') 
+                              </script>
+                              
+                                
+                                  <script>
+                                    var addLazyload = function () {
+                                      var observer = lozad('.lozad', {
+                                        load: function (el) {
+                                          el.srcset = el.getAttribute('data-src')
+                                        },
+                                        loaded: function (el) {
+                                          el.classList.add('loaded')
+                                        },
+                                      })
+                                      observer.observe()
+                                    }
+                                  </script>
+                                  <script>
+                                    loadScript('/js/lib/lozad.min.js', addLazyload)
+                                  </script>
+                                  
+                                    <script src="//instant.page/5.1.0" type="module"
+                                      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+                                    
+                                        
+  </body>
+
+</html>
