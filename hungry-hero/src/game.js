@@ -1,6 +1,6 @@
 /*
  * Hungry Hero — Cocos Creator 3.8 (web) port.
- * Faithful gameplay port of the original AS3/Starling version by Hemanth Sharma.
+ * Faithful gameplay port of an open-source game.
  * Built at runtime from the original TexturePacker atlas + audio (no editor asset bundle needed).
  */
 System.register(['cc'], function (_export, _context) {
@@ -20,7 +20,7 @@ System.register(['cc'], function (_export, _context) {
           Rect = cc.Rect, Size = cc.Size, UITransform = cc.UITransform, EventType = cc.Node.EventType,
           Canvas = cc.Canvas, Graphics = cc.Graphics;
 
-      /* ---------- constants (mirrors GameConstants.as) ---------- */
+      /* ---------- constants (mirrors the original) ---------- */
       var DESIGN_W = 1024, DESIGN_H = 768;
       var HERO_LIVES = 5, HERO_MIN_SPEED = 650, HERO_MAX_SPEED = 1400, OBSTACLE_GAP = 1200, OBSTACLE_SPEED = 300;
       var GAME_STATE_IDLE = 0, GAME_STATE_FLYING = 1, GAME_STATE_OVER = 2;
@@ -94,9 +94,27 @@ System.register(['cc'], function (_export, _context) {
         var sp = n.addComponent(Sprite);
         sp.spriteFrame = FR[name];
         sp.sizeMode = (Sprite.SizeMode && Sprite.SizeMode.CUSTOM != null) ? Sprite.SizeMode.CUSTOM : 0;
-        var s = SP[name]; customSize(n, s.ow, s.oh);
+        // IMPORTANT: use the TRIMMED size (w/h), not the original frame size (ow/oh).
+        // The original sized every display object from the spritesheet's trimmed width/height,
+        // e.g. bgLayer2 is 1024x292 while its original frame is
+        // 1024x362. Sizing from ow/oh stretched the parallax layers ~24% vertically and the
+        // whole scene read as "wrong scale".
+        var s = SP[name]; customSize(n, s.w, s.h);
         if (parent) n.parent = parent;
         return n;
+      }
+      // Swap a sprite's frame at runtime. sizeMode is CUSTOM for pooled sprites, so the
+      // node's content size must be updated alongside the frame or the art gets clipped —
+      // and, worse, every pool slot keeps the size of whatever frame it was born with
+      // (item1 is 29x30 but item2 is 22x33), which visibly distorted the food.
+      // The size check keeps this cheap enough to call once per frame for the hero animation.
+      function setFrame(n, name) {
+        var s = SP[name]; if (!s || !n) return false;
+        var sp = n.getComponent(Sprite);
+        if (sp.spriteFrame !== FR[name]) sp.spriteFrame = FR[name];
+        var ut = n.getComponent(UITransform);
+        if (ut.width !== s.w || ut.height !== s.h) ut.setContentSize(s.w, s.h);
+        return true;
       }
       function mkFull(name, tex, w, h, parent) {
         var n = new Node(name);
@@ -105,19 +123,19 @@ System.register(['cc'], function (_export, _context) {
         sp.sizeMode = (Sprite.SizeMode && Sprite.SizeMode.CUSTOM != null) ? Sprite.SizeMode.CUSTOM : 0;
         customSize(n, w, h);
         // Full-screen art is anchored at the centre in the 0..DESIGN_W / 0..DESIGN_H design
-        // space (the AS3 original used a top-left registration point).
+        // space (the original used a top-left registration point).
         n.setPosition(DESIGN_W / 2, DESIGN_H / 2, 0);
         if (parent) n.parent = parent;
         return n;
       }
-      function mkLabel(str, size, color, w, h, parent) {
+      function mkLabel(str, size, color, w, h, parent, align) {
         var n = new Node('lbl');
         var lb = n.addComponent(Label);
         lb.string = str;
         lb.fontSize = size;
         lb.lineHeight = size * 1.25;
         lb.color = color || Color.WHITE;
-        lb.horizontalAlign = 1;  // CENTER
+        lb.horizontalAlign = (align == null) ? 1 : align;  // 0 LEFT / 1 CENTER / 2 RIGHT
         lb.verticalAlign = 0;    // TOP
         lb.overflow = 0;         // NONE
         customSize(n, w, h);
@@ -217,7 +235,7 @@ System.register(['cc'], function (_export, _context) {
         }
 
         /* ---------- background (parallax) ----------
-         * Mirrors GameBackground.as / BgLayer.as: four layers, each made of two copies of a
+         * Mirrors the original background layers: four of them, each made of two copies of a
          * 1024-wide bottom-aligned strip. Both copies keep their LEFT edge on a multiple of
          * the strip width (0 and w), so the tile seam starts at the right edge of the stage
          * exactly like the original — the whole layer then slides left and wraps at -w.
@@ -242,9 +260,9 @@ System.register(['cc'], function (_export, _context) {
           this.bgLayers = [
             // bgLayer1 lives outside the atlas (full 1024x768 sky/ground strip).
             this.makeLayer('bgSky', 0.02, this.assets.TEX_BG_SKY, DESIGN_W, DESIGN_H),
-            this.makeLayer('bgLayer2', 0.2, null, SP.bgLayer2.ow, SP.bgLayer2.oh),
-            this.makeLayer('bgLayer3', 0.5, null, SP.bgLayer3.ow, SP.bgLayer3.oh),
-            this.makeLayer('bgLayer4', 1.0, null, SP.bgLayer4.ow, SP.bgLayer4.oh)
+          this.makeLayer('bgLayer2', 0.2, null, SP.bgLayer2.w, SP.bgLayer2.h),
+          this.makeLayer('bgLayer3', 0.5, null, SP.bgLayer3.w, SP.bgLayer3.h),
+          this.makeLayer('bgLayer4', 1.0, null, SP.bgLayer4.w, SP.bgLayer4.h)
           ];
         }
         scrollBg(speed) {
@@ -264,11 +282,11 @@ System.register(['cc'], function (_export, _context) {
           this.wHero = mkSprite('welcome_hero', w);
           this.wPlay = btn('welcome_playButton', w, this.onPlayClick.bind(this));
           this.wAbout = btn('welcome_aboutButton', w, this.onAboutClick.bind(this));
-          placeTL(this.wTitle, 600, 65, SP.welcome_title.ow, SP.welcome_title.oh);
-          this.wHero.setPosition(-SP.welcome_hero.ow, WY(230), 0);
+          placeTL(this.wTitle, 600, 65, SP.welcome_title.w, SP.welcome_title.h);
+          this.wHero.setPosition(-SP.welcome_hero.w, WY(230), 0);
           this.wHero.active = true;
-          placeTL(this.wPlay, 640, 340, SP.welcome_playButton.ow, SP.welcome_playButton.oh);
-          placeTL(this.wAbout, 460, 460, SP.welcome_aboutButton.ow, SP.welcome_aboutButton.oh);
+          placeTL(this.wPlay, 640, 340, SP.welcome_playButton.w, SP.welcome_playButton.h);
+          placeTL(this.wAbout, 460, 460, SP.welcome_aboutButton.w, SP.welcome_aboutButton.h);
         }
         showWelcome() {
           this.state = 'welcome';
@@ -277,7 +295,7 @@ System.register(['cc'], function (_export, _context) {
           this.welcomeNode.active = true; this.aboutNode.active = false;
           this.playNode.active = false; this.uiNode.active = false; this.overlayNode.active = false;
           this.bgWelcomeNode.active = true;
-          this.wHero.setPosition(-SP.welcome_hero.ow, WY(230), 0);
+          this.wHero.setPosition(-SP.welcome_hero.w, WY(230), 0);
         }
         onPlayClick() { this.sfx('coffee'); this.startGame(); }
         onAboutClick() { this.sfx('mushroom'); this.showAbout(); }
@@ -298,25 +316,46 @@ System.register(['cc'], function (_export, _context) {
             'You have 5 lives. Travel as far as you can.\n\n' +
             'Coffee = speed boost & smash through obstacles.\n' +
             'Mushroom = food flies toward you.\n\n' +
-            'Originally built with Adobe Flash + Starling by Hemanth Sharma.\n' +
-            'Re-made with Cocos Creator 3.8 by 耿鹏.',
+            'Based on an open-source game.\n' +
+            'Re-made with Cocos Creator 3.8.',
             26, Color.WHITE, 760, 420, a);
           placeTL(txt, 130, 150, 760, 420);
           this.aBack = btn('about_backButton', a, function () { this.sfx('coffee'); this.showWelcome(); }.bind(this));
-          placeTL(this.aBack, 660, 600, SP.about_backButton.ow, SP.about_backButton.oh);
+          placeTL(this.aBack, 660, 600, SP.about_backButton.w, SP.about_backButton.h);
         }
 
         /* ---------- HUD ---------- */
         buildHUD() {
           var u = this.uiNode;
-          this.hudLives = mkLabel('LIVES', 22, Color.WHITE, 150, 30, u); placeTL(this.hudLives, 20, 16, 150, 30);
-          this.hudLivesVal = mkLabel('5', 34, Color.WHITE, 150, 44, u); placeTL(this.hudLivesVal, 20, 46, 150, 44);
-          this.hudScore = mkLabel('SCORE', 22, Color.WHITE, 160, 30, u); placeTL(this.hudScore, DESIGN_W / 2 - 80, 16, 160, 30);
-          this.hudScoreVal = mkLabel('0', 34, Color.WHITE, 160, 44, u); placeTL(this.hudScoreVal, DESIGN_W / 2 - 80, 46, 160, 44);
-          this.hudDist = mkLabel('DISTANCE', 22, Color.WHITE, 160, 30, u); placeTL(this.hudDist, DESIGN_W - 180, 16, 160, 30);
-          this.hudDistVal = mkLabel('0', 34, Color.WHITE, 160, 44, u); placeTL(this.hudDistVal, DESIGN_W - 180, 46, 160, 44);
-          this.pauseBtn = btn('pauseButton', u, this.onPauseClick.bind(this)); placeTL(this.pauseBtn, 30, DESIGN_H - 70, SP.pauseButton.ow, SP.pauseButton.oh);
-          this.soundBtn = btn('soundOn0000', u, this.onSoundClick.bind(this)); placeTL(this.soundBtn, 80, DESIGN_H - 70, 40, 40);
+          // The HUD is three right-aligned 150px columns (labels are 20px, values 36px):
+          //   LIVES     x=150              -> right edge 300
+          //   SCORE     x = 864-150-50=664 -> right edge 814
+          //   DISTANCE  x = 1024-150-10=864-> right edge 1014
+          // Values sit directly under their label (label y=5 h=20 -> value y=25).
+          var R = 2; // Label.HorizontalAlign.RIGHT
+          this.hudLives = mkLabel('L I V E S', 20, Color.WHITE, 150, 20, u, R);
+          this.hudLivesVal = mkLabel('5', 36, Color.WHITE, 150, 32, u, R);
+          this.hudScore = mkLabel('S C O R E', 20, Color.WHITE, 150, 20, u, R);
+          this.hudScoreVal = mkLabel('0', 36, Color.WHITE, 150, 32, u, R);
+          this.hudDist = mkLabel('D I S T A N C E', 20, Color.WHITE, 150, 20, u, R);
+          this.hudDistVal = mkLabel('0', 36, Color.WHITE, 150, 32, u, R);
+          placeTL(this.hudLives, 150, 5, 150, 20);
+          placeTL(this.hudLivesVal, 150, 25, 150, 32);
+          placeTL(this.hudScore, 664, 5, 150, 20);
+          placeTL(this.hudScoreVal, 664, 25, 150, 32);
+          placeTL(this.hudDist, 864, 5, 150, 20);
+          placeTL(this.hudDistVal, 864, 25, 150, 32);
+
+          // PauseButton sits at (width*2, height*0.5) = (80, 20), top-left corner like the original.
+          this.pauseBtn = btn('pauseButton', u, this.onPauseClick.bind(this));
+          placeTL(this.pauseBtn, 80, 20, SP.pauseButton.w, SP.pauseButton.h);
+          this.soundBtn = btn('soundOn0000', u, this.onSoundClick.bind(this));
+          placeTL(this.soundBtn, 25, 25, SP.soundOn0000.w, SP.soundOn0000.h);
+
+          // START button, centred on stage (166x84), exactly like the original.
+          this.startBtn = btn('startButton', u, this.onStartClick.bind(this));
+          this.startBtn.active = false;
+          placeTL(this.startBtn, (DESIGN_W - SP.startButton.w) / 2, (DESIGN_H - SP.startButton.h) / 2, SP.startButton.w, SP.startButton.h);
         }
         onPauseClick() {
           this.gamePaused = !this.gamePaused;
@@ -338,7 +377,7 @@ System.register(['cc'], function (_export, _context) {
         buildGameOver() {
           var o = this.overlayNode;
           this.goBg = mkFull('goBG', this.assets.TEX_BG_WELCOME, DESIGN_W, DESIGN_H, o); this.goBg.opacity = 200;
-          // Same vertical rhythm as GameOverContainer.as: message at 20% height, scores at 40%.
+          // Same vertical rhythm as the original: message at 20% height, scores at 40%.
           this.goMsg = mkLabel('HERO WAS KILLED!', 56, new Color(243, 231, 95), 900, 80, o);
           placeTL(this.goMsg, (DESIGN_W - 900) / 2, DESIGN_H * 0.20, 900, 80);
           this.goDist = mkLabel('DISTANCE TRAVELLED: 0', 34, Color.WHITE, 900, 50, o);
@@ -351,11 +390,11 @@ System.register(['cc'], function (_export, _context) {
           this.goAbout = btn('gameOver_aboutButton', o, this.onAboutClick.bind(this));
 
           // Buttons are laid out edge to edge with 10px gaps and centred as a group (same as
-          // GameOverContainer.as), rather than at hard-coded offsets.
+          // the original), rather than at hard-coded offsets.
           var GAP = 10;
-          var wM = SP.gameOver_mainButton.ow, hM = SP.gameOver_mainButton.oh;
-          var wA = SP.gameOver_playAgainButton.ow, hA = SP.gameOver_playAgainButton.oh;
-          var wB = SP.gameOver_aboutButton.ow, hB = SP.gameOver_aboutButton.oh;
+          var wM = SP.gameOver_mainButton.w, hM = SP.gameOver_mainButton.h;
+          var wA = SP.gameOver_playAgainButton.w, hA = SP.gameOver_playAgainButton.h;
+          var wB = SP.gameOver_aboutButton.w, hB = SP.gameOver_aboutButton.h;
           var yTop = DESIGN_H * 0.70;
           var x = DESIGN_W * 0.5 - (wM + wA + wB + GAP * 2) * 0.5;
           placeTL(this.goMain, x, yTop, wM, hM);
@@ -390,19 +429,38 @@ System.register(['cc'], function (_export, _context) {
           this.heroX = -DESIGN_W; this.heroY = DESIGN_H / 2;
           placeCenter(this.heroNode, this.heroX, this.heroY);
 
-          // reset pools
+          // reset pools (destroy the previous run's nodes so nothing is left frozen on screen)
+          this.disposePool(this.items); this.disposePool(this.obstacles);
+          this.disposePool(this.eatParts); this.disposePool(this.windParts);
           this.items = []; this.obstacles = []; this.eatParts = []; this.windParts = [];
           this.pattern = 1; this.patternPosY = 100; this.patternStep = 15; this.patternDir = 1;
           this.patternGap = 20; this.patternGapCount = 0; this.patternChange = 100;
           this.patternLen = 50; this.patternOnce = true;
           this.obstacleGapCount = 0;
-          this.gameArea = { top: 100, bottom: DESIGN_H - 250 };
+          // The original: gameArea = Rectangle(0, 100, stageWidth, stageHeight - 250)
+          //   -> top 100, height 518, bottom 618
+          // Keeping `height` matters: the original's hurt reaction targets
+          // (gameArea.top + gameArea.height) / 2 == 309, which is NOT the rectangle centre.
+          this.gameArea = { top: 100, bottom: 100 + (DESIGN_H - 250), height: DESIGN_H - 250 };
 
           // particles
           this.makeEmitters();
           this.state = 'play';
           this.startMusic('assets/audio/bgGame.mp3');
           this.setHud();
+
+          // The original keeps the hero parked off-stage behind a START button until the player
+          // kicks off: startButton visible, pauseButton hidden, and no game tick at all.
+          this.launched = false;
+          if (this.startBtn) this.startBtn.active = true;
+          if (this.pauseBtn) this.pauseBtn.active = false;
+        }
+        onStartClick() {
+          this.sfx('coffee');
+          if (this.startBtn) this.startBtn.active = false;
+          if (this.pauseBtn) this.pauseBtn.active = true;
+          this.playerSpeed = 0;
+          this.launched = true;   // launchHero(): starts the tick from IDLE
         }
 
         makeEmitters() {
@@ -437,9 +495,32 @@ System.register(['cc'], function (_export, _context) {
           var it = { node: mkSprite('item1', this.playNode) };
           this.items.push(it); return it;
         }
+        disposePool(arr) {
+          if (!arr) return;
+          for (var i = 0; i < arr.length; i++) {
+            var o = arr[i];
+            try { if (o && o.node && o.node.isValid) o.node.destroy(); } catch (e) {}
+          }
+        }
         get obstacleSlot() {
           for (var i = 0; i < this.obstacles.length; i++) if (!this.obstacles[i].alive) return this.obstacles[i];
-          var ob = { node: new Node('ob'), spr: mkSprite('obstacle1', this.playNode) };
+          // A container node, mirroring the original's `Obstacle extends Sprite`: the art, the
+          // crash art and the look-out sign are all children, so moving / rotating / hiding
+          // the container affects the whole obstacle. (Previously the container was never
+          // parented to the scene, so obstacles updated their logic but drew nothing.)
+          var root = new Node('obstacle');
+          root.parent = this.playNode;
+          var ob = {
+            node: root,
+            spr: mkSprite('obstacle1', root),
+            crash: mkSprite('obstacle1_crash', root),
+            watch: mkSprite('watchOut_0001', root),
+            alive: false, ow: 0, oh: 0, animT: 0, watchT: 0,
+            artName: 'obstacle1', watchName: 'watchOut_0001'
+          };
+          ob.spr.setPosition(0, 0, 0);
+          ob.crash.active = false;
+          ob.watch.active = false;
           this.obstacles.push(ob); return ob;
         }
         get eatSlot() {
@@ -451,7 +532,7 @@ System.register(['cc'], function (_export, _context) {
           var p = { node: mkSprite('particleWindForce', this.playNode) }; this.windParts.push(p); return p;
         }
 
-        /* ---------- ITEM patterns (mirrors InGame.as) ---------- */
+        /* ---------- ITEM patterns (mirrors the original) ---------- */
         setFoodPattern(elapsed) {
           if (this.patternChange > 0) { this.patternChange -= this.playerSpeed * elapsed; return; }
           if (Math.random() < 0.7) this.pattern = randi(1, 4);
@@ -491,10 +572,12 @@ System.register(['cc'], function (_export, _context) {
         }
         configureFood(it) { this.configureFoodAt(it, this.patternPosY); }
         configureFoodAt(it, y) {
-          it.alive = true; it.type = it.type;
-          var f = FR['item' + it.type]; if (f) it.node.getComponent(Sprite).spriteFrame = f;
+          it.alive = true;
+          setFrame(it.node, 'item' + it.type);   // also resizes the node to this item's frame
           it.node.active = true;
-          it.x = DESIGN_W + 80; it.y = y; placeCenter(it.node, it.x, it.y);
+          // The original starts an item at `stageWidth + item.width` (its own width, not a constant).
+          var s = SP['item' + it.type];
+          it.x = DESIGN_W + (s ? s.w : 0); it.y = y; placeCenter(it.node, it.x, it.y);
         }
         animateFood(dt, elapsed) {
           var ga = this.gameArea, hx = this.heroX, hy = this.heroY;
@@ -551,41 +634,84 @@ System.register(['cc'], function (_export, _context) {
           if (this.obstacleGapCount < OBSTACLE_GAP) { this.obstacleGapCount += this.playerSpeed * elapsed; return; }
           this.obstacleGapCount = 0;
           var type = randi(1, 4), dist = rand(1000, 2000);
-          var ob = this.obstacleSlot; ob.alive = true; ob.type = type; ob.alreadyHit = false; ob.lookOut = true;
-          ob.distance = dist; ob.node.active = true; ob.node.setRotationFromEuler(0, 0, 0);
-          var fname = (type === 4) ? 'obstacle4_0001' : ('obstacle' + type);
-          ob.fname = fname; ob.ow = SP[fname].ow;
-          var s = ob.spr; s.getComponent(Sprite).spriteFrame = FR[fname];
+          var ob = this.obstacleSlot;
+          ob.alive = true; ob.type = type; ob.alreadyHit = false; ob.lookOut = true;
+          ob.distance = dist; ob.animT = 0; ob.watchT = 0;
+          ob.node.active = true;
+          ob.node.setRotationFromEuler(0, 0, 0);
+
+          // Main art. Type 4 is a 2-frame animation in the original; the rest are stills.
+          var artName = (type === 4) ? 'obstacle4_0001' : ('obstacle' + type);
+          var a = SP[artName];
+          ob.ow = a.w; ob.oh = a.h; ob.artName = artName;   // display size = trimmed size
+          setFrame(ob.spr, artName);
+          ob.spr.active = true;
+
+          // Crash art, top-left aligned with the main art (as in the original).
+          var cName = 'obstacle' + type + '_crash', c = SP[cName];
+          setFrame(ob.crash, cName);
+          ob.crash.setPosition(-ob.ow / 2 + c.w / 2, ob.oh / 2 - c.h / 2, 0);
+          ob.crash.active = false;
+
+          // Look-out sign: sits immediately to the LEFT of the art, so it becomes visible
+          // at the stage edge before the obstacle itself scrolls in.
+          var ws = SP.watchOut_0001;
+          ob.watchName = 'watchOut_0001';
+          setFrame(ob.watch, ob.watchName);
+          ob.watch.setPosition(-ob.ow / 2 - ws.w / 2, (type === 4) ? (ob.oh / 2 - ws.h / 2) : 0, 0);
+          ob.watch.active = true;
+
+          // Vertical placement uses the TOP edge in design space, matching the original:
+          //   top -> gameArea.top, bottom -> gameArea.bottom - height, else random in range.
           if (type <= 3) {
-            if (Math.random() > 0.5) { ob.pos = 'top'; ob.y = this.gameArea.top; } else { ob.pos = 'bottom'; ob.y = this.gameArea.bottom - SP[fname].oh; }
-          } else { ob.pos = 'middle'; ob.y = randi(this.gameArea.top, this.gameArea.bottom - SP.obstacle4_0001.oh); }
-          ob.node.x = DESIGN_W;
-          ob.x = DESIGN_W; ob.y = ob.y; placeCenter(ob.node, ob.x, ob.y);
-          ob.watch = mkSprite('watchOut_0001', ob.node); ob.watch.active = true;
+            if (Math.random() > 0.5) { ob.pos = 'top'; ob.y = this.gameArea.top; }
+            else { ob.pos = 'bottom'; ob.y = this.gameArea.bottom - ob.oh; }
+          } else {
+            ob.pos = 'middle';
+            ob.y = randi(this.gameArea.top, this.gameArea.bottom - ob.oh);
+          }
+          ob.x = DESIGN_W;                       // left edge starts at the stage right edge
+          placeTL(ob.node, ob.x, ob.y, ob.ow, ob.oh);
         }
         animateObstacles(dt, elapsed) {
           var hx = this.heroX, hy = this.heroY;
           for (var i = 0; i < this.obstacles.length; i++) {
             var ob = this.obstacles[i]; if (!ob.alive) continue;
+
+            // 10 fps clip playback (obstacle type 4 art + the look-out sign).
+            if (ob.type === 4 && !ob.alreadyHit) {
+              ob.animT += elapsed;
+              var f4 = (Math.floor(ob.animT * 10) % 2) === 0 ? 'obstacle4_0001' : 'obstacle4_0002';
+              if (f4 !== ob.artName) { ob.artName = f4; setFrame(ob.spr, f4); }
+            }
+            if (ob.lookOut) {
+              ob.watchT += elapsed;
+              var fw = 'watchOut_000' + ((Math.floor(ob.watchT * 10) % watchOutFrames.length) + 1);
+              if (fw !== ob.watchName && setFrame(ob.watch, fw)) ob.watchName = fw;
+            }
+
             if (ob.distance > 0) { ob.distance -= this.playerSpeed * elapsed; }
             else {
-              if (ob.lookOut) { ob.lookOut = false; if (ob.watch) ob.watch.active = false; }
+              if (ob.lookOut) { ob.lookOut = false; ob.watch.active = false; }
               ob.x -= (this.playerSpeed + OBSTACLE_SPEED) * elapsed;
-              ob.node.x = ob.x;
             }
-            placeCenter(ob.node, ob.x, ob.y);
-            if (ob.x < -ob.ow || this.gameState === GAME_STATE_OVER) { ob.alive = false; ob.node.active = false; if (ob.watch) { ob.watch.active = false; } continue; }
-            var dx = ob.x - hx, dy = ob.y - hy, sq = dx * dx + dy * dy;
+            placeTL(ob.node, ob.x, ob.y, ob.ow, ob.oh);
+            if (ob.x < -ob.ow || this.gameState === GAME_STATE_OVER) { ob.alive = false; ob.node.active = false; continue; }
+
+            // Collision: compare CENTRE points (the original compared top-left corners, which
+            // shifted its effective hitbox by half a sprite; centres keep the 70px radius sane).
+            var dx = (ob.x + ob.ow / 2) - hx, dy = (ob.y + ob.oh / 2) - hy, sq = dx * dx + dy * dy;
             if (sq < 5000 && !ob.alreadyHit) {
               ob.alreadyHit = true; this.sfx('hit'); this.cameraShake = 12;
-              if (this.coffee > 0) {
-                ob.node.setRotationFromEuler(0, 0, ob.pos === 'bottom' ? 100 : -100);
-                this.hitObstacle = 30; this.playerSpeed *= 0.8;
-                if (ob.spr) ob.spr.getComponent(Sprite).spriteFrame = FR['obstacle' + ob.type + '_crash'];
+              var boost = this.coffee > 0;
+              ob.node.setRotationFromEuler(0, 0, ob.pos === 'bottom' ? (boost ? 100 : 70) : (boost ? -100 : -70));
+              ob.spr.active = false; ob.crash.active = true;   // swap to the crash art
+              ob.watch.active = false; ob.lookOut = false;
+              this.hitObstacle = 30;
+              if (boost) {
+                this.playerSpeed *= 0.8;
               } else {
-                ob.node.setRotationFromEuler(0, 0, ob.pos === 'bottom' ? 70 : -70);
-                if (ob.spr) ob.spr.getComponent(Sprite).spriteFrame = FR['obstacle' + ob.type + '_crash'];
-                this.hitObstacle = 30; this.playerSpeed *= 0.5; this.sfx('hurt');
+                this.playerSpeed *= 0.5; this.sfx('hurt');
                 this.lives--; if (this.lives <= 0) { this.lives = 0; this.endGame(); }
                 this.setHud();
               }
@@ -602,21 +728,23 @@ System.register(['cc'], function (_export, _context) {
               var restX = 200;
               var slide = clamp(tn / 1.2, 0, 1);
               var ease = slide * slide * (3 - 2 * slide);
-              var wx = -SP.welcome_hero.ow + (restX + SP.welcome_hero.ow) * ease;
+              var wx = -SP.welcome_hero.w + (restX + SP.welcome_hero.w) * ease;
               this.wHero.setPosition(wx, WY(230 + Math.cos(tn * 2) * 25), 0);
               this.wPlay.y = WY(340 - Math.cos(tn * 2) * 10); this.wAbout.y = WY(460 - Math.cos(tn * 2) * 10);
             }
             return;
           }
           if (this.gamePaused) return;
+          if (!this.launched) return;   // no game tick until the START button is pressed
           var elapsed = Math.min(dt, 0.05);
           var ga = this.gameArea;
 
-          // hero animation
+          // hero animation (fly_ frames are 153x73/75/77 — keep the node in sync per frame
+          // so the art is drawn 1:1 like the original MovieClip instead of being squashed)
           this.heroAnimTime += elapsed;
           var fps = this.playerSpeed > HERO_MIN_SPEED + 100 ? 60 : 20;
           var frame = Math.floor(this.heroAnimTime * fps) % heroFrames.length;
-          this.heroNode.getComponent(Sprite).spriteFrame = heroFrames[frame];
+          setFrame(this.heroNode, 'fly_' + ('000' + (frame + 1)).slice(-4));
 
           if (this.gameState === GAME_STATE_IDLE) {
             if (this.heroX < DESIGN_W * 0.25) {
@@ -626,8 +754,8 @@ System.register(['cc'], function (_export, _context) {
               this.scrollBg(this.playerSpeed);
             } else { this.gameState = GAME_STATE_FLYING; this.heroState = 1; }
             this.heroNode.setRotationFromEuler(0, 0, clamp(-(this.heroY - this.touchY) * 0.2, -30, 30));
-            if (this.heroY > ga.bottom - SP.fly_0001.oh / 2) { this.heroY = ga.bottom - SP.fly_0001.oh / 2; this.heroNode.setRotationFromEuler(0, 0, 0); }
-            if (this.heroY < ga.top + SP.fly_0001.oh / 2) { this.heroY = ga.top + SP.fly_0001.oh / 2; this.heroNode.setRotationFromEuler(0, 0, 0); }
+            if (this.heroY > ga.bottom - SP.fly_0001.h / 2) { this.heroY = ga.bottom - SP.fly_0001.h / 2; this.heroNode.setRotationFromEuler(0, 0, 0); }
+            if (this.heroY < ga.top + SP.fly_0001.h / 2) { this.heroY = ga.top + SP.fly_0001.h / 2; this.heroNode.setRotationFromEuler(0, 0, 0); }
             placeCenter(this.heroNode, this.heroX, this.heroY);
           } else if (this.gameState === GAME_STATE_FLYING) {
             if (this.coffee > 0) this.playerSpeed += (HERO_MAX_SPEED - this.playerSpeed) * 0.2;
@@ -636,13 +764,22 @@ System.register(['cc'], function (_export, _context) {
               if (this.playerSpeed > HERO_MIN_SPEED + 100) { this.spawnWind(); this.heroAnimTime += elapsed; }
               else { if (this.coffeePS) this.coffeePS.getComponent(ParticleSystem2D).emitting = false; }
               this.heroNode.setRotationFromEuler(0, 0, clamp(-(this.heroY - this.touchY) * 0.2, -30, 30));
-              if (this.heroY > ga.bottom - SP.fly_0001.oh / 2) { this.heroY = ga.bottom - SP.fly_0001.oh / 2; this.heroNode.setRotationFromEuler(0, 0, 0); }
-              if (this.heroY < ga.top + SP.fly_0001.oh / 2) { this.heroY = ga.top + SP.fly_0001.oh / 2; this.heroNode.setRotationFromEuler(0, 0, 0); }
+              if (this.heroY > ga.bottom - SP.fly_0001.h / 2) { this.heroY = ga.bottom - SP.fly_0001.h / 2; this.heroNode.setRotationFromEuler(0, 0, 0); }
+              if (this.heroY < ga.top + SP.fly_0001.h / 2) { this.heroY = ga.top + SP.fly_0001.h / 2; this.heroNode.setRotationFromEuler(0, 0, 0); }
             } else {
-              if (this.heroState !== 2) this.heroState = 2;
+              // Hit feedback. With coffee active the hero must NOT play the hurt reaction
+              // (no snap to screen centre, no spin) — it only stutters for 30 frames and
+              // keeps control. This mirrors the original: `if (coffee <= 0) { ...hit anim... }`.
+              if (this.coffee <= 0) {
+                if (this.heroState !== 2) this.heroState = 2;
+                this.heroY -= (this.heroY - (ga.top + ga.height) / 2) * 0.1;   // == 309, as in the original
+                this.heroNode.setRotationFromEuler(0, 0, this.heroY > DESIGN_H / 2 ? this.heroNode.eulerAngles.z - this.hitObstacle * 2 : this.heroNode.eulerAngles.z + this.hitObstacle * 2);
+              } else {
+                this.heroState = 1;
+              }
               this.hitObstacle -= 1;
-              this.heroY -= (this.heroY - (ga.top + ga.bottom) / 2) * 0.1;
-              this.heroNode.setRotationFromEuler(0, 0, this.heroY > DESIGN_H / 2 ? this.heroNode.eulerAngles.z - this.hitObstacle * 2 : this.heroNode.eulerAngles.z + this.hitObstacle * 2);
+              // The original drives the shake amplitude from the decaying hitObstacle counter.
+              this.cameraShake = this.hitObstacle;
             }
             if (this.mushroom > 0) this.mushroom -= elapsed;
             if (this.coffee > 0) this.coffee -= elapsed;
@@ -662,16 +799,17 @@ System.register(['cc'], function (_export, _context) {
             for (var n = 0; n < this.windParts.length; n++) if (this.windParts[n].alive) { this.windParts[n].alive = false; this.windParts[n].node.active = false; }
             if (this.coffeePS) this.coffeePS.getComponent(ParticleSystem2D).emitting = false;
             if (this.mushroomPS) this.mushroomPS.getComponent(ParticleSystem2D).emitting = false;
-            if (this.heroY < DESIGN_H + SP.fly_0001.oh) { this.playerSpeed -= this.playerSpeed * elapsed; this.heroY += DESIGN_H * elapsed; placeCenter(this.heroNode, this.heroX, this.heroY); }
+            if (this.heroY < DESIGN_H + SP.fly_0001.h) { this.playerSpeed -= this.playerSpeed * elapsed; this.heroY += DESIGN_H * elapsed; placeCenter(this.heroNode, this.heroX, this.heroY); }
             else { this.playerSpeed = 0; this.showGameOver(); }
           }
 
-          // camera shake
+          // camera shake (the original's shakeAnimation: decaying amplitude, both axes, integer jitter)
           if (this.cameraShake > 0) {
             this.cameraShake -= 0.1;
-            this.shakeX = Math.random() * this.cameraShake - this.cameraShake * 0.5;
-            this.playNode.setPosition(this.shakeX, 0, 0);
-          } else if (this.playNode.x !== 0) { this.shakeX = 0; this.playNode.setPosition(0, 0, 0); }
+            var amp = this.cameraShake;
+            this.shakeX = Math.floor(Math.random() * amp - amp * 0.5);
+            this.playNode.setPosition(this.shakeX, Math.floor(Math.random() * amp - amp * 0.5), 0);
+          } else if (this.playNode.x !== 0 || this.playNode.y !== 0) { this.shakeX = 0; this.playNode.setPosition(0, 0, 0); }
         }
 
         showGameOver() {
