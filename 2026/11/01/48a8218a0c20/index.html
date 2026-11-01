@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta 
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta 
+    http-equiv="X-UA-Compatible" 
+    content="ie=edge">
+  <meta 
+    name="theme-color" 
+    content="#fff" 
+    id="theme-color">
+  <meta 
+    name="description" 
+    content="Hexo">
+  <link 
+    rel="icon" 
+    href="/">
+  <title>把 Flash + Starling 的《Hungry Hero》完整搬到 Cocos Creator 3.8</title>
+  
+    
+      <meta 
+        property="og:title" 
+        content="把 Flash + Starling 的《Hungry Hero》完整搬到 Cocos Creator 3.8">
+    
+    
+      <meta 
+        property="og:url" 
+        content="https://mrlibertine.github.io/2026/11/01/48a8218a0c20/index.html">
+    
+    
+      <meta 
+        property="og:img" 
+        content="/img/68339006.png">
+    
+    
+    
+      <meta 
+        property="og:type" 
+        content="article">
+      <meta 
+        property="og:article:published_time" 
+        content="2026-11-01">
+      <meta 
+        property="og:article:modified_time" 
+        content="2026-11-01">
+      <meta 
+        property="og:article:author" 
+        content="MrLibertine">
+      
+        
+          <meta 
+            property="og:article:tag" 
+            content="Cocos Creator">
+        
+          <meta 
+            property="og:article:tag" 
+            content="游戏开发">
+        
+          <meta 
+            property="og:article:tag" 
+            content="迁移">
+        
+          <meta 
+            property="og:article:tag" 
+            content="Flash">
+        
+      
+    
+  
+  
+  <link rel="preload" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css" as="style" >
+  <link rel="preload" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css" as="style" >
+  <link rel="preload" href="/css/main.css" as="style" >
+  
+  <link rel="modulepreload" href="//instant.page/5.1.0">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1946621_i1kgafibvw.css">
+  
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_1952792_89b4ac4k4up.css">
+  
+  
+  
+    <link rel="stylesheet" href="/js/lib/lightbox/baguetteBox.min.css">
+  
+  <script>
+    function loadScript(url, cb) {
+      var script = document.createElement('script');
+      script.src = url;
+      if (cb) script.onload = cb;
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    function loadCSS(href, data, attr) {
+      var sheet = document.createElement('link');
+      sheet.ref = 'stylesheet';
+      sheet.href = href;
+      sheet.dataset[data] = attr;
+      document.head.appendChild(sheet);
+    }
+    function changeCSS(cssFile, data, attr) {
+      var oldlink = document.querySelector(data);
+      var newlink = document.createElement("link");
+      newlink.setAttribute("rel", "stylesheet");
+      newlink.setAttribute("href", cssFile);
+      newlink.dataset.prism = attr;
+      document.head.replaceChild(newlink, oldlink);
+    }
+  </script>
+  
+    
+  
+  <script>
+    // control reverse button
+    var reverseDarkList = {
+      dark: 'light',
+      light: 'dark'
+    };
+    var themeColor = {
+      dark: '#1c1c1e',
+      light: '#fff'
+    }
+    // get the data of css prefers-color-scheme
+    var getCssMediaQuery = function() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+    // reverse current darkmode setting function
+    var reverseDarkModeSetting = function() {
+      var setting = localStorage.getItem('user-color-scheme');
+      if(reverseDarkList[setting]) {
+        setting = reverseDarkList[setting];
+      } else if(setting === null) {
+        setting = reverseDarkList[getCssMediaQuery()];
+      } else {
+        return;
+      }
+      localStorage.setItem('user-color-scheme', setting);
+      return setting;
+    };
+    // apply current darkmode setting
+  </script>
+  
+    <script>
+      var setDarkmode = function(mode) {
+      var setting = mode || localStorage.getItem('user-color-scheme');
+      if(setting === getCssMediaQuery()) {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else if(reverseDarkList[setting]) {
+        document.documentElement.setAttribute('data-user-color-scheme', setting);
+        document.getElementById('theme-color').content = themeColor[setting];
+        document.getElementById('theme-color').dataset.mode = setting;
+      } else {
+        document.documentElement.removeAttribute('data-user-color-scheme');
+        localStorage.removeItem('user-color-scheme');
+        document.getElementById('theme-color').content = themeColor[getCssMediaQuery()];
+        document.getElementById('theme-color').dataset.mode = getCssMediaQuery();
+      }
+    };
+    setDarkmode();
+    </script>
+  
+  
+  
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.js" as="script">
+    <link rel="preload" href="/js/lib/lightbox/baguetteBox.min.css" as="style" >
+  
+  
+    <link rel="preload" href="/js/lib/lozad.min.js" as="script">
+  
+  
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+  <body>
+    <div class="wrapper">
+      
+        <nav class="navbar">
+  <div class="navbar-logo">
+    <a class="navbar-logo-main" href="/">
+      
+      <span class="navbar-logo-dsc">MrLibertine</span>
+      </a>
+  </div>
+  <div class="navbar-menu">
+    
+      <a 
+        href="/" 
+        class="navbar-menu-item">
+        
+          首页
+        
+      </a>
+    
+      <a 
+        href="/archives" 
+        class="navbar-menu-item">
+        
+          归档
+        
+      </a>
+    
+      <a 
+        href="/tags" 
+        class="navbar-menu-item">
+        
+          标签
+        
+      </a>
+    
+      <a 
+        href="/categories" 
+        class="navbar-menu-item">
+        
+          分类
+        
+      </a>
+    
+      <a 
+        href="/about" 
+        class="navbar-menu-item">
+        
+          关于
+        
+      </a>
+    
+      <a 
+        href="/links" 
+        class="navbar-menu-item">
+        
+          友链
+        
+      </a>
+    
+    <button 
+      class="navbar-menu-item darknavbar navbar-menu-btn" 
+      aria-label="Toggle dark mode"
+      id="dark">
+      <i class="iconfont icon-weather"></i>
+    </button>
+    <button 
+      class="navbar-menu-item searchnavbar navbar-menu-btn" 
+      aria-label="Toggle search"
+      id="search">
+      <!-- <i 
+        class="iconfont icon-search" 
+        style="font-size: 1.2rem; font-weight: 400;">
+      </i> -->
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img"
+        class="iconify iconify--ion" width="28" height="28" preserveAspectRatio="xMidYMid meet" viewBox="0 0 512 512">
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M256 80a176 176 0 1 0 176 176A176 176 0 0 0 256 80Z"></path>
+        <path fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="28"
+          d="M232 160a72 72 0 1 0 72 72a72 72 0 0 0-72-72Z"></path>
+        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="28"
+          d="M283.64 283.64L336 336"></path>
+      </svg>
+    </button>
+  </div>
+</nav>
+          
+            <div id="local-search" style="display: none">
+              <input class="navbar-menu-item" id="search-input" placeholder="请输入搜索内容..." />
+              <div id="search-content"></div>
+            </div>
+            
+              <div class="section-wrap">
+                <div class="container">
+                  <div class="columns">
+                    <aside class="left-column">
+                      
+                        <div class="card card-author">
+                          
+  <img 
+    src="/img/68339006.png" 
+    class="author-img"
+    width="88"
+    height="88"
+    alt="author avatar">
+
+<p class="author-name">MrLibertine</p>
+<p class="author-description">designed by MrLibertine</p>
+<div class="author-message">
+  <a 
+    class="author-posts-count" 
+    href="/archives">
+    <span>20</span>
+    <span>文章</span>
+  </a>
+  <a 
+    class="author-categories-count" 
+    href="/categories">
+    <span>2</span>
+    <span>分类</span>
+  </a>
+  <a 
+    class="author-tags-count" 
+    href="/tags">
+    <span>28</span>
+    <span>标签</span>
+  </a>
+</div>
+
+                        </div>
+                         <div class="sticky-tablet">
+  
+  
+    <article class="display-when-two-columns spacer">
+      <div class="card card-content toc-card">
+        <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%8D%E5%88%BB%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-text">复刻了什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%81%E7%A7%BB%E7%AD%96%E7%95%A5%EF%BC%9A%E5%A4%8D%E7%94%A8%E5%BC%95%E6%93%8E%E5%8C%85%EF%BC%8C%E8%BF%90%E8%A1%8C%E6%97%B6%E6%90%AD%E5%9C%BA%E6%99%AF"><span class="toc-text">迁移策略：复用引擎包，运行时搭场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E4%B8%AA%E3%80%8C%E7%99%BD%E5%B1%8F%E4%BD%86%E6%8E%A7%E5%88%B6%E5%8F%B0%E9%9B%B6%E6%8A%A5%E9%94%99%E3%80%8D%E7%9A%84%E5%9D%91"><span class="toc-text">五个「白屏但控制台零报错」的坑</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%8F%AA%E5%BB%BA-Node-%E6%A0%91%EF%BC%8C%E4%B8%80%E4%B8%AA%E4%B8%9C%E8%A5%BF%E9%83%BD%E4%B8%8D%E4%BC%9A%E7%94%BB"><span class="toc-text">1. 只建 Node 树，一个东西都不会画</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%9B%B8%E6%9C%BA%E5%8F%82%E6%95%B0%E5%86%99%E9%94%99%E4%BA%86%E5%90%8D%E5%AD%97%EF%BC%8C%E8%80%8C%E4%B8%94%E4%B8%8D%E6%8A%A5%E9%94%99"><span class="toc-text">2. 相机参数写错了名字，而且不报错</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-node-setScale-1-%E4%BC%9A%E6%8A%8A%E8%8A%82%E7%82%B9%E5%8F%98%E6%88%90%E9%9A%90%E5%BD%A2"><span class="toc-text">3. node.setScale(1) 会把节点变成隐形</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%BF%90%E8%A1%8C%E6%97%B6%E8%B4%B4%E5%9B%BE%EF%BC%9ATexture2D-image-%E8%A6%81%E7%9A%84%E6%98%AF-ImageAsset"><span class="toc-text">4. 运行时贴图：Texture2D.image 要的是 ImageAsset</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-SpriteFrame-offset-%E7%9A%84%E7%AC%A6%E5%8F%B7%E6%98%AF%E5%8F%8D%E7%9A%84"><span class="toc-text">5. SpriteFrame.offset 的符号是反的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A1%BA%E5%B8%A6%E4%B8%A4%E4%B8%AA-SystemJS-%E7%9A%84%E5%9D%91"><span class="toc-text">顺带两个 SystemJS 的坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF%E8%A7%86%E5%B7%AE%EF%BC%9A%E7%85%A7%E6%8A%84%E5%8E%9F%E7%89%88%E7%9A%84%E4%B8%A4%E4%B8%AA%E7%BB%86%E8%8A%82"><span class="toc-text">背景视差：照抄原版的两个细节</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E5%AE%9E%E6%B5%8B%E7%9A%84%E6%95%B0%E5%AD%97"><span class="toc-text">运行时实测的数字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E5%88%86%E8%BE%A8%E7%8E%87%E4%B8%8E%E3%80%8C%E8%A7%86%E5%8F%A3%E3%80%8D"><span class="toc-text">设计分辨率与「视口」</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AS3-x2F-Starling-%E2%86%92-Cocos-3-8-%E5%AF%B9%E7%85%A7"><span class="toc-text">AS3 &#x2F; Starling → Cocos 3.8 对照</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%90%8E"><span class="toc-text">最后</span></a></li></ol>
+      </div>
+    </article>
+  
+  
+  <article class="card card-content categories-widget">
+    <div class="categories-card">
+  <div class="categories-header">
+    <i 
+      class="iconfont icon-fenlei" 
+      style="padding-right: 2px;">
+    </i>分类
+  </div>
+  <div class="categories-list">
+    
+      <a href="/categories/Unity/">
+        <div class="categories-list-item">
+          Unity
+          <span class="categories-list-item-badge">1</span>
+        </div>
+      </a>
+    
+      <a href="/categories/Cocos-Creator/">
+        <div class="categories-list-item">
+          Cocos-Creator
+          <span class="categories-list-item-badge">2</span>
+        </div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  <article class="card card-content tags-widget">
+    <div class="tags-card">
+  <div class="tags-header">
+    <i 
+      class="iconfont icon-biaoqian" 
+      style="padding-right: 2px;">
+    </i>热门标签
+  </div>
+  <div class="tags-list">
+    
+      <a 
+        href="/tags/AI/" 
+        title="AI">
+        <div class="tags-list-item">AI</div>
+      </a>
+    
+      <a 
+        href="/tags/LLM/" 
+        title="LLM">
+        <div class="tags-list-item">LLM</div>
+      </a>
+    
+      <a 
+        href="/tags/NLP/" 
+        title="NLP">
+        <div class="tags-list-item">NLP</div>
+      </a>
+    
+      <a 
+        href="/tags/RAG/" 
+        title="RAG">
+        <div class="tags-list-item">RAG</div>
+      </a>
+    
+      <a 
+        href="/tags/LayaAir/" 
+        title="LayaAir">
+        <div class="tags-list-item">LayaAir</div>
+      </a>
+    
+      <a 
+        href="/tags/Unity/" 
+        title="Unity">
+        <div class="tags-list-item">Unity</div>
+      </a>
+    
+      <a 
+        href="/tags/WebView/" 
+        title="WebView">
+        <div class="tags-list-item">WebView</div>
+      </a>
+    
+      <a 
+        href="/tags/Worker/" 
+        title="Worker">
+        <div class="tags-list-item">Worker</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E/" 
+        title="游戏引擎">
+        <div class="tags-list-item">游戏引擎</div>
+      </a>
+    
+      <a 
+        href="/tags/C/" 
+        title="C#">
+        <div class="tags-list-item">C#</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/" 
+        title="杂七杂八">
+        <div class="tags-list-item">杂七杂八</div>
+      </a>
+    
+      <a 
+        href="/tags/Linux/" 
+        title="Linux">
+        <div class="tags-list-item">Linux</div>
+      </a>
+    
+      <a 
+        href="/tags/WebGL/" 
+        title="WebGL">
+        <div class="tags-list-item">WebGL</div>
+      </a>
+    
+      <a 
+        href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" 
+        title="性能优化">
+        <div class="tags-list-item">性能优化</div>
+      </a>
+    
+      <a 
+        href="/tags/UGUI/" 
+        title="UGUI">
+        <div class="tags-list-item">UGUI</div>
+      </a>
+    
+      <a 
+        href="/tags/GLSL/" 
+        title="GLSL">
+        <div class="tags-list-item">GLSL</div>
+      </a>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+                    </aside>
+                    <main class="main-column">
+                      
+<article class="card card-content">
+  <header>
+    <h1 class="post-title">
+      把 Flash + Starling 的《Hungry Hero》完整搬到 Cocos Creator 3.8
+    </h1>
+  </header>
+  <div class="post-meta post-show-meta">
+    <time datetime="2026-11-01T10:50:00.000Z">
+      <i 
+        class="iconfont icon-calendar" 
+        style="margin-right: 2px;">
+      </i>
+      <span>2026-11-01</span>
+    </time>
+    
+      <span class="dot"></span>
+      
+        <a 
+          href="/categories/Cocos-Creator/" 
+          class="post-meta-link">
+          Cocos Creator
+        </a>
+      
+    
+    
+      <span class="dot"></span>
+      <span>3k 字</span>
+    
+  </div>
+  
+    <div 
+      class="post-meta post-show-meta" 
+      style="margin-top: -10px;">
+      <div style="display: flex; align-items: center;">
+        <i 
+          class="iconfont icon-biaoqian" 
+          style="margin-right: 2px; font-size: 1.15rem;">
+        </i>
+        
+          
+          <a 
+            href="/tags/Cocos-Creator/" 
+            class="post-meta-link">
+            Cocos Creator
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" 
+            class="post-meta-link">
+            游戏开发
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/%E8%BF%81%E7%A7%BB/" 
+            class="post-meta-link">
+            迁移
+          </a>
+        
+          
+            <span class="dot"></span>
+          
+          <a 
+            href="/tags/Flash/" 
+            class="post-meta-link">
+            Flash
+          </a>
+        
+      </div>
+    </div>
+  
+  </header>
+  <div 
+    id="section" 
+    class="post-content">
+    <div class="hh-embed">
+<iframe src="/hungry-hero/index.html" frameborder="0" loading="lazy" allow="fullscreen" allowfullscreen></iframe>
+</div>
+<style>
+.hh-embed { margin: 0; }
+.hh-embed iframe {
+  display: block; width: 100%; height: auto; aspect-ratio: 4 / 3;
+  border-radius: 8px; border: 1px solid #2a3242; background: #0b0e14;
+}
+</style>
+
+<blockquote>
+<p>鼠标移动控制主角高度，吃食物加分，躲障碍。画面小就点右下角 ⛶ 全屏，或<a href="/hungry-hero/index.html">在新窗口单独打开</a>。</p>
+</blockquote>
+<p>《Hungry Hero》是 Hemanth Sharma 2012 年用 <strong>Adobe Flash + Starling</strong> 写的一个开源小游戏，跟着他的书一起放出来的，协议是 Simplified BSD。玩法很朴素：一个永远吃不饱的英雄往前飞，玩家用鼠标控制他的高度去吃食物、躲障碍，路上有咖啡（加速 + 撞穿障碍）和蘑菇（食物自动飞过来）两个道具。</p>
+<p>我把它完整搬到了 <strong>Cocos Creator 3.8.8</strong>。不是「照着玩法重写一个」，而是把原来的五个类逐个对应过来：<code>Welcome</code> &#x2F; <code>InGame</code> &#x2F; <code>GameBackground</code> &#x2F; <code>Hero</code> &#x2F; <code>Obstacle</code>，连图集矩形、音效、动画帧序、背景视差系数都是原样的。</p>
+<h2 id="复刻了什么"><a href="#复刻了什么" class="headerlink" title="复刻了什么"></a>复刻了什么</h2><table>
+<thead>
+<tr>
+<th>原版功能</th>
+<th>状态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>欢迎页主角从左侧滑入 + 标题&#x2F;按钮</td>
+<td>保留，缓动曲线按原版 1.2 秒</td>
+</tr>
+<tr>
+<td>5 种食物编队（波浪、直线、斜线、环形…）</td>
+<td>按原 <code>pattern</code> 状态机逐个实现</td>
+</tr>
+<tr>
+<td>4 种障碍物 + 出现前 “LOOK OUT!” 5 帧预警</td>
+<td>保留，含红屏闪烁</td>
+</tr>
+<tr>
+<td>撞击后主角翻转、扣命、屏幕轻微震动</td>
+<td>保留（震动是相机节点位移）</td>
+</tr>
+<tr>
+<td>咖啡加速 &#x2F; 撞穿障碍、蘑菇自动吸食</td>
+<td>保留，各自配粒子发射器</td>
+</tr>
+<tr>
+<td>4 层视差背景（天空 0.02 &#x2F; 山 0.2 &#x2F; 楼 0.5 &#x2F; 草 1.0）</td>
+<td>与 <code>BgLayer.as</code> 完全一致，含取整与回卷</td>
+</tr>
+<tr>
+<td>生命 5 条、分数 &#x3D; 食物分 + 距离</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>暂停、静音、About、结算页（MAIN &#x2F; PLAY AGAIN &#x2F; ABOUT）</td>
+<td>保留，结算页按钮布局按原公式算</td>
+</tr>
+</tbody></table>
+<p>原工程里 <code>assets/</code> 只有一张 2048×1024 的图集、两张 1024×768 的背景和 8 个 mp3，这些直接复用，一张图都没重画。</p>
+<p><img src="/img/hungry-hero/welcome.png" alt="欢迎页" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/img/hungry-hero/welcome.png" class="lozad post-image"></p>
+<h2 id="迁移策略：复用引擎包，运行时搭场景"><a href="#迁移策略：复用引擎包，运行时搭场景" class="headerlink" title="迁移策略：复用引擎包，运行时搭场景"></a>迁移策略：复用引擎包，运行时搭场景</h2><p>Cocos 3.x 的常规做法是在编辑器里拖一个场景再构建，但那样产物是「场景资源 + 序列化 JSON」，我这边没有编辑器里的手工接线，也不想把一堆 <code>.scene</code>&#x2F;<code>.meta</code> 手写出来（<code>__type__</code> 要用压缩过的脚本 uuid，很容易写错）。</p>
+<p>所以走的是「<strong>只复用引擎运行包，场景用代码搭</strong>」的路子：</p>
+<ul>
+<li>从之前那个 <a href="/2026/10/31/fe7d82c5f999/">Cocos UI 性能实验室</a> 里直接拿 <code>cocos-js/</code>（引擎本体）、<code>src/system.bundle.js</code>（SystemJS）、<code>src/polyfills.bundle.js</code>、<code>import-map.json</code>；</li>
+<li>写一个 <code>index.js</code> 入口，<code>System.import(&#39;cc&#39;)</code> 拿引擎，再 <code>cc.game.init(&#123;settingsPath&#125;)</code> → <code>cc.game.run()</code> → 加载 <code>src/game.js</code>；</li>
+<li><code>game.js</code> 里 <code>new Scene()</code>、<code>new Node()</code>、<code>addComponent(Sprite)</code> 全部用代码建，最后 <code>director.runSceneImmediate(scene)</code>。</li>
+</ul>
+<p>好处是整个工程就是几个纯文本 js + 一堆图片，改一行刷新就见效，也能在无头浏览器里跑自动化检测。</p>
+<p>代价是：<strong>编辑器帮你做的事，全得自己补回来</strong>。下面就是补的过程里踩的坑。</p>
+<h2 id="五个「白屏但控制台零报错」的坑"><a href="#五个「白屏但控制台零报错」的坑" class="headerlink" title="五个「白屏但控制台零报错」的坑"></a>五个「白屏但控制台零报错」的坑</h2><p>这段是这次迁移最实在的部分。每一个都表现为「页面加载完了，画面什么都没有，控制台干干净净」。</p>
+<h3 id="1-只建-Node-树，一个东西都不会画"><a href="#1-只建-Node-树，一个东西都不会画" class="headerlink" title="1. 只建 Node 树，一个东西都不会画"></a>1. 只建 Node 树，一个东西都不会画</h3><p>场景图是完全正确的：<code>director.getScene()</code> 有 40 个节点，位置、尺寸、<code>SpriteFrame</code> 全对，<code>sprite._renderData</code> 也有 4 个顶点 6 个索引，<code>requestAnimationFrame</code> 在跑（<code>getTotalFrames()</code> 涨到 416），但 <code>device._numDrawCalls === 0</code>。</p>
+<p>查了半天才在引擎源码里找到这句：</p>
+<pre class="highlight"><span class="line"><span class="comment">// cc.RenderRoot2D</span></span><br><span class="line"><span class="title function_">onEnable</span>(<span class="params"></span>) &#123; director.<span class="property">root</span>.<span class="property">batcher2D</span>.<span class="title function_">addScreen</span>(<span class="variable language_">this</span>); &#125;</span><br><span class="line"><span class="title function_">onDisable</span>(<span class="params"></span>) &#123; director.<span class="property">root</span>.<span class="property">batcher2D</span>.<span class="title function_">removeScreen</span>(<span class="variable language_">this</span>); &#125;</span><br></pre>
+
+<p>Cocos 3.x 的 2D 渲染是<strong>由 <code>RenderRoot2D</code>（<code>Canvas</code> 的父类）驱动</strong>的：它 <code>onEnable</code> 时把自己注册进 <code>Batcher2D</code> 的 <code>_screens</code>，渲染时只 <code>walk</code> 这些 screen。纯 <code>Node</code> 树再正确也不会被遍历。</p>
+<p>所以必须有这一层：</p>
+<pre class="highlight"><span class="line"><span class="keyword">var</span> canvasNode = <span class="keyword">new</span> <span class="title class_">Node</span>(<span class="string">&#x27;Canvas&#x27;</span>);</span><br><span class="line">canvasNode.<span class="title function_">setPosition</span>(<span class="variable constant_">DESIGN_W</span> / <span class="number">2</span>, <span class="variable constant_">DESIGN_H</span> / <span class="number">2</span>, <span class="number">0</span>);   <span class="comment">// 放在设计区中心</span></span><br><span class="line">scene.<span class="title function_">addChild</span>(canvasNode);</span><br><span class="line">canvasNode.<span class="title function_">addComponent</span>(<span class="title class_">UITransform</span>).<span class="title function_">setContentSize</span>(<span class="variable constant_">DESIGN_W</span>, <span class="variable constant_">DESIGN_H</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> camNode = <span class="keyword">new</span> <span class="title class_">Node</span>(<span class="string">&#x27;Camera&#x27;</span>);</span><br><span class="line">canvasNode.<span class="title function_">addChild</span>(camNode);</span><br><span class="line"><span class="keyword">var</span> cam = camNode.<span class="title function_">addComponent</span>(<span class="title class_">Camera</span>);</span><br><span class="line">cam.<span class="property">projection</span> = <span class="title class_">Camera</span>.<span class="property">ProjectionType</span>.<span class="property">ORTHO</span>;</span><br><span class="line">cam.<span class="property">orthoHeight</span> = <span class="variable constant_">DESIGN_H</span> / <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> canvas = canvasNode.<span class="title function_">addComponent</span>(<span class="title class_">Canvas</span>);</span><br><span class="line">canvas.<span class="property">cameraComponent</span> = cam;      <span class="comment">// Canvas 会把相机摆到自己的世界坐标 + z=1000</span></span><br></pre>
+
+<p>顺手记一下：<code>Canvas._onResizeCamera()</code> 会按 <code>windowSize.height / getScaleY() / 2</code> 重算 <code>orthoHeight</code>，所以设计分辨率适配是对的，不用自己算。</p>
+<h3 id="2-相机参数写错了名字，而且不报错"><a href="#2-相机参数写错了名字，而且不报错" class="headerlink" title="2. 相机参数写错了名字，而且不报错"></a>2. 相机参数写错了名字，而且不报错</h3><p>我按记忆写了 <code>cam.ortho = true; cam.nearClip = 1; cam.farClip = 3000;</code>。全是<strong>不存在的属性</strong>，JS 不会报错，只是默默变成一个普通字段。结果相机保持默认的<strong>透视投影</strong>、<code>near=1 / far=1000</code>，而相机节点在 <code>z=1000</code>——所有精灵都在 <code>z=0</code>，正好落在远裁面上，被裁得一个不剩。</p>
+<p>3.8 里正确的名字是：</p>
+<pre class="highlight"><span class="line">cam.<span class="property">projection</span> = <span class="title class_">Camera</span>.<span class="property">ProjectionType</span>.<span class="property">ORTHO</span>;   <span class="comment">// 0</span></span><br><span class="line">cam.<span class="property">orthoHeight</span> = <span class="variable constant_">DESIGN_H</span> / <span class="number">2</span>;</span><br><span class="line">cam.<span class="property">near</span> = <span class="number">1</span>;</span><br><span class="line">cam.<span class="property">far</span>  = <span class="number">3000</span>;</span><br></pre>
+
+<p>排查手法是从 <code>cc.director.root.device._numDrawCalls</code> 反推：一直是 0，说明连提交都没提交，问题必然在相机&#x2F;管线而不是贴图。</p>
+<h3 id="3-node-setScale-1-会把节点变成隐形"><a href="#3-node-setScale-1-会把节点变成隐形" class="headerlink" title="3. node.setScale(1) 会把节点变成隐形"></a>3. <code>node.setScale(1)</code> 会把节点变成隐形</h3><p>这条最坑。原来 AS3 里是 <code>hero.scaleX = hero.scaleY = 1</code>，我顺手写成 <code>heroNode.setScale(1)</code>。看着天经地义，但 Cocos 的 <code>setScale</code> 期望 <code>(x, y, z)</code> 三个参数，缺的 <code>y/z</code> 会变成 <code>undefined</code>，局部矩阵直接退化成非数——<strong>节点还在场景里，<code>activeInHierarchy</code> 是 true，<code>worldPosition</code> 也能读，但就是不画</strong>。</p>
+<p>更迷惑的是它的子节点也跟着坏：两个粒子发射器的 <code>worldPosition</code> 变成 <code>NaN</code>，我一开始以为是粒子系统污染了合批缓冲，绕了很久。</p>
+<pre class="highlight"><span class="line">heroNode.<span class="title function_">setScale</span>(<span class="number">1</span>);                    <span class="comment">// ✗ 隐形</span></span><br><span class="line">heroNode.<span class="title function_">setScale</span>(<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>);              <span class="comment">// ✓</span></span><br><span class="line">heroNode.<span class="title function_">setScale</span>(<span class="keyword">new</span> cc.<span class="title class_">Vec3</span>(<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>)); <span class="comment">// ✓</span></span><br></pre>
+
+<p>后来我在工程里全局搜了一遍 <code>setScale</code>，又抓出 <code>setScale(p.scale)</code> 和 <code>setScale(w.scale, 1)</code> 两处——都是缺参数的。</p>
+<h3 id="4-运行时贴图：Texture2D-image-要的是-ImageAsset"><a href="#4-运行时贴图：Texture2D-image-要的是-ImageAsset" class="headerlink" title="4. 运行时贴图：Texture2D.image 要的是 ImageAsset"></a>4. 运行时贴图：<code>Texture2D.image</code> 要的是 <code>ImageAsset</code></h3><p>图集是运行时用 <code>&lt;img&gt;</code> 加载的，随手写 <code>texture.image = img</code> 会炸：</p>
+<pre class="highlight"><span class="line">TypeError: i.extractMipmaps is not a function</span><br></pre>
+
+<p>因为 <code>image</code> 的 setter 内部是 <code>this.mipmaps = [t]</code>，而 <code>mipmaps</code> 的 setter 会对每个元素调 <code>extractMipmaps()</code> —— 这只有 <code>ImageAsset</code> 上有。正确的包装是：</p>
+<pre class="highlight"><span class="line"><span class="keyword">var</span> imageAsset = <span class="keyword">new</span> cc.<span class="title class_">ImageAsset</span>();</span><br><span class="line">imageAsset.<span class="property">_format</span> = <span class="number">35</span>;        <span class="comment">// RGBA8888</span></span><br><span class="line">imageAsset.<span class="property">_nativeData</span> = img;   <span class="comment">// 注意：data 在这个构建里是只读 getter</span></span><br><span class="line"><span class="keyword">var</span> t = <span class="keyword">new</span> cc.<span class="title class_">Texture2D</span>();</span><br><span class="line">t.<span class="property">image</span> = imageAsset;</span><br><span class="line">t.<span class="property">packable</span> = <span class="literal">false</span>;</span><br></pre>
+
+<p><code>data</code> 这个属性在 3.8.8 的 web 包里只定义了 getter（我试过 <code>imageAsset.data = img</code>，报 “only a getter”），所以直接写 <code>_nativeData</code>——<code>data</code> 的 getter 返回的正是它。</p>
+<h3 id="5-SpriteFrame-offset-的符号是反的"><a href="#5-SpriteFrame-offset-的符号是反的" class="headerlink" title="5. SpriteFrame.offset 的符号是反的"></a>5. <code>SpriteFrame.offset</code> 的符号是反的</h3><p>从 TexturePacker 的 XML 切帧时，裁剪帧要算 <code>offset</code>（裁剪后内容相对原图中心的位移）。我按「左上原点」的直觉写成：</p>
+<pre class="highlight"><span class="line">f.<span class="property">offset</span> = <span class="keyword">new</span> <span class="title class_">Vec2</span>(s.<span class="property">ox</span> + s.<span class="property">w</span> / <span class="number">2</span> - s.<span class="property">ow</span> / <span class="number">2</span>, s.<span class="property">oy</span> + s.<span class="property">h</span> / <span class="number">2</span> - s.<span class="property">oh</span> / <span class="number">2</span>);   <span class="comment">// ✗</span></span><br></pre>
+
+<p>小图看不出来（差 1~3 像素），但背景层 <code>bgLayer2</code> 上下各裁了 26&#x2F;44 像素，整层就往上错位 26px，接缝全露出来，看起来像一块块矩形贴错位置。</p>
+<p>Cocos 的语义是：<code>offset</code> &#x3D; 裁剪内容相对<strong>原图中心</strong>的位移，x 向右为正，<strong>y 向上为正</strong>；TexturePacker 的 <code>frameX/frameY</code> 是从左上角量起的负 padding。所以：</p>
+<pre class="highlight"><span class="line"><span class="comment">// offset.x = trimLeft - (ow - w)/2      trimLeft = -frameX</span></span><br><span class="line"><span class="comment">// offset.y = (oh - h)/2 - trimTop       trimTop  = -frameY</span></span><br><span class="line">f.<span class="property">offset</span> = <span class="keyword">new</span> <span class="title class_">Vec2</span>(-s.<span class="property">ox</span> - (s.<span class="property">ow</span> - s.<span class="property">w</span>) / <span class="number">2</span>, (s.<span class="property">oh</span> - s.<span class="property">h</span>) / <span class="number">2</span> + s.<span class="property">oy</span>);</span><br></pre>
+
+<h3 id="顺带两个-SystemJS-的坑"><a href="#顺带两个-SystemJS-的坑" class="headerlink" title="顺带两个 SystemJS 的坑"></a>顺带两个 SystemJS 的坑</h3><ul>
+<li><code>chunks/bundle.js</code>（里面注册了 <code>rollupPluginModLoBabelHelpers</code>）<strong>必须用经典 <code>&lt;script&gt;</code> 标签</strong>加载，而且在 <code>system.bundle.js</code> 之后。它原本是给引擎 <code>main</code> 包的 preload 脚本用的，运行时模式下那段永远不执行，用 <code>System.import()</code> 去拉也不生效（我抓包确认过：一次请求都没发出去）。</li>
+<li>这套 SystemJS 里，相对的 <code>./xxx</code> 是相对<strong>页面目录</strong>（document base），不是相对模块自己所在的目录。所以 <code>src/application.js</code> 里要写 <code>System.import(&#39;./src/game.js&#39;)</code> 而不是 <code>./game.js</code>。</li>
+</ul>
+<h2 id="背景视差：照抄原版的两个细节"><a href="#背景视差：照抄原版的两个细节" class="headerlink" title="背景视差：照抄原版的两个细节"></a>背景视差：照抄原版的两个细节</h2><p><code>GameBackground.as</code> 和 <code>BgLayer.as</code> 很值得抄，因为细节都藏在里面：</p>
+<pre class="highlight"><span class="line">// 每层 = 两张同图，左边缘对齐在 0 和 w</span><br><span class="line">image1.x = 0;            image1.y = stage.stageHeight - image1.height;</span><br><span class="line">image2.x = image2.width; image2.y = image1.y;</span><br><span class="line"></span><br><span class="line">// 整层左移，超过一个宽度就回卷</span><br><span class="line">bgLayer.x -= Math.ceil(_speed * bgLayer.parallaxDepth);</span><br><span class="line">if (bgLayer.x &lt; -stage.stageWidth) bgLayer.x = 0;</span><br></pre>
+
+<p>两个要点：</p>
+<ol>
+<li><strong>底部对齐</strong>（<code>stageHeight - image.height</code>），不是垂直居中；</li>
+<li><strong>接缝要落在右边界上</strong>（第二张图的左边缘在 <code>w</code>）。我一开始按 <code>x = 0</code> 和 <code>x = w</code> 摆<strong>中心</strong>，接缝就跑到屏幕正中间去了——<code>bgLayer2</code> 是两边渐隐的软山丘，本来就不是为无缝平铺画的，接缝一进画面就是一条明显的亮带。改成左边缘对齐之后，接缝从右边界开始往左走，观感就回到原版了。</li>
+</ol>
+<p><code>bgLayer4</code>（草）我量了一下左右边缘像素：完全一致，能无缝平铺；<code>bgLayer3</code>（楼）最大差 8；<code>bgLayer2</code> 差得多——所以这条不是「代码 bug」，是素材本身的特性，照原版的摆法就不会难看。</p>
+<h2 id="运行时实测的数字"><a href="#运行时实测的数字" class="headerlink" title="运行时实测的数字"></a>运行时实测的数字</h2><p>在无头 Chrome（SwiftShader 软件渲染）里跑起来后读引擎计数器：</p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>Draw Calls</th>
+<th>三角面</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>游戏进行中（4 层背景 + 主角 + 30+ 食物 + 障碍）</td>
+<td>12 ~ 13</td>
+<td>164 ~ 234</td>
+</tr>
+<tr>
+<td>结算页</td>
+<td>12</td>
+<td>150</td>
+</tr>
+</tbody></table>
+<p>因为所有精灵共用一张 2048×1024 的图集和同一个材质，食物&#x2F;障碍&#x2F;主角全被合进同一批；4 个背景层各自是一张图，拆成 4 批；再加大约 2 批动态字型的 HUD 文本。批次数几乎不随物体数量增长——这正是图集该有的效果。</p>
+<p>顺便说一句，HUD 用的是系统字体 <code>Label</code>，每个 <code>Label</code> 实例都带自己的动态字型纹理。这里只有 6 个 label，代价可以不管；如果要做几十行的列表，还是得换位图字体。</p>
+<p><img src="/img/hungry-hero/play.png" alt="游戏进行中" srcset="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20300%20300'%3E%3C/svg%3E" data-src="/img/hungry-hero/play.png" class="lozad post-image"></p>
+<h2 id="设计分辨率与「视口」"><a href="#设计分辨率与「视口」" class="headerlink" title="设计分辨率与「视口」"></a>设计分辨率与「视口」</h2><p>页面用 <code>SHOW_ALL</code> 把 1024×768 的设计区等比塞进任意窗口，多出来的地方是黑边。但背景层是横向平铺的，会铺到设计区外面去，导致左右两侧露出来的内容和里面接不上——一条硬缝正好压在设计区边界上。</p>
+<p>解决办法很土但有效：在最后一个兄弟节点上挂一个 <code>Graphics</code>，在设计区左右各画一条 4096 宽的深色矩形，把溢出部分盖掉。这样无论窗口多宽，画面都是干净的固定视口。</p>
+<pre class="highlight"><span class="line"><span class="keyword">var</span> g = frameNode.<span class="title function_">addComponent</span>(<span class="title class_">Graphics</span>);</span><br><span class="line">g.<span class="property">fillColor</span> = <span class="keyword">new</span> <span class="title class_">Color</span>(<span class="number">10</span>, <span class="number">13</span>, <span class="number">20</span>, <span class="number">255</span>);</span><br><span class="line">g.<span class="title function_">rect</span>(-<span class="number">4096</span>, -<span class="number">400</span>, <span class="number">4096</span>, <span class="variable constant_">DESIGN_H</span> + <span class="number">800</span>); g.<span class="title function_">fill</span>();</span><br><span class="line">g.<span class="title function_">rect</span>(<span class="variable constant_">DESIGN_W</span>, -<span class="number">400</span>, <span class="number">4096</span>, <span class="variable constant_">DESIGN_H</span> + <span class="number">800</span>); g.<span class="title function_">fill</span>();</span><br></pre>
+
+<h2 id="AS3-x2F-Starling-→-Cocos-3-8-对照"><a href="#AS3-x2F-Starling-→-Cocos-3-8-对照" class="headerlink" title="AS3 &#x2F; Starling → Cocos 3.8 对照"></a>AS3 &#x2F; Starling → Cocos 3.8 对照</h2><table>
+<thead>
+<tr>
+<th>需求</th>
+<th>Starling (AS3)</th>
+<th>Cocos Creator 3.8</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>显示对象</td>
+<td><code>Sprite</code> &#x2F; <code>Image</code></td>
+<td><code>Node</code> + <code>Sprite</code></td>
+</tr>
+<tr>
+<td>图集取帧</td>
+<td><code>Assets.getAtlas().getTexture(name)</code></td>
+<td><code>SpriteFrame&#123;rect, originalSize, offset&#125;</code></td>
+</tr>
+<tr>
+<td>纹理来源</td>
+<td><code>Texture.fromBitmapData</code></td>
+<td><code>ImageAsset</code> → <code>Texture2D.image</code></td>
+</tr>
+<tr>
+<td>顶层容器</td>
+<td><code>Starling.current.stage</code></td>
+<td><code>Canvas</code>（<code>RenderRoot2D</code>）</td>
+</tr>
+<tr>
+<td>帧循环</td>
+<td><code>Event.ENTER_FRAME</code></td>
+<td><code>Component.update(dt)</code></td>
+</tr>
+<tr>
+<td>补间</td>
+<td><code>Tween</code> &#x2F; <code>TweenMax</code></td>
+<td><code>tween()</code> 或手写插值</td>
+</tr>
+<tr>
+<td>粒子</td>
+<td><code>ParticleSystem</code></td>
+<td><code>ParticleSystem2D</code></td>
+</tr>
+<tr>
+<td>音效</td>
+<td><code>SoundMixer</code> &#x2F; <code>SoundChannel</code></td>
+<td>这个包里没 <code>cc.audioEngine</code>，直接用 <code>new Audio()</code></td>
+</tr>
+<tr>
+<td>屏幕震动</td>
+<td>操作 <code>stage</code> 的相机</td>
+<td>位移场景根节点</td>
+</tr>
+<tr>
+<td>设计分辨率</td>
+<td><code>Starling.multitouchEnabled</code> + <code>stage.stageWidth</code></td>
+<td><code>view.setDesignResolutionSize(w, h, SHOW_ALL)</code></td>
+</tr>
+</tbody></table>
+<p>最后一条值得说明：我一开始想让引擎的音频模块播 mp3，结果发现这个裁剪过的 web 包里没有 <code>cc.audioEngine</code>，于是直接用浏览器的 <code>new Audio()</code>。代价是<strong>自动播放策略</strong>：首次交互前不能出声，所以背景音乐挂在第一次 <code>pointerdown</code> 上才开始。</p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>原版是 2012 年的 Flash 游戏，Starling 当年解决的「GPU 加速 2D 精灵批处理」这件事，今天的 Cocos、LayaAir、Unity 的 UGUI 都在用同一套思路：一张图集、一个材质、按渲染顺序合批。<strong>换引擎之后真正会变的只有 API 名字，不会变的是合批条件、裁剪成本、以及「画不出来先看 draw call」这条排查路径。</strong></p>
+<p>原工程：Hemanth Sharma 的 <a target="_blank" rel="noopener" href="http://www.hungryherogame.com/">Hungry Hero</a>（Simplified BSD）。Cocos 版是我用脚本 + 手写代码搬过来的，如果你想看某个类的具体实现，可以邮件找我：<a href="mailto:&#99;&#x67;&#x65;&#110;&#103;&#112;&#101;&#x6e;&#103;&#64;&#103;&#x6d;&#97;&#105;&#x6c;&#46;&#x63;&#x6f;&#x6d;">&#99;&#x67;&#x65;&#110;&#103;&#112;&#101;&#x6e;&#103;&#64;&#103;&#x6d;&#97;&#105;&#x6c;&#46;&#x63;&#x6f;&#x6d;</a>。</p>
+<hr>
+<p>相关：同一套运行时方案做的另一个工程 → <a href="/2026/10/31/fe7d82c5f999/">用 Cocos Creator 3.8 复刻我的 UI 性能实验室</a></p>
+
+  </div>
+  <div>
+    
+      <div 
+        class="post-note note-warning copyright" 
+        style="margin-top: 42px">
+        <p>
+          <span style="font-weight: bold;">作者：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="/about">
+            MrLibertine
+          </a>
+        </p>
+        <p>
+          <span style="font-weight: bold;">文章链接：</span><a 
+            target="_blank" 
+            rel="nofollow noopener noreferrer" 
+            href="https://mrlibertine.github.io/2026/11/01/48a8218a0c20/">
+            https://mrlibertine.github.io/2026/11/01/48a8218a0c20/
+          </a>
+        </p>
+        <p><span style="font-weight: bold;">版权声明：</span>本博客所有文章除特别声明外，均采用<a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">CC BY-NC-SA 4.0 协议</a>。转载请注明出处！</p>
+      </div>
+    
+  </div>
+</article>
+<div class="nav">
+  
+  
+    <div class="nav-item-next">
+      <a 
+        href="/2026/10/31/fe7d82c5f999/" 
+        class="nav-link">
+        <div>
+          <div class="nav-label">下一篇</div>
+          
+            <div class="nav-title">用 Cocos Creator 3.8 复刻我的 UI 性能实验室：10 个实验，零编辑器接线 </div>
+          
+        </div>
+        <i class="iconfont icon-right nav-next-icon"></i>
+      </a>
+    </div>
+  
+</div>
+
+<div 
+  class="card card-content toc-card" 
+  id="mobiletoc">
+  <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%8D%E5%88%BB%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-text">复刻了什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%81%E7%A7%BB%E7%AD%96%E7%95%A5%EF%BC%9A%E5%A4%8D%E7%94%A8%E5%BC%95%E6%93%8E%E5%8C%85%EF%BC%8C%E8%BF%90%E8%A1%8C%E6%97%B6%E6%90%AD%E5%9C%BA%E6%99%AF"><span class="toc-text">迁移策略：复用引擎包，运行时搭场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E4%B8%AA%E3%80%8C%E7%99%BD%E5%B1%8F%E4%BD%86%E6%8E%A7%E5%88%B6%E5%8F%B0%E9%9B%B6%E6%8A%A5%E9%94%99%E3%80%8D%E7%9A%84%E5%9D%91"><span class="toc-text">五个「白屏但控制台零报错」的坑</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%8F%AA%E5%BB%BA-Node-%E6%A0%91%EF%BC%8C%E4%B8%80%E4%B8%AA%E4%B8%9C%E8%A5%BF%E9%83%BD%E4%B8%8D%E4%BC%9A%E7%94%BB"><span class="toc-text">1. 只建 Node 树，一个东西都不会画</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%9B%B8%E6%9C%BA%E5%8F%82%E6%95%B0%E5%86%99%E9%94%99%E4%BA%86%E5%90%8D%E5%AD%97%EF%BC%8C%E8%80%8C%E4%B8%94%E4%B8%8D%E6%8A%A5%E9%94%99"><span class="toc-text">2. 相机参数写错了名字，而且不报错</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-node-setScale-1-%E4%BC%9A%E6%8A%8A%E8%8A%82%E7%82%B9%E5%8F%98%E6%88%90%E9%9A%90%E5%BD%A2"><span class="toc-text">3. node.setScale(1) 会把节点变成隐形</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%BF%90%E8%A1%8C%E6%97%B6%E8%B4%B4%E5%9B%BE%EF%BC%9ATexture2D-image-%E8%A6%81%E7%9A%84%E6%98%AF-ImageAsset"><span class="toc-text">4. 运行时贴图：Texture2D.image 要的是 ImageAsset</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-SpriteFrame-offset-%E7%9A%84%E7%AC%A6%E5%8F%B7%E6%98%AF%E5%8F%8D%E7%9A%84"><span class="toc-text">5. SpriteFrame.offset 的符号是反的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A1%BA%E5%B8%A6%E4%B8%A4%E4%B8%AA-SystemJS-%E7%9A%84%E5%9D%91"><span class="toc-text">顺带两个 SystemJS 的坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF%E8%A7%86%E5%B7%AE%EF%BC%9A%E7%85%A7%E6%8A%84%E5%8E%9F%E7%89%88%E7%9A%84%E4%B8%A4%E4%B8%AA%E7%BB%86%E8%8A%82"><span class="toc-text">背景视差：照抄原版的两个细节</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E5%AE%9E%E6%B5%8B%E7%9A%84%E6%95%B0%E5%AD%97"><span class="toc-text">运行时实测的数字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E5%88%86%E8%BE%A8%E7%8E%87%E4%B8%8E%E3%80%8C%E8%A7%86%E5%8F%A3%E3%80%8D"><span class="toc-text">设计分辨率与「视口」</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AS3-x2F-Starling-%E2%86%92-Cocos-3-8-%E5%AF%B9%E7%85%A7"><span class="toc-text">AS3 &#x2F; Starling → Cocos 3.8 对照</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%90%8E"><span class="toc-text">最后</span></a></li></ol>
+</div>
+                    </main>
+                    <aside class="right-column">
+                      <div class="sticky-widescreen">
+  
+  
+    <article class="card card-content toc-card">
+      <div class="toc-header">
+  <i 
+    class="iconfont icon-menu" 
+    style="padding-right: 2px;">
+  </i>目录
+</div>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%8D%E5%88%BB%E4%BA%86%E4%BB%80%E4%B9%88"><span class="toc-text">复刻了什么</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%81%E7%A7%BB%E7%AD%96%E7%95%A5%EF%BC%9A%E5%A4%8D%E7%94%A8%E5%BC%95%E6%93%8E%E5%8C%85%EF%BC%8C%E8%BF%90%E8%A1%8C%E6%97%B6%E6%90%AD%E5%9C%BA%E6%99%AF"><span class="toc-text">迁移策略：复用引擎包，运行时搭场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E4%B8%AA%E3%80%8C%E7%99%BD%E5%B1%8F%E4%BD%86%E6%8E%A7%E5%88%B6%E5%8F%B0%E9%9B%B6%E6%8A%A5%E9%94%99%E3%80%8D%E7%9A%84%E5%9D%91"><span class="toc-text">五个「白屏但控制台零报错」的坑</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%8F%AA%E5%BB%BA-Node-%E6%A0%91%EF%BC%8C%E4%B8%80%E4%B8%AA%E4%B8%9C%E8%A5%BF%E9%83%BD%E4%B8%8D%E4%BC%9A%E7%94%BB"><span class="toc-text">1. 只建 Node 树，一个东西都不会画</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E7%9B%B8%E6%9C%BA%E5%8F%82%E6%95%B0%E5%86%99%E9%94%99%E4%BA%86%E5%90%8D%E5%AD%97%EF%BC%8C%E8%80%8C%E4%B8%94%E4%B8%8D%E6%8A%A5%E9%94%99"><span class="toc-text">2. 相机参数写错了名字，而且不报错</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-node-setScale-1-%E4%BC%9A%E6%8A%8A%E8%8A%82%E7%82%B9%E5%8F%98%E6%88%90%E9%9A%90%E5%BD%A2"><span class="toc-text">3. node.setScale(1) 会把节点变成隐形</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%BF%90%E8%A1%8C%E6%97%B6%E8%B4%B4%E5%9B%BE%EF%BC%9ATexture2D-image-%E8%A6%81%E7%9A%84%E6%98%AF-ImageAsset"><span class="toc-text">4. 运行时贴图：Texture2D.image 要的是 ImageAsset</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-SpriteFrame-offset-%E7%9A%84%E7%AC%A6%E5%8F%B7%E6%98%AF%E5%8F%8D%E7%9A%84"><span class="toc-text">5. SpriteFrame.offset 的符号是反的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A1%BA%E5%B8%A6%E4%B8%A4%E4%B8%AA-SystemJS-%E7%9A%84%E5%9D%91"><span class="toc-text">顺带两个 SystemJS 的坑</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%83%8C%E6%99%AF%E8%A7%86%E5%B7%AE%EF%BC%9A%E7%85%A7%E6%8A%84%E5%8E%9F%E7%89%88%E7%9A%84%E4%B8%A4%E4%B8%AA%E7%BB%86%E8%8A%82"><span class="toc-text">背景视差：照抄原版的两个细节</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E5%AE%9E%E6%B5%8B%E7%9A%84%E6%95%B0%E5%AD%97"><span class="toc-text">运行时实测的数字</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E5%88%86%E8%BE%A8%E7%8E%87%E4%B8%8E%E3%80%8C%E8%A7%86%E5%8F%A3%E3%80%8D"><span class="toc-text">设计分辨率与「视口」</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AS3-x2F-Starling-%E2%86%92-Cocos-3-8-%E5%AF%B9%E7%85%A7"><span class="toc-text">AS3 &#x2F; Starling → Cocos 3.8 对照</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%80%E5%90%8E"><span class="toc-text">最后</span></a></li></ol>
+    </article>
+  
+  
+  <article class="card card-content">
+    <div class="recent-posts-card">
+  <div class="recent-posts-header">
+    <i 
+      class="iconfont icon-wenzhang_huaban" 
+      style="padding-right: 2px;">
+    </i>最近文章
+  </div>
+  <div class="recent-posts-list">
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-11-01</div>
+        <a href="/2026/11/01/48a8218a0c20/"><div class="recent-posts-item-content">把 Flash + Starling 的《Hungry Hero》完整搬到 Cocos Creator 3.8</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-10-31</div>
+        <a href="/2026/10/31/fe7d82c5f999/"><div class="recent-posts-item-content">用 Cocos Creator 3.8 复刻我的 UI 性能实验室：10 个实验，零编辑器接线</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-10-19</div>
+        <a href="/2026/10/19/ae2005365a89/"><div class="recent-posts-item-content">Unity 客户端 UI 性能实践：虚拟列表、合批与框架设计</div></a>
+      </div>
+    
+      <div class="recent-posts-item">
+        <div class="recent-posts-item-title">2026-06-09</div>
+        <a href="/2026/06/09/76cfdea54713/"><div class="recent-posts-item-content">LayaAir 原生 vs Unity 原生 — 为什么你的 Worker 在原生 App 里不启用</div></a>
+      </div>
+    
+  </div>
+</div>
+  </article>
+  
+  
+</div>
+                    </aside>
+                  </div>
+                </div>
+              </div>
+    </div>
+    
+      <footer class="footer">
+  <div class="footer-container">
+    <div>
+      <div class="footer-dsc">
+        <span>
+          Copyright ©
+          
+            2020
+          
+          
+                - 
+                2026
+          
+        </span>
+        &nbsp;
+        <a 
+          href="/" 
+          class="footer-link">
+          MrLibertine
+        </a>
+      </div>
+    </div>
+
+    
+    
+    
+    
+      <div class="footer-dsc">
+        
+          本站总访问量<span id="busuanzi_value_site_pv"></span>次
+        
+        
+          <span>&nbsp;|&nbsp;</span>
+        
+        
+          本站总访客数<span id="busuanzi_value_site_uv"></span>次
+        
+      </div>
+      
+    
+</footer>
+
+        
+  <a 
+    role="button" 
+    id="scrollbutton" 
+    class="basebutton" 
+    aria-label="回到顶部">
+    <i class="iconfont icon-arrowleft button-icon"></i>
+  </a>
+
+<a 
+  role="button" 
+  id="menubutton"
+  aria-label="menu button"
+  class="basebutton">
+  <i class="iconfont icon-menu button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="popbutton" 
+  class="basebutton" 
+  aria-label="控制中心">
+  <i class="iconfont icon-expand button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="darkbutton" 
+  class="basebutton darkwidget" 
+  aria-label="夜色模式">
+  <i class="iconfont icon-weather button-icon"></i>
+</a>
+<a 
+  role="button" 
+  id="searchbutton" 
+  class="basebutton searchwidget" 
+  aria-label="搜索">
+  <i class="iconfont icon-search button-icon"></i>
+</a>
+          
+            
+                  
+                    <script>
+  var addImgLayout = function () {
+    var img = document.querySelectorAll('.post-content img')
+    var i
+    for (i = 0; i < img.length; i++) {
+      var wrapper = document.createElement('a')
+      wrapper.setAttribute('href', img[i].getAttribute('data-src'))
+      wrapper.setAttribute('aria-label', 'illustration')
+      wrapper.style.cssText =
+        'width: 100%; display: flex; justify-content: center;'
+      if (img[i].alt) wrapper.dataset.caption = img[i].alt
+      wrapper.dataset.nolink = true
+      img[i].before(wrapper)
+      wrapper.append(img[i])
+      var divWrap = document.createElement('div')
+      divWrap.classList.add('gallery')
+      wrapper.before(divWrap)
+      divWrap.append(wrapper)
+    }
+    baguetteBox.run('.gallery')
+  }
+</script>
+<script>
+  loadScript(
+    "/js/lib/lightbox/baguetteBox.min.js",
+    addImgLayout
+  )
+</script>
+
+                      
+                        
+                          <script src="/js/main.js"></script>
+                            
+                              <script>
+                                loadScript('/js/lib/busuanzi.min.js') 
+                              </script>
+                              
+                                
+                                  <script>
+                                    var addLazyload = function () {
+                                      var observer = lozad('.lozad', {
+                                        load: function (el) {
+                                          el.srcset = el.getAttribute('data-src')
+                                        },
+                                        loaded: function (el) {
+                                          el.classList.add('loaded')
+                                        },
+                                      })
+                                      observer.observe()
+                                    }
+                                  </script>
+                                  <script>
+                                    loadScript('/js/lib/lozad.min.js', addLazyload)
+                                  </script>
+                                  
+                                    <script src="//instant.page/5.1.0" type="module"
+                                      integrity="sha384-by67kQnR+pyfy8yWP4kPO12fHKRLHZPfEsiSXR8u2IKcTdxD805MGUXBzVPnkLHw"></script>
+                                    
+                                        
+  </body>
+
+</html>

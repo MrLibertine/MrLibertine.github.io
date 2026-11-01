@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>Hungry Hero · Cocos Creator 3.8 复刻</title>
+  <meta name="viewport"
+        content="width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1,minimal-ui=true"/>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="renderer" content="webkit"/>
+  <meta name="force-rendering" content="webkit"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <meta name="msapplication-tap-highlight" content="no">
+  <meta name="full-screen" content="yes"/>
+  <meta name="x5-fullscreen" content="true"/>
+  <meta name="360-fullscreen" content="true"/>
+  <meta name="x5-page-mode" content="app">
+  <link rel="stylesheet" type="text/css" href="style.css"/>
+  <style>
+    html, body {
+      margin: 0; padding: 0; height: 100%; overflow: hidden;
+      background: #10131a;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      color: #e6ecf5;
+    }
+    #boot {
+      position: fixed; inset: 0; z-index: 10;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: #10131a;
+      transition: opacity .45s ease;
+    }
+    #boot.done { opacity: 0; pointer-events: none; }
+    #boot .name { font-size: 15px; letter-spacing: .12em; color: #7c8798; }
+    #boot .title { margin-top: 10px; font-size: 28px; font-weight: 700; letter-spacing: .02em; }
+    #boot .sub { margin-top: 8px; font-size: 13px; color: #66707f; max-width: 560px; text-align: center; line-height: 1.5; }
+    #boot .bar { margin-top: 26px; width: 220px; height: 3px; border-radius: 2px; background: #1b2230; overflow: hidden; }
+    #boot .bar i { display: block; width: 40%; height: 100%; border-radius: 2px; background: #1f6feb; animation: slide 1.1s ease-in-out infinite; }
+    @keyframes slide { 0% { margin-left: -40%; } 100% { margin-left: 100%; } }
+    #back {
+      position: fixed; right: 18px; top: 16px; z-index: 11;
+      font-size: 12px; color: #8b97a8; text-decoration: none;
+      padding: 5px 10px; border: 1px solid #2a3342; border-radius: 999px;
+      background: rgba(16, 19, 26, .72);
+      transition: color .2s, border-color .2s;
+    }
+    #back:hover { color: #e6ecf5; border-color: #3d4a5e; }
+    #full {
+      position: fixed; right: 12px; bottom: 12px; z-index: 11;
+      display: none; width: 30px; height: 30px; padding: 0;
+      color: #8b97a8; background: rgba(16, 19, 26, .62);
+      border: 1px solid #2a3342; border-radius: 8px;
+      font-size: 13px; line-height: 1; cursor: pointer;
+      transition: color .2s, border-color .2s;
+    }
+    #full:hover { color: #e6ecf5; border-color: #3d4a5e; }
+    #err {
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 12;
+      display: none; padding: 12px 16px; font-size: 12px; line-height: 1.6;
+      color: #ffb4a8; background: #2a1512; border-top: 1px solid #4a2320;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <a id="back" href="https://mrlibertine.github.io/">← 返回博客</a>
+  <button id="full" title="全屏查看（Esc 退出）">⛶</button>
+
+  <div id="boot">
+    <div class="name">COCOS CREATOR 3.8 · WEB</div>
+    <div class="title">Hungry Hero</div>
+    <div class="sub">把 Adobe Flash + Starling 的经典小游戏用 Cocos Creator 3.8 完整复刻 —— 飞行吃食、躲避障碍、咖啡加速、蘑菇吸食</div>
+    <div class="bar"><i></i></div>
+  </div>
+
+  <div id="GameDiv" cc_exact_fit_screen="true">
+    <div id="Cocos3dGameContainer">
+      <canvas id="GameCanvas" oncontextmenu="event.preventDefault()" tabindex="99"></canvas>
+    </div>
+  </div>
+
+  <div id="err"></div>
+
+  <script src="src/polyfills.bundle.js" charset="utf-8"></script>
+  <script src="src/system.bundle.js" charset="utf-8"></script>
+  <!-- Engine-shared chunk helpers (rollupPluginModLoBabelHelpers). Must load as a
+       classic script AFTER system.bundle.js so it registers synchronously before
+       the engine's "internal" bundle imports it. -->
+  <script src="src/chunks/bundle.js" charset="utf-8"></script>
+  <!-- Atlas rect table (frame x/y/w/h + offset). Must run before game.js evaluates. -->
+  <script src="assets/textures/sprites.js" charset="utf-8"></script>
+  <script src="src/import-map.json" type="systemjs-importmap" charset="utf-8"></script>
+  <script>
+    (function () {
+      var boot = document.getElementById('boot');
+      var errBox = document.getElementById('err');
+
+      var embedded = false;
+      try { embedded = window.self !== window.top; } catch (e) { embedded = true; }
+      if (embedded) {
+        document.getElementById('back').style.display = 'none';
+        var fullBtn = document.getElementById('full');
+        fullBtn.style.display = 'block';
+        fullBtn.addEventListener('click', function () {
+          var el = document.documentElement;
+          if (el.requestFullscreen) el.requestFullscreen();
+          else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+        });
+        document.addEventListener('fullscreenchange', function () {
+          fullBtn.textContent = document.fullscreenElement ? '✕' : '⛶';
+        });
+      }
+
+      function fail(msg) {
+        errBox.style.display = 'block';
+        errBox.textContent = '启动失败：' + msg + '\n（刚部署的话等几十秒，让 GitHub Pages 同步完再刷新）';
+        boot.classList.add('done');
+      }
+
+      window.addEventListener('error', function (e) {
+        if (!boot.classList.contains('done')) fail(e.message || '脚本错误');
+      });
+
+      var tries = 0;
+      var timer = setInterval(function () {
+        tries++;
+        var cc = window.cc;
+        var ready = cc && cc.director && cc.director.getScene && cc.director.getScene();
+        if (ready) {
+          clearInterval(timer);
+          setTimeout(function () { boot.classList.add('done'); }, 260);
+        } else if (tries > 300) {
+          clearInterval(timer);
+          fail('引擎未在 30 秒内启动');
+        }
+      }, 100);
+    })();
+  </script>
+
+  <script>
+    System.import('./index.js').catch(function (err) {
+      console.error(err);
+      var box = document.getElementById('err');
+      box.style.display = 'block';
+      box.textContent = '启动失败：' + (err && err.message ? err.message : err);
+      document.getElementById('boot').classList.add('done');
+    });
+  </script>
+</body>
+</html>
